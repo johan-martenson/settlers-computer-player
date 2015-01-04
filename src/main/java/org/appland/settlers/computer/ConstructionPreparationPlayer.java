@@ -5,27 +5,32 @@
  */
 package org.appland.settlers.computer;
 
+import java.util.LinkedList;
 import java.util.List;
 import org.appland.settlers.model.ForesterHut;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
+import org.appland.settlers.model.Land;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
+import org.appland.settlers.model.Quarry;
 import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Sawmill;
 import static org.appland.settlers.model.Size.MEDIUM;
 import static org.appland.settlers.model.Size.SMALL;
+import org.appland.settlers.model.Stone;
 import org.appland.settlers.model.Woodcutter;
 
 /**
  *
  * @author johan
  */
-public class PlanckProductionPlayer implements ComputerPlayer {
+public class ConstructionPreparationPlayer implements ComputerPlayer {
     private ForesterHut foresterHut;
     private Woodcutter  woodcutter;
     private Headquarter headquarter;
     private Sawmill     sawmill;
+    private Quarry      quarry;
 
     private enum State {
         NO_CONSTRUCTION,
@@ -34,15 +39,21 @@ public class PlanckProductionPlayer implements ComputerPlayer {
         WOODCUTTER_CONSTRUCTED,
         SAWMILL_CONSTRUCTED, 
         WAITING_FOR_WOODCUTTER, 
-        WAITING_FOR_SAWMILL
+        WAITING_FOR_SAWMILL, 
+        NO_STONE_WITHIN_BORDER, 
+        WAITING_FOR_QUARRY, 
+        IDLE, 
+        NEED_STONE
     }
+
+    private static final int QUARRY_STONE_DISTANCE = 4;
 
     private final GameMap map;
     private final Player  player;
 
     private State state;
     
-    public PlanckProductionPlayer(Player p, GameMap m) {
+    public ConstructionPreparationPlayer(Player p, GameMap m) {
         player = p;
         map    = m;
 
@@ -118,6 +129,61 @@ public class PlanckProductionPlayer implements ComputerPlayer {
 
             /* Change state to wait for the woodcutter */
             state = State.WAITING_FOR_SAWMILL;
+        } else if (state == State.WAITING_FOR_SAWMILL) {
+
+            /* Check if the sawmill is constructed */
+            if (sawmill.ready()) {
+                state = State.SAWMILL_CONSTRUCTED;
+            }
+        } else if (state == State.SAWMILL_CONSTRUCTED) {
+
+            /* Look for stone within the border */
+            Point stonePoint = findStoneWithinBorder();
+
+            /* Write a warning and exit if no stone is found */
+            if (stonePoint == null) {
+                System.out.println("WARNING: No stone found within border");
+
+                state = State.NO_STONE_WITHIN_BORDER;
+
+                return;
+            }
+
+            /* Find spot close to stone to place quarry */
+            Point site = findSpotForQuarry(stonePoint);
+
+            /* Place the quarry */
+            quarry = map.placeBuilding(new Quarry(player), site);
+
+            /* Connect the quarry to the headquarter */
+            Road road = map.placeAutoSelectedRoad(player, headquarter.getFlag(), quarry.getFlag());
+
+            /* Place flags on the road where possible */
+            Utils.fillRoadWithFlags(map, road);
+
+            /* Change state to wait for construction of the quarry */
+            state = State.WAITING_FOR_QUARRY;
+        } else if (state == State.WAITING_FOR_QUARRY) {
+
+            /* Check if the quarry is ready */
+            if (quarry.ready()) {
+                state = State.IDLE;
+            }
+        } else if (state == State.IDLE) {
+
+            /* Check if the quarry still has access to stone */
+            List<Stone> stones = findStonesWithinReach(quarry.getPosition());
+
+            /* Stay idle if there is still stone */
+            if (!stones.isEmpty()) {
+                return;
+            }
+
+            /* Destroy the quarry if it can't reach any stone */
+            quarry.tearDown();
+
+            /* Set state to needing stone again */
+            state = State.NEED_STONE;
         }
 
         /* Print the old and new state if the state changed */
@@ -161,5 +227,47 @@ public class PlanckProductionPlayer implements ComputerPlayer {
     @Override
     public Player getControlledPlayer() {
         return player;
+    }
+
+    private Point findStoneWithinBorder() {
+        for (Land land : player.getLands()) {
+            for (Point point : land.getPointsInLand()) {
+                if (map.isStoneAtPoint(point)) {
+                    return point;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private Point findSpotForQuarry(Point stonePoint) throws Exception {
+
+        /* Get points with available space for houses close to the stone point */
+        List<Point> points = Utils.findAvailableHousePointsWithinRadius(map, player, stonePoint, SMALL, 3);
+
+        /* Return null if there are no available places */
+        if (points.isEmpty()) {
+            return null;
+        }
+
+        /* Return any point from the available places */
+        return points.get(0);
+    }
+
+    private List<Stone> findStonesWithinReach(Point position) {
+        List<Stone> stones = new LinkedList<>();
+
+        /* Get points the quarry can reach */
+        List<Point> points = map.getPointsWithinRadius(position, QUARRY_STONE_DISTANCE);
+
+        /* Find stones within the reachable area */
+        for (Point point : points) {
+            if (map.isStoneAtPoint(point)) {
+                stones.add(map.getStoneAtPoint(point));
+            }
+        }
+
+        return stones;
     }
 }

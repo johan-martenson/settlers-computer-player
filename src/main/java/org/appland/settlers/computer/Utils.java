@@ -28,11 +28,11 @@ public class Utils {
         return spots.keySet().iterator().next();
     }
 
-    static List<Point> findAvailableHousePointsWithinRadius(GameMap map, Player player, Point position, Size size) throws Exception {
+    static List<Point> findAvailableHousePointsWithinRadius(GameMap map, Player player, Point position, Size size, int radius) throws Exception {
         List<Point> availableHousePointsWithinRadius = new LinkedList<>();
 
         /* Collect the available house points within the radius */
-        for (Point point : map.getPointsWithinRadius(position, 4)) {
+        for (Point point : map.getPointsWithinRadius(position, radius)) {
 
             Size availableSize = map.isAvailableHousePoint(player, point);
 

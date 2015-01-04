@@ -69,7 +69,7 @@ public class MoreUtils {
         assertTrue(building.ready());
     }
 
-    public static void verifyPlayerPlacesOnlyBuilding(ComputerPlayer computerPlayer, GameMap map, Class<Woodcutter> aClass) throws Exception {
+    public static <T extends Building> void verifyPlayerPlacesOnlyBuilding(ComputerPlayer computerPlayer, GameMap map, Class<T> aClass) throws Exception {
         Player player = computerPlayer.getControlledPlayer();
         int amount    = player.getBuildings().size();
         boolean found = false;
