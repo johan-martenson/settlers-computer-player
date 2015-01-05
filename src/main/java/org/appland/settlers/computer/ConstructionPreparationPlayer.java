@@ -182,6 +182,9 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
             /* Destroy the quarry if it can't reach any stone */
             quarry.tearDown();
 
+            /* Remove the part of the road that is used only by the quarry */
+            Utils.removeRoadWithoutAffectingOthers(map, quarry.getFlag());
+
             /* Set state to needing stone again */
             state = State.NEED_STONE;
         }

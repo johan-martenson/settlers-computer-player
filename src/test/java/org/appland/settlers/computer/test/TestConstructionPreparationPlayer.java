@@ -9,19 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 import org.appland.settlers.computer.ComputerPlayer;
 import org.appland.settlers.computer.ConstructionPreparationPlayer;
-import org.appland.settlers.model.Building;
 import org.appland.settlers.model.ForesterHut;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Quarry;
+import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Sawmill;
 import org.appland.settlers.model.Stone;
 import org.appland.settlers.model.Woodcutter;
 import org.appland.settlers.test.MoreUtils;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -289,39 +289,10 @@ public class TestConstructionPreparationPlayer {
         map.placeBuilding(new Headquarter(player0), point0);
 
         /* Fast forward until player builds quarry */
-        Quarry quarry = null;
-
-        for (int i = 0; i < 10000; i++) {
-            computerPlayer.turn();
-
-            for (Building b : player0.getBuildings()) {
-                if (b instanceof Quarry) {
-                    quarry = (Quarry)b;
-
-                    break;
-                }
-            }
-
-            if (quarry != null) {
-                break;
-            }
-
-            map.stepTime();
-        }
-
-        assertNotNull(quarry);
+        Quarry quarry = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Quarry.class, map);
 
         /* Wait for the stone to run out */
-        for (int i = 0; i < 10000; i++) {
-
-            computerPlayer.turn();
-
-            if (!map.isStoneAtPoint(stone0.getPosition())) {
-                break;
-            }
-
-            map.stepTime();
-        }
+        MoreUtils.waitForStoneToRunOut(computerPlayer, map, stone0);
 
         /* Verify that the player destroys the quarry */
         for (int i = 0; i < 100; i++) {
@@ -336,6 +307,51 @@ public class TestConstructionPreparationPlayer {
         }
 
         assertTrue(quarry.burningDown());
+    }
+
+    @Test
+    public void testPlayerRemovesRoadWhenItRemovesQuarry() throws Exception {
+
+        /* Create players */
+        Player player0 = new Player("Player 0", java.awt.Color.BLUE);
+        List<Player> players = new ArrayList<>();
+        players.add(player0);
+
+        /* Create game map */
+        GameMap map = new GameMap(players, 100, 100);
+
+        /* Place stone */
+        Point point1 = new Point(15, 17);
+        Stone stone0 = map.placeStone(point1);
+
+        /* Create the computer player */
+        ComputerPlayer computerPlayer = new ConstructionPreparationPlayer(player0, map);
+
+        /* Place headquarter */
+        Point point0 = new Point(10, 10);
+        Headquarter headquarter0 = map.placeBuilding(new Headquarter(player0), point0);
+
+        /* Fast forward until player builds quarry */
+        Quarry quarry = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Quarry.class, map);
+
+        /* Get the road from the quarry before it's destroyed */
+        List<Point> points = map.findWayWithExistingRoads(headquarter0.getFlag().getPosition(), quarry.getFlag().getPosition());
+
+        /* Wait for the stone to run out */
+        MoreUtils.waitForStoneToRunOut(computerPlayer, map, stone0);
+
+        /* Wait for player to destroy the quarry */
+        MoreUtils.waitForBuildingToGetTornDown(computerPlayer, map, quarry);
+
+        /* Verify that the player removes the full road */
+        for (Point point : points) {
+            if (point.equals(headquarter0.getFlag().getPosition())) {
+                continue;
+            }
+
+            assertFalse(map.isRoadAtPoint(point));
+            assertFalse(map.isFlagAtPoint(point));
+        }
     }
     
     /*

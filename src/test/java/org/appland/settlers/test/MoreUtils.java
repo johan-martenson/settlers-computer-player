@@ -10,8 +10,10 @@ import org.appland.settlers.model.Building;
 import org.appland.settlers.model.ForesterHut;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Player;
-import org.appland.settlers.model.Woodcutter;
+import org.appland.settlers.model.Quarry;
+import org.appland.settlers.model.Stone;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -35,7 +37,7 @@ public class MoreUtils {
     public static <T> T waitForComputerPlayerToPlaceBuilding(ComputerPlayer computerPlayer, Class<T> aClass, GameMap map) throws Exception {
         T found = null;
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 10000; i++) {
             computerPlayer.turn();
 
             for (Building b : computerPlayer.getControlledPlayer().getBuildings()) {
@@ -44,6 +46,10 @@ public class MoreUtils {
 
                     break;
                 }
+            }
+
+            if (found != null) {
+                break;
             }
 
             map.stepTime();
@@ -93,6 +99,36 @@ public class MoreUtils {
         }
 
         assertTrue(found);
-        assertEquals(player.getBuildings().size(), amount);
+        assertEquals(player.getBuildings().size(), amount + 1);
+    }
+
+    public static void waitForStoneToRunOut(ComputerPlayer computerPlayer, GameMap map, Stone stone) throws Exception {
+        for (int i = 0; i < 10000; i++) {
+
+            computerPlayer.turn();
+
+            if (!map.isStoneAtPoint(stone.getPosition())) {
+                break;
+            }
+
+            map.stepTime();
+        }
+
+        assertFalse(map.isStoneAtPoint(stone.getPosition()));
+    }
+
+    public static <T extends Building> void waitForBuildingToGetTornDown(ComputerPlayer computerPlayer, GameMap map, T quarry) throws Exception {
+        for (int i = 0; i < 100; i++) {
+
+            computerPlayer.turn();
+
+            if (quarry.burningDown()) {
+                break;
+            }
+
+            map.stepTime();
+        }
+
+        assertTrue(quarry.burningDown());
     }
 }

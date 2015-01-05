@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.appland.settlers.model.Building;
+import org.appland.settlers.model.EndPoint;
+import org.appland.settlers.model.Flag;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
 import org.appland.settlers.model.Player;
@@ -62,6 +64,33 @@ public class Utils {
             if (map.isAvailableFlagPoint(road.getPlayer(), point)) {
                 map.placeFlag(player, point);
             }
+        }
+    }
+
+    static void removeRoadWithoutAffectingOthers(GameMap map, Flag flag) throws Exception {
+
+        /* Remove the road as long as it connects only in one direction and not to a building */
+        while (map.getRoadsFromFlag(flag).size() == 1) {
+
+            /* Get the connected road */
+            Road road = map.getRoadsFromFlag(flag).get(0);
+
+            /* Move the flag iterator to the other side */
+            EndPoint otherSide = road.getOtherFlag(flag);
+
+            /* Stop if the other side is a building */
+            if (map.isBuildingAtPoint(otherSide.getPosition())) {
+                break;
+            }
+
+            /* Get the flag at the position */
+            Flag otherFlag = map.getFlagAtPoint(otherSide.getPosition());
+
+            /* Remove the previous flag */
+            map.removeFlag(flag);
+
+            /* Move the flag iterator to the new flag */
+            flag = otherFlag;
         }
     }
 }
