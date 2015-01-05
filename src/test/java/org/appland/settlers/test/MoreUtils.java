@@ -5,12 +5,12 @@
  */
 package org.appland.settlers.test;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.appland.settlers.computer.ComputerPlayer;
 import org.appland.settlers.model.Building;
-import org.appland.settlers.model.ForesterHut;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Player;
-import org.appland.settlers.model.Quarry;
 import org.appland.settlers.model.Stone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -26,7 +26,7 @@ public class MoreUtils {
     public static void verifyPlayersBuildingsContain(Player player0, Class<? extends Building> aClass) {
         boolean found = false;
         for (Building b : player0.getBuildings()) {
-            if (b instanceof ForesterHut) {
+            if (b.getClass().equals(aClass)) {
                 found = true;
             }
         }
@@ -35,13 +35,17 @@ public class MoreUtils {
     }
 
     public static <T> T waitForComputerPlayerToPlaceBuilding(ComputerPlayer computerPlayer, Class<T> aClass, GameMap map) throws Exception {
-        T found = null;
+        Player player = computerPlayer.getControlledPlayer();
+        T found       = null;
+        Set<Building> buildingsBefore = new HashSet<>();
+
+        buildingsBefore.addAll(player.getBuildings());
 
         for (int i = 0; i < 10000; i++) {
             computerPlayer.turn();
 
-            for (Building b : computerPlayer.getControlledPlayer().getBuildings()) {
-                if (b.getClass().equals(aClass)) {
+            for (Building b : player.getBuildings()) {
+                if (b.getClass().equals(aClass) && !buildingsBefore.contains(b)) {
                     found = (T)b;
 
                     break;
@@ -78,27 +82,9 @@ public class MoreUtils {
     public static <T extends Building> void verifyPlayerPlacesOnlyBuilding(ComputerPlayer computerPlayer, GameMap map, Class<T> aClass) throws Exception {
         Player player = computerPlayer.getControlledPlayer();
         int amount    = player.getBuildings().size();
-        boolean found = false;
 
-        for (int i = 0; i < 1000; i++) {
-            computerPlayer.turn();
+        T building = waitForComputerPlayerToPlaceBuilding(computerPlayer, aClass, map);
 
-            for (Building b : player.getBuildings()) {
-                if (b.getClass().equals(aClass)) {
-                    found = true;
-
-                    break;
-                }
-            }
-
-            if (found) {
-                break;
-            }
-
-            map.stepTime();
-        }
-
-        assertTrue(found);
         assertEquals(player.getBuildings().size(), amount + 1);
     }
 

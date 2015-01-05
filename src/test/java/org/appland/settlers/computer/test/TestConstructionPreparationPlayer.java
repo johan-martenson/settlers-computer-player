@@ -178,7 +178,7 @@ public class TestConstructionPreparationPlayer {
         MoreUtils.waitForBuildingToGetConstructed(computerPlayer, map, woodcutter);
 
         /* Verify that the player now places a sawmill */
-        MoreUtils.verifyPlayerPlacesOnlyBuilding(computerPlayer, map, Woodcutter.class);
+        MoreUtils.verifyPlayerPlacesOnlyBuilding(computerPlayer, map, Sawmill.class);
     }
 
     @Test
