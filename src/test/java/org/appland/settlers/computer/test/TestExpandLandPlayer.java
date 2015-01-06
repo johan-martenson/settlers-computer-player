@@ -341,5 +341,43 @@ public class TestExpandLandPlayer {
         MoreUtils.verifyPlayerPlacesOnlyBuilding(computerPlayer, map, Barracks.class);
     }
 
+    @Test
+    public void testPlayerPlacesDoesNotPlaceBarracksTooCloseToEdgeOfMap() throws Exception {
+
+        /* Create players */
+        Player player0 = new Player("Player 0", java.awt.Color.BLUE);
+        List<Player> players = new ArrayList<>();
+        players.add(player0);
+
+        /* Create game map */
+        GameMap map = new GameMap(players, 100, 100);
+
+        /* Create the computer player */
+        ComputerPlayer computerPlayer = new ExpandLandPlayer(player0, map);
+
+        /* Place headquarter */
+        Point point0 = new Point(10, 10);
+        Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
+
+        /* Give the player extra building materials and militaries */
+        Utils.adjustInventoryTo(headquarter, PLANCK, 40, map);
+        Utils.adjustInventoryTo(headquarter, STONE, 40, map);
+        Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
+
+        /* Verify that the player does not place barracks too close to the edges */
+
+        for (int i = 0; i < 15; i++) {
+            /* Wait for the player to with place a barracks */
+            Barracks barracks = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Barracks.class, map);
+
+            /* Verify that it's not too close to the edge */
+            Point p = barracks.getPosition();
+
+            assertTrue(p.x > 3);
+            assertTrue(p.x < map.getWidth() - 3);
+            assertTrue(p.y > 3);
+            assertTrue(p.y < map.getHeight()- 3);
+        }
+    }
 // TEST CAN BUILD 20 (MANY) BARRACKS
 }
