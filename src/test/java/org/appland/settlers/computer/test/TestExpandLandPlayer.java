@@ -356,7 +356,7 @@ public class TestExpandLandPlayer {
         ComputerPlayer computerPlayer = new ExpandLandPlayer(player0, map);
 
         /* Place headquarter */
-        Point point0 = new Point(10, 10);
+        Point point0 = new Point(5, 5);
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
@@ -373,10 +373,10 @@ public class TestExpandLandPlayer {
             /* Verify that it's not too close to the edge */
             Point p = barracks.getPosition();
 
-            assertTrue(p.x > 3);
-            assertTrue(p.x < map.getWidth() - 3);
-            assertTrue(p.y > 3);
-            assertTrue(p.y < map.getHeight()- 3);
+            assertTrue(p.x > 2);
+            assertTrue(p.x < map.getWidth() - 2);
+            assertTrue(p.y > 2);
+            assertTrue(p.y < map.getHeight()- 2);
         }
     }
 // TEST CAN BUILD 20 (MANY) BARRACKS

@@ -17,7 +17,6 @@ import org.appland.settlers.model.Headquarter;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Road;
-import org.appland.settlers.model.Size;
 
 /**
  *
@@ -121,28 +120,6 @@ public class ExpandLandPlayer implements ComputerPlayer {
         return player;
     }
 
-    private Point findSpotForFirstBarracks(GameMap map, Player player) throws Exception {
-
-        /* Go throug the border and find a suitable spot */
-        for (Point point : player.getBorders().get(0)) {
-
-            /* Get a suitable point for building a military building */
-            for (Point availablePoint : getMilitaryBuildingsPointFromBorderPoint(point)) {
-
-                /* Filter out points too close to the edge of the map */
-                if (tooCloseToEdge(map, availablePoint)) {
-                    continue;
-                }
-
-                /* Return any suitable point */
-                return availablePoint;
-            }
-        }
-
-        /* Return null if there were no available points */
-        return null;
-    }
-
     private boolean tooCloseToMilitaryBuilding(Player player, Point point, int limit) {
 
         for (Building b : player.getBuildings()) {
@@ -153,27 +130,6 @@ public class ExpandLandPlayer implements ComputerPlayer {
             if (point.distance(b.getPosition()) < limit) {
                 return true;
             }
-        }
-
-        return false;
-    }
-
-    private List<Point> getMilitaryBuildingsPointFromBorderPoint(Point point) throws Exception {
-        /* Avoid points without available spots to build houses close by */
-        List<Point> sites = Utils.findAvailableHousePointsWithinRadius(map, player, point, Size.SMALL, 3);
-
-        /* Return null if there are no available sites */
-        if (sites.isEmpty()) {
-            return null;
-        }
-        
-        /* Choose the point if it passed all criterias */
-        return sites;
-    }
-
-    private boolean tooCloseToEdge(GameMap map, Point point) {
-        if (point.x < 3 || point.x > map.getWidth() - 3 || point.y < 3 || point.y > map.getHeight() - 3) {
-            return true;
         }
 
         return false;
@@ -206,6 +162,14 @@ public class ExpandLandPlayer implements ComputerPlayer {
 
                 /* Don't try the point again */
                 alreadyTried.add(point);
+
+                /* Filter out points that are too close to the edge */
+                if (point.x < MIN_DISTANCE_TO_EDGE                  ||
+                    point.x > map.getWidth() - MIN_DISTANCE_TO_EDGE ||
+                    point.y < MIN_DISTANCE_TO_EDGE                  ||
+                    point.y > map.getHeight() - MIN_DISTANCE_TO_EDGE) {
+                    continue;
+                }
 
                 /* Filter out points that cannot be built on */
                 if (map.isAvailableHousePoint(player, point) == null) {
