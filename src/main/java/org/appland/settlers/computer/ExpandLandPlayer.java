@@ -38,7 +38,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
     }
 
     private final static int MIN_DISTANCE_BETWEEN_BARRACKS = 4;
-    private final static int GOOD_DISTANCE_BETWEEN_BARRACKS = 7;
+    private final static int GOOD_DISTANCE_BETWEEN_BARRACKS = 10;
     private final static int MAX_DISTANCE_FROM_BORDER = 3;
     private final static int MIN_DISTANCE_TO_EDGE = 3;
     private final static int THRESHOLD_FOR_EVACUATION = 10;
