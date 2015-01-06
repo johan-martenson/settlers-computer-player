@@ -34,7 +34,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
     private enum State {
         INITIAL_STATE, 
         WAITING_FOR_CONSTRUCTION, 
-        CONSTRUCTION_DONE
+        READY_FOR_CONSTRUCTION
     }
 
     private final static int MIN_DISTANCE_BETWEEN_BARRACKS = 4;
@@ -63,14 +63,23 @@ public class ExpandLandPlayer implements ComputerPlayer {
             /* Find headquarter */
             headquarter = Utils.findHeadquarter(player);
 
-            /* Find a site for the first barracks */
+            /* Change the state to ready to build */
+            state = State.READY_FOR_CONSTRUCTION;
+        } else if (state == State.READY_FOR_CONSTRUCTION) {
+
+            /* Find the spot for the next barracks */
             Point site = findSpotForNextBarracks(player);
+
+            /* Stay in the ready to build state if there is no suitable site to build at */
+            if (site == null) {
+                return;
+            }
 
             /* Place barracks */
             unfinishedBarracks = map.placeBuilding(new Barracks(player), site);
 
             /* Connect the barracks with the headquarter */
-            Road road = map.placeAutoSelectedRoad(player, unfinishedBarracks.getFlag(), headquarter.getFlag());
+            Road road = Utils.placeRoadToHeadquarterOrExistingRoad(player, map, unfinishedBarracks, headquarter);
 
             /* Place flags where possible */
             Utils.fillRoadWithFlags(map, road);
@@ -89,24 +98,8 @@ public class ExpandLandPlayer implements ComputerPlayer {
                 evacuateWherePossible(player);
 
                 /* Change the state to construction done */
-                state = State.CONSTRUCTION_DONE;
+                state = State.READY_FOR_CONSTRUCTION;
             }
-        } else if (state == State.CONSTRUCTION_DONE) {
-
-            /* Find the spot for the next barracks */
-            Point site = findSpotForNextBarracks(player);
-
-            /* Place barracks */
-            unfinishedBarracks = map.placeBuilding(new Barracks(player), site);
-
-            /* Connect the barracks with the headquarter */
-            Road road = Utils.placeRoadToHeadquarterOrExistingRoad(player, map, unfinishedBarracks, headquarter);
-
-            /* Place flags where possible */
-            Utils.fillRoadWithFlags(map, road);
-
-            /* Change state to wait for the barracks to be ready and occupied */
-            state = State.WAITING_FOR_CONSTRUCTION;
         }
 
         /* Print the old and new state if the state changed */
