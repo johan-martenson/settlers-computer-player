@@ -7,15 +7,18 @@ package org.appland.settlers.computer;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.EndPoint;
 import org.appland.settlers.model.Flag;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
 import org.appland.settlers.model.InvalidRouteException;
+import org.appland.settlers.model.Land;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Road;
@@ -189,5 +192,27 @@ public class Utils {
         }
 
         return null;
+    }
+
+    static List<Building> findVisibleOpponentBuildings(GameMap map, Player player) {
+
+        /* Get the discovered land that is not owned by the player */
+        Set<Point> allLand = new HashSet<>(player.getDiscoveredLand());
+
+        /* Subtract the owned land */
+        for (Land land : player.getLands()) {
+            allLand.removeAll(land.getPointsInLand());
+        }
+
+        /* Collect all buildings in the remaining land */
+        List<Building> visibleOpponentBuildings = new LinkedList<>();
+
+        for (Building b : map.getBuildings()) {
+            if (allLand.contains(b.getPosition())) {
+                visibleOpponentBuildings.add(b);
+            }
+        }
+
+        return visibleOpponentBuildings;
     }
 }
