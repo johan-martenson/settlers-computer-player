@@ -57,7 +57,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
     public void turn() throws Exception {
         State stateBefore = state;
 
-        /* Construct a barracks */
+        /* Start with finding the headquarter */
         if (state == State.INITIAL_STATE) {
 
             /* Find headquarter */
