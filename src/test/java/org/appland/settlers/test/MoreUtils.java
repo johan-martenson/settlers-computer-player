@@ -8,9 +8,12 @@ package org.appland.settlers.test;
 import java.util.HashSet;
 import java.util.Set;
 import org.appland.settlers.computer.ComputerPlayer;
+import org.appland.settlers.model.Barracks;
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.GameMap;
+import static org.appland.settlers.model.Military.Rank.PRIVATE_RANK;
 import org.appland.settlers.model.Player;
+import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Stone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -116,5 +119,19 @@ public class MoreUtils {
         }
 
         assertTrue(quarry.burningDown());
+    }
+
+    public static Barracks placeAndOccupyBarracks(GameMap map, Player player, Point point2) throws Exception {
+
+        /* Place barracks */
+        Barracks barracks0 = map.placeBuilding(new Barracks(player), point2);
+
+        /* Finish construction of barracks */
+        Utils.constructHouse(barracks0, map);
+
+        /* Occupy the barracks */
+        Utils.occupyMilitaryBuilding(PRIVATE_RANK, 2, barracks0, map);
+
+        return barracks0;
     }
 }
