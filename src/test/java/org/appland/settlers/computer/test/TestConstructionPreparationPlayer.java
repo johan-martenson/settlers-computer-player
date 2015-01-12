@@ -6,16 +6,18 @@
 package org.appland.settlers.computer.test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.appland.settlers.computer.ComputerPlayer;
 import org.appland.settlers.computer.ConstructionPreparationPlayer;
+import org.appland.settlers.model.Building;
 import org.appland.settlers.model.ForesterHut;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Quarry;
-import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Sawmill;
 import org.appland.settlers.model.Stone;
 import org.appland.settlers.model.Woodcutter;
@@ -337,15 +339,31 @@ public class TestConstructionPreparationPlayer {
         /* Get the road from the quarry before it's destroyed */
         List<Point> points = map.findWayWithExistingRoads(headquarter0.getFlag().getPosition(), quarry.getFlag().getPosition());
 
+        /* Collect all existing roads */
+        Set<Point> otherRoads = new HashSet<>();
+
+        for (Building b : player0.getBuildings()) {
+
+            if (b.equals(quarry)) {
+                continue;
+            }
+
+            if (b.equals(headquarter0)) {
+                continue;
+            }
+
+            otherRoads.addAll(map.findWayWithExistingRoads(headquarter0.getPosition(), b.getPosition()));
+        }
+
         /* Wait for the stone to run out */
         MoreUtils.waitForStoneToRunOut(computerPlayer, map, stone0);
 
         /* Wait for player to destroy the quarry */
         MoreUtils.waitForBuildingToGetTornDown(computerPlayer, map, quarry);
 
-        /* Verify that the player removes the full road */
+        /* Verify that the player removes the road as long as it doesn't connect to another building */
         for (Point point : points) {
-            if (point.equals(headquarter0.getFlag().getPosition())) {
+            if (otherRoads.contains(point)) {
                 continue;
             }
 
