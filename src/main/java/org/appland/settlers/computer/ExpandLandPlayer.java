@@ -88,6 +88,13 @@ public class ExpandLandPlayer implements ComputerPlayer {
             state = State.WAITING_FOR_CONSTRUCTION;
         } else if (state == State.WAITING_FOR_CONSTRUCTION) {
 
+            /* Build a new barracks if this barracks was destroyed */
+            if (unfinishedBarracks.burningDown() || unfinishedBarracks.destroyed()) {
+
+                /* Set state to build new barracks */
+                state = State.READY_FOR_CONSTRUCTION;
+            }
+
             /* Check if construction is done and the building is occupied */
             if (unfinishedBarracks.ready() && unfinishedBarracks.getHostedMilitary() > 0) {
 
