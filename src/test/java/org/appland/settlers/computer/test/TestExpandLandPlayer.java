@@ -19,10 +19,13 @@ import static org.appland.settlers.model.Material.PRIVATE;
 import static org.appland.settlers.model.Material.STONE;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
+import org.appland.settlers.model.Road;
 import org.appland.settlers.test.MoreUtils;
 import org.appland.settlers.test.Utils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -418,6 +421,50 @@ public class TestExpandLandPlayer {
 
         assertTrue(map.getBuildings().contains(barracks2));
         assertFalse(barracks2.getPosition().equals(barracks1.getPosition()));
+    }
+
+    @Test
+    public void testPlayerRestoresRoadIfNeeded() throws Exception {
+
+        /* Create players */
+        Player player0 = new Player("Player 0", java.awt.Color.BLUE);
+        List<Player> players = new ArrayList<>();
+        players.add(player0);
+
+        /* Create game map */
+        GameMap map = new GameMap(players, 100, 100);
+
+        /* Create the computer player */
+        ComputerPlayer computerPlayer = new ExpandLandPlayer(player0, map);
+
+        /* Place headquarter */
+        Point point0 = new Point(10, 10);
+        Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
+
+        /* Give the player extra building materials and militaries */
+        Utils.adjustInventoryTo(headquarter, PLANCK, 40, map);
+        Utils.adjustInventoryTo(headquarter, STONE, 40, map);
+        Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
+
+        /* Wait for the player to with place a barracks */
+        Barracks barracks0 = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Barracks.class, map);
+
+        assertFalse(barracks0.ready());
+
+        /* Remove a road */
+        List<Road> roads = map.getRoadsFromFlag(barracks0.getFlag());
+
+        roads.remove(map.getRoad(barracks0.getPosition(), barracks0.getFlag().getPosition()));
+
+        map.removeRoad(roads.get(0));
+
+        assertNull(map.findWayWithExistingRoads(barracks0.getPosition(), headquarter.getPosition()));
+
+        /* Verify that the player builds a road to connect the barracks again */
+        computerPlayer.turn();
+        computerPlayer.turn();
+
+        assertNotNull(map.findWayWithExistingRoads(barracks0.getPosition(), headquarter.getPosition()));
     }
 // TEST CAN BUILD 20 (MANY) BARRACKS
 }

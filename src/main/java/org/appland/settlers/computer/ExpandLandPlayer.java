@@ -34,7 +34,8 @@ public class ExpandLandPlayer implements ComputerPlayer {
     private enum State {
         INITIAL_STATE, 
         WAITING_FOR_CONSTRUCTION, 
-        READY_FOR_CONSTRUCTION
+        READY_FOR_CONSTRUCTION, 
+        BUILDING_NOT_CONNECTED
     }
 
     private final static int MIN_DISTANCE_BETWEEN_BARRACKS = 4;
@@ -93,10 +94,9 @@ public class ExpandLandPlayer implements ComputerPlayer {
 
                 /* Set state to build new barracks */
                 state = State.READY_FOR_CONSTRUCTION;
-            }
 
             /* Check if construction is done and the building is occupied */
-            if (unfinishedBarracks.ready() && unfinishedBarracks.getHostedMilitary() > 0) {
+            } else if (unfinishedBarracks.ready() && unfinishedBarracks.getHostedMilitary() > 0) {
 
                 /* Save the barracks */
                 placedBarracks.add(unfinishedBarracks);
@@ -105,6 +105,32 @@ public class ExpandLandPlayer implements ComputerPlayer {
                 evacuateWherePossible(player);
 
                 /* Change the state to construction done */
+                state = State.READY_FOR_CONSTRUCTION;
+
+            /* Verify that the barracks under construction is still reachable from the headquarter */
+            } else if (map.findWayWithExistingRoads(headquarter.getPosition(), unfinishedBarracks.getPosition()) == null) {
+
+                /* Try to repair the connection */
+                state = State.BUILDING_NOT_CONNECTED;
+            }
+        } else if (state == State.BUILDING_NOT_CONNECTED) {
+
+            /* Try to repair the connection */
+            Utils.repairConnection(map, player, unfinishedBarracks.getFlag(), headquarter.getFlag());
+
+            /* Wait for the building to get constructed if the repair worked */
+            if (map.findWayWithExistingRoads(headquarter.getPosition(), unfinishedBarracks.getPosition()) != null) {
+
+                /* Wait for construction */
+                state = State.WAITING_FOR_CONSTRUCTION;
+
+            /* Destroy the building if the repair failed */
+            } else {
+
+                /* Destroy the building */
+                unfinishedBarracks.tearDown();
+
+                /* Construct a new building */
                 state = State.READY_FOR_CONSTRUCTION;
             }
         }

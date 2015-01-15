@@ -154,25 +154,35 @@ public class Utils {
         Point start = building1.getFlag().getPosition();
         Point end   = building2.getFlag().getPosition();
 
-        /* Look for close flag with connection to the headquarter */
+        /* Look for the closest flag with connection to the headquarter within a reasonable range */
         double distance = Double.MAX_VALUE;
         Point viaPoint = null;
 
         for (Point point : map.getPointsWithinRadius(start, 15)) {
 
+            /* Avoid the source point itself */
             if (point.equals(end)) {
                 continue;
             }
 
-            if (map.findWayWithExistingRoads(point, end) == null) {
+            /* Filter non-flag points */
+            if (!map.isFlagAtPoint(point)) {
                 continue;
             }
 
-            if (map.findAutoSelectedRoad(player, start, point, null) == null) {
+            /* Filter points that are not connected to the headquarter */
+            List<Point> pathViaPointToHeadquarter = map.findWayWithExistingRoads(point, end);
+            if (pathViaPointToHeadquarter == null) {
                 continue;
             }
 
-            double tempDistance = start.distance(point);
+            /* Filter points that cannot be reached */
+            List<Point> wayToViaPoint = map.findAutoSelectedRoad(player, start, point, null);
+            if (wayToViaPoint == null) {
+                continue;
+            }
+
+            double tempDistance = wayToViaPoint.size();
 
             if (tempDistance < distance) {
                 distance = tempDistance;
@@ -214,5 +224,110 @@ public class Utils {
         }
 
         return visibleOpponentBuildings;
+    }
+
+    public static void repairConnection(GameMap map, Player player, Flag from, Flag to) throws Exception {
+
+        System.out.println("Repairing connection");
+        /* Get the connected flags on each side */
+        Set<Flag> fromFlags = findConnectedFlags(map, from);
+        Set<Flag> toFlags   = findConnectedFlags(map, to);
+
+        /* Find a good-enough or any road that connects them */
+        Flag flag1 = null;
+        Flag flag2 = null;
+
+        int distance = Integer.MAX_VALUE;
+
+        /* Try all pairs of flags from the to and from set */
+        for (Flag fromFlag : fromFlags) {
+
+            for (Flag toFlag : toFlags) {
+
+                int total = 0;
+
+                /* Add the distance from the start flag to the current flag */
+                if (!fromFlag.equals(from)) {
+                    List<Point> path1 = map.findWayWithExistingRoads(from.getPosition(), fromFlag.getPosition());
+
+                    if (path1 != null) {
+                        total += path1.size();
+                    }
+                }
+
+                /* Add the distance from the goal flag to the current flag */
+                if (!toFlag.equals(to)) {
+                    List<Point> path2 = map.findWayWithExistingRoads(to.getPosition(), toFlag.getPosition());
+
+                    if (path2 != null) {
+                        total += path2.size();
+                    }
+                }
+
+                /* Determine if it's possible to connect the flags */
+                List<Point> path = map.findAutoSelectedRoad(player, fromFlag.getPosition(), toFlag.getPosition(), null);
+
+                /* Go to next pair if it's not possible to build a road between them */
+                if (path == null) {
+                    continue;
+                }
+
+                total = total + path.size();
+
+                /* Look for the pair with the shortest total distance */
+                if (total < distance) {
+                    distance = total;
+
+                    flag1 = fromFlag;
+                    flag2 = toFlag;
+                }
+            }
+        }
+
+        /* Leave without placing road if no good flag pair was found */
+        if (flag1 == null || flag2 == null) {
+            return;
+        }
+
+        map.placeAutoSelectedRoad(player, flag1, flag2);
+    }
+
+    public static Set<Flag> findConnectedFlags(GameMap map, Flag from) throws Exception {
+        Set<Flag>  fromFlags     = new HashSet<>();
+        List<Flag> flagsToSearch = new LinkedList<>();
+        Set<Road>  searchedRoads = new HashSet<>();
+
+        /* Set the root to search from */
+        flagsToSearch.add(from);
+
+        /* Find existing flags in the "to" network */
+        while (!flagsToSearch.isEmpty()) {
+
+            Flag flag = flagsToSearch.remove(0);
+            fromFlags.add(flag);
+
+            for (Road road : map.getRoadsFromFlag(flag)) {
+
+                /* Skip already searched roads */
+                if (searchedRoads.contains(road)) {
+                    continue;
+                }
+
+                searchedRoads.add(road);
+
+                /* Get the other end */
+                EndPoint ep = road.getOtherFlag(flag);
+
+                /* Filter buildings */
+                if (map.isBuildingAtPoint(ep.getPosition())) {
+                    continue;
+                }
+
+                /* Add the flag */
+                flagsToSearch.add(map.getFlagAtPoint(ep.getPosition()));
+            }
+        }
+
+        return fromFlags;
     }
 }
