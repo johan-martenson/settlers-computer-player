@@ -289,7 +289,11 @@ public class Utils {
             return;
         }
 
-        map.placeAutoSelectedRoad(player, flag1, flag2);
+        /* Place a new road to repair the connection */
+        Road road = map.placeAutoSelectedRoad(player, flag1, flag2);
+
+        /* Fill the new road with flags */
+        fillRoadWithFlags(map, road);
     }
 
     public static Set<Flag> findConnectedFlags(GameMap map, Flag from) throws Exception {
