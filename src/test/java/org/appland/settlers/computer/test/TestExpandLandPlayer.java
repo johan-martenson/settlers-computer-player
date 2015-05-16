@@ -263,7 +263,7 @@ public class TestExpandLandPlayer {
 
         /* Wait for the player to place a barracks that is close to the edge */
         for (int i = 0; i < 20; i++) {
-            System.out.println("i: " + i);
+
             /* Wait for the player to with place a barracks */
             Barracks barracks0 = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Barracks.class, map);
 
