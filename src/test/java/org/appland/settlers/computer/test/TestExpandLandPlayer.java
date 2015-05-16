@@ -5,6 +5,7 @@
  */
 package org.appland.settlers.computer.test;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -12,11 +13,13 @@ import org.appland.settlers.computer.ComputerPlayer;
 import org.appland.settlers.computer.ExpandLandPlayer;
 import static org.appland.settlers.computer.Utils.getDistanceToBorder;
 import org.appland.settlers.model.Barracks;
+import org.appland.settlers.model.Building;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
 import static org.appland.settlers.model.Material.PLANCK;
 import static org.appland.settlers.model.Material.PRIVATE;
 import static org.appland.settlers.model.Material.STONE;
+import org.appland.settlers.model.Military;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Road;
@@ -466,5 +469,102 @@ public class TestExpandLandPlayer {
 
         assertNotNull(map.findWayWithExistingRoads(barracks0.getPosition(), headquarter.getPosition()));
     }
-// TEST CAN BUILD 20 (MANY) BARRACKS
+
+    @Test
+    public void testPlayerDoesNotRestoreRoadToCapturedBarracks() throws Exception {
+
+        /* Create players */
+        Player player0 = new Player("Player 0", Color.BLUE);
+        Player player1 = new Player("Player 1", Color.RED);
+        List<Player> players = new ArrayList<>();
+        players.add(player0);
+        players.add(player1);
+
+        /* Create game map */
+        GameMap map = new GameMap(players, 100, 100);
+
+        /* Create the computer player */
+        ComputerPlayer computerPlayer = new ExpandLandPlayer(player0, map);
+
+        /* Place player 0's headquarter */
+        Point point0 = new Point(10, 10);
+        Headquarter headquarter0 = map.placeBuilding(new Headquarter(player0), point0);
+
+        /* Place player 1's headquarter */
+        Point point1 = new Point(40, 10);
+        Headquarter headquarter1 = map.placeBuilding(new Headquarter(player1), point1);
+
+        /* Place player 1's barracks */
+        Point point2 = new Point(30, 10);
+        Barracks barracks1 = map.placeBuilding(new Barracks(player1), point2);
+
+        /* Finish player 1's barracks */
+        Utils.constructHouse(barracks1, map);
+
+        /* Occupy player 1's barracks */
+        Utils.occupyMilitaryBuilding(Military.Rank.GENERAL_RANK, 2, barracks1, map);
+
+        /* Give the player extra building materials and militaries */
+        Utils.adjustInventoryTo(headquarter0, PLANCK, 60, map);
+        Utils.adjustInventoryTo(headquarter0, STONE, 60, map);
+        Utils.adjustInventoryTo(headquarter0, PRIVATE, 10, map);
+
+        /* Wait for player 0 to place a barracks close to player 1's barracks */
+        Building barracksToAttack = null;
+
+        for (int i = 0; i < 5000; i++) {
+
+            for (Point p : map.getPointsWithinRadius(barracks1.getPosition(), 12)) {
+
+                /* Filter points without buildings */
+                if (!map.isBuildingAtPoint(p)) {
+                    continue;
+                }
+
+                Building building = map.getBuildingAtPoint(p);
+
+                /* Filter points with own buildings */
+                if (building.getPlayer().equals(player1)) {
+                    continue;
+                }
+
+                /* Filter non-military buildings */
+                if (!building.isMilitaryBuilding()) {
+                    continue;
+                }
+
+                /* Filter unfinished buildings */
+                if (!building.ready()) {
+                    continue;
+                }
+
+                barracksToAttack = building;
+
+                break;
+            }
+
+            map.stepTime();
+
+            computerPlayer.turn();
+        }
+
+        assertNotNull(barracksToAttack);
+
+        /* Let player 1 capture the barracks */
+        player1.attack(barracksToAttack, 1);
+
+        /* Wait for player 1 to capture the barracks */
+        MoreUtils.waitForBuildingToGetCapturedByPlayer(barracksToAttack, player1, map);
+
+        /* Verify that player 0 doesn't build a road to the captured barracks */
+        for (int i = 0; i < 200; i++) {
+
+            map.stepTime();
+
+            computerPlayer.turn();
+
+            /* Verify that there is only one road from the barracks' flag */
+            assertEquals(map.getRoadsFromFlag(barracksToAttack.getFlag()).size(), 1);
+        }
+    }
 }
