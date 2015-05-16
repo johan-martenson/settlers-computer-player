@@ -14,6 +14,7 @@ import org.appland.settlers.model.GameMap;
 import static org.appland.settlers.model.Military.Rank.PRIVATE_RANK;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
+import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Stone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -133,5 +134,16 @@ public class MoreUtils {
         Utils.occupyMilitaryBuilding(PRIVATE_RANK, 2, barracks0, map);
 
         return barracks0;
+    }
+
+    static void printRoads(GameMap map) {
+
+        System.out.println("\n\n");
+        
+        for (Road r : map.getRoads()) {
+            System.out.println("Road: " + r.getWayPoints());
+        }
+
+        System.out.println("\n\n");        
     }
 }
