@@ -109,7 +109,7 @@ public class Utils {
         Map<Building, Material> result = new HashMap<>();
 
         for (Building b : buildings) {
-            Map<Material, Integer> neededMaterial = b.getRequiredGoodsForProduction();
+            Map<Material, Integer> neededMaterial = b.getTotalAmountNeededForProduction();
 
             for (Material m : neededMaterial.keySet()) {
                 result.put(b, m);
