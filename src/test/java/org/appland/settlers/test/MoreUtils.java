@@ -146,4 +146,19 @@ public class MoreUtils {
 
         System.out.println("\n\n");        
     }
+
+    public static void waitForBuildingToGetCapturedByPlayer(Building building, Player player, GameMap map) throws Exception {
+
+        for (int i = 0; i < 5000; i++) {
+
+            if (building.getPlayer().equals(player)) {
+                break;
+            }
+
+            map.stepTime();
+        }
+
+        assertEquals(building.getPlayer(), player);
+    }
+    
 }
