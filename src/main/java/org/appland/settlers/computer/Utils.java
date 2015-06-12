@@ -150,8 +150,7 @@ public class Utils {
         return result;
     }
 
-    static Road placeRoadToHeadquarterOrExistingRoad(Player player, GameMap map, Building building1, Building building2) throws InvalidRouteException, Exception {
-        Point start = building1.getFlag().getPosition();
+    static Road connectPointToBuilding(Player player, GameMap map, Point start, Building building2) throws InvalidRouteException, Exception {
         Point end   = building2.getFlag().getPosition();
 
         /* Look for the closest flag with connection to the headquarter within a reasonable range */
@@ -202,6 +201,53 @@ public class Utils {
         }
 
         return null;
+    }
+
+    static Point findConnectionToDestionationOrExistingRoad(Player player, GameMap map, Point start, Point end) throws InvalidRouteException, Exception {
+
+        /* Look for the closest flag with connection to the headquarter within a reasonable range */
+        double distance = Double.MAX_VALUE;
+        Point viaPoint = null;
+
+        for (Point point : map.getPointsWithinRadius(start, 15)) {
+
+            /* Avoid the source point itself */
+            if (point.equals(end)) {
+                continue;
+            }
+
+            /* Filter non-flag points */
+            if (!map.isFlagAtPoint(point)) {
+                continue;
+            }
+
+            /* Filter points that are not connected to the headquarter */
+            List<Point> pathViaPointToHeadquarter = map.findWayWithExistingRoads(point, end);
+            if (pathViaPointToHeadquarter == null) {
+                continue;
+            }
+
+            /* Filter points that cannot be reached */
+            List<Point> wayToViaPoint = map.findAutoSelectedRoad(player, start, point, null);
+            if (wayToViaPoint == null) {
+                continue;
+            }
+
+            double tempDistance = wayToViaPoint.size();
+
+            if (tempDistance < distance) {
+                distance = tempDistance;
+
+                viaPoint = point;
+            }
+        }
+
+        /* Connect via the nearby flag if it existed */
+        if (viaPoint != null) {
+            return viaPoint;
+        } else {
+            return end;
+        }
     }
 
     static List<Building> findVisibleOpponentBuildings(GameMap map, Player player) {

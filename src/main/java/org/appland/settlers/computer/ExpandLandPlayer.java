@@ -75,7 +75,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
             unfinishedBarracks = map.placeBuilding(new Barracks(player), site);
 
             /* Connect the barracks with the headquarter */
-            Road road = Utils.placeRoadToHeadquarterOrExistingRoad(player, map, unfinishedBarracks, headquarter);
+            Road road = Utils.connectPointToBuilding(player, map, unfinishedBarracks.getFlag().getPosition(), headquarter);
 
             /* Place flags where possible */
             Utils.fillRoadWithFlags(map, road);

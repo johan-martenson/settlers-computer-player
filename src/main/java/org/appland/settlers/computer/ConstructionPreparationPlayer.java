@@ -156,7 +156,7 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
             quarry = map.placeBuilding(new Quarry(player), site);
 
             /* Connect the quarry to the headquarter */
-            Road road = Utils.placeRoadToHeadquarterOrExistingRoad(player, map, quarry, headquarter);
+            Road road = Utils.connectPointToBuilding(player, map, quarry.getFlag().getPosition(), headquarter);
 
             /* Place flags on the road where possible */
             Utils.fillRoadWithFlags(map, road);

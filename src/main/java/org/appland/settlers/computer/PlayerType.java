@@ -10,5 +10,5 @@ package org.appland.settlers.computer;
  * @author johan
  */
 public enum PlayerType {
-    BUILDING, EXPANDING, ATTACKING
+    BUILDING, EXPANDING, ATTACKING, MINERALS
 }
