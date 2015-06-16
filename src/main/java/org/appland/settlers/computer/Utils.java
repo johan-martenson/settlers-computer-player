@@ -12,12 +12,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.EndPoint;
 import org.appland.settlers.model.Flag;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
 import org.appland.settlers.model.InvalidRouteException;
+import org.appland.settlers.model.IronSmelter;
 import org.appland.settlers.model.Land;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
@@ -380,4 +382,67 @@ public class Utils {
 
         return fromFlags;
     }
+
+	public static <T extends Building> boolean buildingsAreReady(List<T> buildings) {
+
+	    for (T b : buildings) {
+	        if (!b.ready()) {
+	            return false;
+	        }
+	    }
+
+	    return true;
+	}
+
+	public static <T> boolean buildingTypeExists(List<Building> buildings, Class<T> class1) {
+
+	    for (Building b : buildings) {
+	        if (b.getClass().equals(class1)) {
+	            return true;
+	        }
+	    }
+
+	    return false;
+	}
+
+	public static <T> List<T> getBuildingsOfType(List<Building> buildings, Class<T> class1) {
+		List<T> result = new ArrayList<>();
+
+		for (Building b : buildings) {
+
+		    if (b.getClass().equals(class1)) {
+		    	result.add((T)b);
+		    }
+		}
+
+	    return result;
+	}
+
+	public static Point findPointForBuildingCloseToPoint(Point point, Size neededSize, Player controlledPlayer, GameMap map) throws Exception {
+
+        /* Find a good point to build on, close to the given point */
+        Point site = null;
+        double distance = Double.MAX_VALUE;
+
+        for (Land land : controlledPlayer.getLands()) {
+            for (Point p : land.getPointsInLand()) {
+
+                /* Filter out points where it's not possible to build */
+                Size availableSize = map.isAvailableHousePoint(controlledPlayer, p);
+
+                if (!Size.contains(availableSize, neededSize)) {
+                    continue;
+                }
+
+                double tempDistance = p.distance(point);
+
+                if (tempDistance < distance) {
+                    site = p;
+                    distance = tempDistance;
+                }
+            }
+        }
+
+        return site;
+	}
 }
