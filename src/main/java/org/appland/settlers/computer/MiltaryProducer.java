@@ -6,14 +6,18 @@ import java.util.List;
 import org.appland.settlers.model.Armory;
 import org.appland.settlers.model.Brewery;
 import org.appland.settlers.model.Building;
+import org.appland.settlers.model.Farm;
+import org.appland.settlers.model.Well;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
 import org.appland.settlers.model.IronSmelter;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Road;
+import static org.appland.settlers.model.Size.LARGE;
 
 import static org.appland.settlers.model.Size.MEDIUM;
+import static org.appland.settlers.model.Size.SMALL;
 
 /**
  *
@@ -26,18 +30,23 @@ public class MiltaryProducer implements ComputerPlayer {
     private final List<IronSmelter> ironSmelters;
     private final List<Armory>      armories;
     private final List<Brewery>     breweries;
+    private final List<Farm>        farms;
+    private final List<Well>        wells;
 
     private State    state;
     private Building headquarter;
 
     private enum State {
         INITIALIZING,
-        NEEDS_FOOD, 
-        WAITING_FOR_ARMORY, 
+        NEEDS_IRON_SMELTER, 
+        NEEDS_ARMORY, 
+        NEEDS_FARM,
+        NEEDS_WELL,
         NEEDS_BREWERY, 
         WAITING_FOR_IRON_SMELTER, 
-        NEEDS_ARMORY, 
-        NEEDS_IRON_SMELTER, 
+        WAITING_FOR_ARMORY, 
+        WAITING_FOR_FARM,
+        WAITING_FOR_WELL,
         WAITING_FOR_BREWERY, 
         DONE,
     }
@@ -49,6 +58,8 @@ public class MiltaryProducer implements ComputerPlayer {
         ironSmelters = new ArrayList<>();
         armories     = new ArrayList<>();
         breweries    = new ArrayList<>();
+        farms        = new ArrayList<>();
+        wells        = new ArrayList<>();
 
         state = State.INITIALIZING;
     }
@@ -135,8 +146,74 @@ public class MiltaryProducer implements ComputerPlayer {
         } else if (state == State.WAITING_FOR_ARMORY) {
 
         	if (Utils.buildingsAreReady(armories)) {
-        		state = State.NEEDS_BREWERY;
+        		state = State.NEEDS_FARM;
         	}
+        } else if (state == State.NEEDS_FARM) {
+
+            /* Determine if there are already existing farm */
+            if (Utils.buildingTypeExists(controlledPlayer.getBuildings(), Farm.class)) {
+                farms.addAll(Utils.getBuildingsOfType(controlledPlayer.getBuildings(), Farm.class));
+
+                state = State.WAITING_FOR_FARM;
+            } else {
+
+                /* Find a spot for the farm */
+                Point farmSpot = Utils.findPointForBuildingCloseToPoint(headquarter.getPosition(), LARGE, controlledPlayer, map);
+
+                if (farmSpot == null) {
+                    return;
+                }
+
+                /* Build the farm */
+                Farm farm = map.placeBuilding(new Farm(controlledPlayer), farmSpot);
+
+                farms.add(farm);
+
+                /* Connect the farm with the headquarter */
+                Road road = Utils.connectPointToBuilding(controlledPlayer, map, farm.getFlag().getPosition(), headquarter);
+
+                /* Fill the road with flags */
+                Utils.fillRoadWithFlags(map, road);
+
+                state = State.WAITING_FOR_FARM;
+            }
+        } else if (state == State.WAITING_FOR_FARM) {
+            if (Utils.buildingsAreReady(farms)) {
+                state = State.NEEDS_WELL;
+            }
+        } else if (state == State.NEEDS_WELL) {
+
+            /* Determine if there already are wells built */
+            if (Utils.buildingTypeExists(controlledPlayer.getBuildings(), Well.class)) {
+                wells.addAll(Utils.getBuildingsOfType(controlledPlayer.getBuildings(), Well.class));
+
+                state = State.WAITING_FOR_WELL;
+            } else {
+
+                /* Find a spot for the brewery */
+                Point wellPoint = Utils.findPointForBuildingCloseToPoint(headquarter.getPosition(), SMALL, controlledPlayer, map);
+
+                if (wellPoint == null) {
+                    return;
+                }
+
+                /* Build the well */
+                Well well = map.placeBuilding(new Well(controlledPlayer), wellPoint);
+
+                wells.add(well);
+
+                /* Connect the well with the headquarter */
+                Road road = Utils.connectPointToBuilding(controlledPlayer, map, well.getFlag().getPosition(), headquarter);
+
+                /* Fill the road with flags */
+                Utils.fillRoadWithFlags(map, road);
+
+                state = State.WAITING_FOR_WELL;
+            }
+        } else if (state == State.WAITING_FOR_WELL) {
+            if (Utils.buildingsAreReady(wells)) {
+                state = State.NEEDS_BREWERY;
+            }
         } else if (state == State.NEEDS_BREWERY) {
 
             /* Determine if there already are breweries built */
@@ -150,7 +227,7 @@ public class MiltaryProducer implements ComputerPlayer {
             	Point breweryPoint = Utils.findPointForBuildingCloseToPoint(headquarter.getPosition(), MEDIUM, controlledPlayer, map);
 
             	if (breweryPoint == null) {
-            		return;
+                    return;
             	}
 
             	/* Build the brewery */
