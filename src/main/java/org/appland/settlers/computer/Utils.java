@@ -25,6 +25,7 @@ import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Size;
+import org.appland.settlers.model.Well;
 
 /**
  *
@@ -66,6 +67,11 @@ public class Utils {
     }
 
     static void fillRoadWithFlags(GameMap map, Road road) throws Exception {
+
+        if (road == null) {
+            return;
+        }
+
         Player player = road.getPlayer();
 
         for (Point point : road.getWayPoints()) {
@@ -153,7 +159,12 @@ public class Utils {
     }
 
     static Road connectPointToBuilding(Player player, GameMap map, Point start, Building building2) throws InvalidRouteException, Exception {
-        Point end   = building2.getFlag().getPosition();
+        Point end = building2.getFlag().getPosition();
+
+        /* Return directly if they are already connected */
+        if (map.findWayWithExistingRoads(start, end) != null) {
+            return null;
+        }
 
         /* Look for the closest flag with connection to the headquarter within a reasonable range */
         double distance = Double.MAX_VALUE;
@@ -445,4 +456,14 @@ public class Utils {
 
         return site;
 	}
+
+    static <T extends Building> boolean listContainsAtLeastOneReadyBuilding(List<T> wells) {
+        for (T b : wells) {
+            if (b.ready()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

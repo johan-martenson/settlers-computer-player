@@ -203,4 +203,10 @@ public class FoodProducer implements ComputerPlayer {
 
         return site;
     }
+
+    boolean basicFoodProductionDone() {
+
+        return (Utils.listContainsAtLeastOneReadyBuilding(fisheries) &&
+                Utils.listContainsAtLeastOneReadyBuilding(hunterHuts));
+    }
 }

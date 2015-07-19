@@ -10,5 +10,12 @@ package org.appland.settlers.computer;
  * @author johan
  */
 public enum PlayerType {
-    BUILDING, EXPANDING, ATTACKING, MINERALS, FOOD_PRODUCER, COIN_PRODUCER, MILITARY_PRODUCER
+    BUILDING, 
+    EXPANDING, 
+    ATTACKING, 
+    MINERALS, 
+    FOOD_PRODUCER, 
+    COIN_PRODUCER, 
+    MILITARY_PRODUCER,
+    COMPOSITE_PLAYER
 }

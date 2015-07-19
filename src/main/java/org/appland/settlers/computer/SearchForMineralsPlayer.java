@@ -43,20 +43,20 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
     private final Set<Point> concludedPoints;
     private final Set<Point> pointsToInvestigate;
     private final Map<Point, Material> foundMinerals;
+    private final Map<Material, Integer> activeMines;
 
     private State     state;
     private Building  headquarter;
     private Flag      geologistFlag;
     private Geologist calledGeologist;
 
-    private Map<Material, Integer> activeMines;
-
     private enum State {
         INITIALIZING,
         LOOKING_FOR_MINERALS,
         LOOKING_FOR_GEOLOGIST,
         FOUND_MINERALS, 
-        WAITING_FOR_GEOLOGY_RESULTS
+        WAITING_FOR_GEOLOGY_RESULTS, 
+        ALL_CURRENTLY_CONCLUDED
     }
     
     public SearchForMineralsPlayer(Player player, GameMap m) {
@@ -117,45 +117,50 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
                 }
             }
 
-            /* Send out geologists if needed and possible */
-            for (Point p : pointsToInvestigate) {
+            if (pointsToInvestigate.isEmpty()) {
+                state = State.ALL_CURRENTLY_CONCLUDED;
+            } else {
 
-                /* Temporarily skip points if needed */
-                if (map.isBuildingAtPoint(p)) {
-                    continue;
-                }
+                /* Send out geologists if needed and possible */
+                for (Point p : pointsToInvestigate) {
 
-                if (map.isTreeAtPoint(p)) {
-                    continue;
-                }
-
-                if (map.isFlagAtPoint(p)) {
-                    continue;
-                }
-
-                /* Look for a suitable flag close to the point */
-                Flag flag = findFlagCloseBy(p);
-
-                if (flag == null) {
-
-                    Point flagPoint = findPointForFlagCloseBy(p);
-
-                    if (flagPoint != null) {
-                        flag = map.placeFlag(controlledPlayer, flagPoint);
-
-                        /* Build a road that connects with the headquarter */
-                        Utils.connectPointToBuilding(controlledPlayer, map, flagPoint, headquarter);
+                    /* Temporarily skip points if needed */
+                    if (map.isBuildingAtPoint(p)) {
+                        continue;
                     }
-                }
 
-                if (flag != null) {
-                    state = State.LOOKING_FOR_GEOLOGIST;
+                    if (map.isTreeAtPoint(p)) {
+                        continue;
+                    }
 
-                    geologistFlag = flag;
+                    if (map.isFlagAtPoint(p)) {
+                        continue;
+                    }
 
-                    flag.callGeologist();
+                    /* Look for a suitable flag close to the point */
+                    Flag flag = findFlagCloseBy(p);
 
-                    break;
+                    if (flag == null) {
+
+                        Point flagPoint = findPointForFlagCloseBy(p);
+
+                        if (flagPoint != null) {
+                            flag = map.placeFlag(controlledPlayer, flagPoint);
+
+                            /* Build a road that connects with the headquarter */
+                            Utils.connectPointToBuilding(controlledPlayer, map, flagPoint, headquarter);
+                        }
+                    }
+
+                    if (flag != null) {
+                        state = State.LOOKING_FOR_GEOLOGIST;
+
+                        geologistFlag = flag;
+
+                        flag.callGeologist();
+
+                        break;
+                    }
                 }
             }
         } else if (state == State.LOOKING_FOR_GEOLOGIST) {
@@ -195,7 +200,11 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
 
                 newlyInvestigatedPoints.add(p);
 
-                buildMineIfPossible(p, sign.getType());
+                if (buildMineIfPossible(p, sign.getType())) {
+
+                    /* Remove the flag as well from the list of points to investigate */
+                    newlyInvestigatedPoints.add(p.downRight());
+                }
             }
 
             concludedPoints.addAll(newlyInvestigatedPoints);
@@ -250,7 +259,7 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
         return null;
     }
 
-    private void buildMineIfPossible(Point p, Material type) throws Exception {
+    private boolean buildMineIfPossible(Point p, Material type) throws Exception {
 
         if (map.isAvailableMinePoint(controlledPlayer, p)) {
 
@@ -278,6 +287,26 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
 
                 activeMines.put(type, 1);
             }
+
+            return true;
         }
+
+        return false;
+    }
+
+    boolean allCurrentMineralsKnown() {
+        return state == State.ALL_CURRENTLY_CONCLUDED;
+    }
+
+    boolean hasCoalMine() {
+        return activeMines.containsKey(COAL) && activeMines.get(COAL) > 0;
+    }
+
+    boolean hasIronMine() {
+        return activeMines.containsKey(IRON) && activeMines.get(IRON) > 0;
+    }
+
+    boolean hasGoldMine() {
+        return activeMines.containsKey(GOLD) && activeMines.get(GOLD) > 0;
     }
 }

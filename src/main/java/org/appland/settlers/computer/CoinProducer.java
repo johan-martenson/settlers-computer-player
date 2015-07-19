@@ -4,17 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.appland.settlers.model.Building;
-import org.appland.settlers.model.Fishery;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
-import org.appland.settlers.model.HunterHut;
 import org.appland.settlers.model.Land;
 import org.appland.settlers.model.Mint;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Size;
-import org.appland.settlers.model.Terrain;
 
 import static org.appland.settlers.model.Material.GOLD;
 import static org.appland.settlers.model.Size.SMALL;
@@ -139,5 +136,9 @@ public class CoinProducer implements ComputerPlayer {
         }
 
         return site;
+    }
+
+    boolean coinProductionDone() {
+        return Utils.listContainsAtLeastOneReadyBuilding(mints);
     }
 }

@@ -78,10 +78,13 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
             foresterHut = map.placeBuilding(new ForesterHut(player), site);
 
             /* Connect the forester hut with the headquarter */
-            Road road = map.placeAutoSelectedRoad(player, foresterHut.getFlag(), headquarter.getFlag());
+            Road road = Utils.connectPointToBuilding(player, map, 
+                    foresterHut.getFlag().getPosition(), headquarter);
 
             /* Place flags where possible */
-            Utils.fillRoadWithFlags(map, road);
+            if (road != null) {
+                Utils.fillRoadWithFlags(map, road);
+            }
 
             /* Change state to wait for the forester to be ready */
             state = State.WAITING_FOR_FORESTER;
@@ -100,10 +103,13 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
             woodcutter = map.placeBuilding(new Woodcutter(player), site);
 
             /* Connect the forester hut with the headquarter */
-            Road road = map.placeAutoSelectedRoad(player, foresterHut.getFlag(), woodcutter.getFlag());
+            Road road = Utils.connectPointToBuilding(player, map, 
+                    woodcutter.getFlag().getPosition(), headquarter);
 
             /* Place flags where possible */
-            Utils.fillRoadWithFlags(map, road);
+            if (road != null) {
+                Utils.fillRoadWithFlags(map, road);
+            }
 
             /* Change state to wait for the woodcutter */
             state = State.WAITING_FOR_WOODCUTTER;
@@ -122,10 +128,13 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
             sawmill = map.placeBuilding(new Sawmill(player), site);
 
             /* Connect the sawmill with the headquarter */
-            Road road = map.placeAutoSelectedRoad(player, sawmill.getFlag(), headquarter.getFlag());
+            Road road = Utils.connectPointToBuilding(player, map, 
+                    sawmill.getFlag().getPosition(), headquarter);
 
             /* Place flags where possible */
-            Utils.fillRoadWithFlags(map, road);
+            if (road != null) {
+                Utils.fillRoadWithFlags(map, road);
+            }
 
             /* Change state to wait for the woodcutter */
             state = State.WAITING_FOR_SAWMILL;
@@ -159,7 +168,9 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
             Road road = Utils.connectPointToBuilding(player, map, quarry.getFlag().getPosition(), headquarter);
 
             /* Place flags on the road where possible */
-            Utils.fillRoadWithFlags(map, road);
+            if (road != null) {
+                Utils.fillRoadWithFlags(map, road);
+            }
 
             /* Change state to wait for construction of the quarry */
             state = State.WAITING_FOR_QUARRY;
@@ -272,5 +283,13 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
         }
 
         return stones;
+    }
+
+    boolean basicConstructionDone() {
+
+        return (foresterHut != null && foresterHut.ready() &&
+                woodcutter  != null && woodcutter.ready()  &&
+                sawmill     != null && sawmill.ready()     &&
+                quarry      != null && quarry.ready());
     }
 }

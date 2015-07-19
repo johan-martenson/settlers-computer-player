@@ -254,4 +254,12 @@ public class MiltaryProducer implements ComputerPlayer {
     public Player getControlledPlayer() {
         return controlledPlayer;
     }
+
+    boolean productionDone() {
+        return (Utils.listContainsAtLeastOneReadyBuilding(ironSmelters) &&
+                Utils.listContainsAtLeastOneReadyBuilding(armories)     &&
+                Utils.listContainsAtLeastOneReadyBuilding(breweries)    &&
+                Utils.listContainsAtLeastOneReadyBuilding(farms)        &&
+                Utils.listContainsAtLeastOneReadyBuilding(wells));
+    }
 }
