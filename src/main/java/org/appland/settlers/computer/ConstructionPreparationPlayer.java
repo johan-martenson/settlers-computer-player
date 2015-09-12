@@ -5,7 +5,6 @@
  */
 package org.appland.settlers.computer;
 
-import java.util.LinkedList;
 import java.util.List;
 import org.appland.settlers.model.ForesterHut;
 import org.appland.settlers.model.GameMap;
@@ -18,7 +17,6 @@ import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Sawmill;
 import static org.appland.settlers.model.Size.MEDIUM;
 import static org.appland.settlers.model.Size.SMALL;
-import org.appland.settlers.model.Stone;
 import org.appland.settlers.model.Woodcutter;
 
 /**
@@ -63,10 +61,9 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
 
     @Override
     public void turn() throws Exception {
-        State stateBefore = state;
 
         /* Construct a forester */
-        if (state == State.NO_CONSTRUCTION) {
+        if (noForester()) {
 
             /* Find headquarter */
             headquarter = Utils.findHeadquarter(player);
@@ -88,13 +85,7 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
 
             /* Change state to wait for the forester to be ready */
             state = State.WAITING_FOR_FORESTER;
-        } else if (state == State.WAITING_FOR_FORESTER) {
-
-            /* Check if the forester hut is constructed */
-            if (foresterHut.ready()) {
-                state = State.FORESTER_CONSTRUCTED;
-            }
-        } else if (state == State.FORESTER_CONSTRUCTED) {
+        } else if (foresterDone() && noWoodcutter()) {
 
             /* Find a site for the woodcutter close to the forester hut */
             Point site = findSpotForWoodcutterNextToForesterHut(foresterHut);
@@ -113,13 +104,7 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
 
             /* Change state to wait for the woodcutter */
             state = State.WAITING_FOR_WOODCUTTER;
-        } else if (state == State.WAITING_FOR_WOODCUTTER) {
-
-            /* Check if the woodcutter is constructed */
-            if (woodcutter.ready()) {
-                state = State.WOODCUTTER_CONSTRUCTED;
-            }
-        } else if (state == State.WOODCUTTER_CONSTRUCTED) {
+        } else if (woodcutterDone() && noSawmill()) {
 
             /* Find a site for the sawmill close to the headquarter */
             Point site = findSpotForSawmill(headquarter);
@@ -138,13 +123,7 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
 
             /* Change state to wait for the woodcutter */
             state = State.WAITING_FOR_SAWMILL;
-        } else if (state == State.WAITING_FOR_SAWMILL) {
-
-            /* Check if the sawmill is constructed */
-            if (sawmill.ready()) {
-                state = State.SAWMILL_CONSTRUCTED;
-            }
-        } else if (state == State.SAWMILL_CONSTRUCTED) {
+        } else if (sawmillDone() && noQuarry()) {
 
             /* Look for stone within the border */
             Point stonePoint = findStoneWithinBorder();
@@ -171,38 +150,13 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
             if (road != null) {
                 Utils.fillRoadWithFlags(map, road);
             }
-
-            /* Change state to wait for construction of the quarry */
-            state = State.WAITING_FOR_QUARRY;
-        } else if (state == State.WAITING_FOR_QUARRY) {
-
-            /* Check if the quarry is ready */
-            if (quarry.ready()) {
-                state = State.IDLE;
-            }
-        } else if (state == State.IDLE) {
-
-            /* Check if the quarry still has access to stone */
-            List<Stone> stones = findStonesWithinReach(quarry.getPosition());
-
-            /* Stay idle if there is still stone */
-            if (!stones.isEmpty()) {
-                return;
-            }
+        } else if (quarryDone() && quarry.outOfNaturalResources()) {
 
             /* Destroy the quarry if it can't reach any stone */
             quarry.tearDown();
 
             /* Remove the part of the road that is used only by the quarry */
             Utils.removeRoadWithoutAffectingOthers(map, quarry.getFlag());
-
-            /* Set state to needing stone again */
-            state = State.NEED_STONE;
-        }
-
-        /* Print the old and new state if the state changed */
-        if (stateBefore != state) {
-            System.out.println("Transition: " + stateBefore + " -> " + state);
         }
     }
 
@@ -269,27 +223,44 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
         return points.get(0);
     }
 
-    private List<Stone> findStonesWithinReach(Point position) {
-        List<Stone> stones = new LinkedList<>();
-
-        /* Get points the quarry can reach */
-        List<Point> points = map.getPointsWithinRadius(position, QUARRY_STONE_DISTANCE);
-
-        /* Find stones within the reachable area */
-        for (Point point : points) {
-            if (map.isStoneAtPoint(point)) {
-                stones.add(map.getStoneAtPoint(point));
-            }
-        }
-
-        return stones;
-    }
-
     boolean basicConstructionDone() {
 
-        return (foresterHut != null && foresterHut.ready() &&
-                woodcutter  != null && woodcutter.ready()  &&
-                sawmill     != null && sawmill.ready()     &&
-                quarry      != null && quarry.ready());
+        return (foresterDone()   &&
+                woodcutterDone() &&
+                sawmillDone()    &&
+                ((quarryDone() && !quarry.outOfNaturalResources()) ||
+                 (noQuarry() && !Utils.hasStoneWithinArea(map, player))));
+    }
+
+    private boolean foresterDone() {
+        return Utils.buildingDone(foresterHut);
+    }
+
+    private boolean noForester() {
+        return !Utils.buildingInPlace(foresterHut);
+    }
+
+    private boolean noWoodcutter() {
+        return !Utils.buildingInPlace(woodcutter);
+    }
+
+    private boolean woodcutterDone() {
+        return Utils.buildingDone(woodcutter);
+    }
+
+    private boolean noSawmill() {
+        return !Utils.buildingInPlace(sawmill);
+    }
+
+    private boolean sawmillDone() {
+        return Utils.buildingDone(sawmill);
+    }
+
+    private boolean noQuarry() {
+        return !Utils.buildingInPlace(quarry);
+    }
+
+    private boolean quarryDone() {
+        return Utils.buildingDone(quarry);
     }
 }

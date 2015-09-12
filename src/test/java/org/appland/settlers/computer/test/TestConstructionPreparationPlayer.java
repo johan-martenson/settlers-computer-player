@@ -297,7 +297,7 @@ public class TestConstructionPreparationPlayer {
         MoreUtils.waitForStoneToRunOut(computerPlayer, map, stone0);
 
         /* Verify that the player destroys the quarry */
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 150; i++) {
 
             computerPlayer.turn();
 

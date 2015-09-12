@@ -23,7 +23,9 @@ import org.appland.settlers.model.IronSmelter;
 import org.appland.settlers.model.Land;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
+import org.appland.settlers.model.Quarry;
 import org.appland.settlers.model.Road;
+import org.appland.settlers.model.Sawmill;
 import org.appland.settlers.model.Size;
 import org.appland.settlers.model.Well;
 
@@ -465,5 +467,33 @@ public class Utils {
         }
 
         return false;
+    }
+
+    static boolean hasStoneWithinArea(GameMap map, Player player) {
+
+        for(Land land : player.getLands()) {
+            for (Point p : land.getPointsInLand()) {
+                if (map.isStoneAtPoint(p)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    static boolean buildingDone(Building building) {
+        return building != null && building.ready();
+    }
+
+    static boolean buildingInPlace(Building building) {
+        if (building == null) {
+            return false;
+        }
+
+        GameMap map = building.getMap();
+
+        return map.isBuildingAtPoint(building.getPosition()) &&
+               map.getBuildingAtPoint(building.getPosition()).equals(building);
     }
 }

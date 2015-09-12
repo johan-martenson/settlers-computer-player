@@ -309,4 +309,8 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
     boolean hasGoldMine() {
         return activeMines.containsKey(GOLD) && activeMines.get(GOLD) > 0;
     }
+
+    boolean hasMines() {
+        return !activeMines.isEmpty();
+    }
 }

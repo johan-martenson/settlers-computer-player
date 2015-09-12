@@ -38,16 +38,16 @@ public class MoreUtils {
         assertTrue(found);
     }
 
-    public static <T> T waitForComputerPlayerToPlaceBuilding(ComputerPlayer computerPlayer, Class<T> aClass, GameMap map) throws Exception {
+    public static <T extends Building> 
+        T waitForComputerPlayerToPlaceBuilding(ComputerPlayer computerPlayer, 
+            Class<T> aClass, GameMap map) throws Exception {
         Player player = computerPlayer.getControlledPlayer();
         T found       = null;
         Set<Building> buildingsBefore = new HashSet<>();
 
         buildingsBefore.addAll(player.getBuildings());
-
+    
         for (int i = 0; i < 10000; i++) {
-            computerPlayer.turn();
-
             for (Building b : player.getBuildings()) {
                 if (b.getClass().equals(aClass) && !buildingsBefore.contains(b)) {
                     found = (T)b;
@@ -60,6 +60,8 @@ public class MoreUtils {
                 break;
             }
 
+            computerPlayer.turn();
+
             map.stepTime();
         }
 
@@ -71,11 +73,11 @@ public class MoreUtils {
     public static <T extends Building> void waitForBuildingToGetConstructed(ComputerPlayer computerPlayer, GameMap map, T building) throws Exception {
 
         for (int i = 0; i < 1000; i++) {
-            computerPlayer.turn();
-
             if (building.ready()) {
                 break;
             }
+
+            computerPlayer.turn();
 
             map.stepTime();
         }
@@ -108,7 +110,7 @@ public class MoreUtils {
     }
 
     public static <T extends Building> void waitForBuildingToGetTornDown(ComputerPlayer computerPlayer, GameMap map, T quarry) throws Exception {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1000; i++) {
 
             computerPlayer.turn();
 
