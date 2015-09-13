@@ -19,15 +19,11 @@ import org.appland.settlers.model.Flag;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
 import org.appland.settlers.model.InvalidRouteException;
-import org.appland.settlers.model.IronSmelter;
 import org.appland.settlers.model.Land;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
-import org.appland.settlers.model.Quarry;
 import org.appland.settlers.model.Road;
-import org.appland.settlers.model.Sawmill;
 import org.appland.settlers.model.Size;
-import org.appland.settlers.model.Well;
 
 /**
  *
@@ -495,5 +491,30 @@ public class Utils {
 
         return map.isBuildingAtPoint(building.getPosition()) &&
                map.getBuildingAtPoint(building.getPosition()).equals(building);
+    }
+
+    static <T extends Building> T placeBuilding(Player player, Headquarter headquarter, T building) throws Exception {
+
+        GameMap map  = player.getMap();
+        Size    size = building.getSize();
+
+        /* Find a spot for the building */
+        Point location = Utils.findPointForBuildingCloseToPoint(headquarter.getPosition(), size, player, map);
+
+        /* Return null if we couldn't place the building */
+        if (location == null) {
+            return null;
+        }
+
+        /* Place the building on the map */
+        map.placeBuilding(building, location);
+
+        /* Connect the farm with the headquarter */
+        Road road = Utils.connectPointToBuilding(player, map, building.getFlag().getPosition(), headquarter);
+
+        /* Fill the road with flags */
+        Utils.fillRoadWithFlags(map, road);
+
+        return building;
     }
 }

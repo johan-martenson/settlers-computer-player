@@ -2,16 +2,20 @@ package org.appland.settlers.computer;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.appland.settlers.model.Bakery;
 import org.appland.settlers.model.Building;
+import org.appland.settlers.model.Farm;
 import org.appland.settlers.model.Fishery;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
 import org.appland.settlers.model.HunterHut;
 import org.appland.settlers.model.Land;
+import org.appland.settlers.model.Mill;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Terrain;
+import org.appland.settlers.model.Well;
 
 /**
  *
@@ -25,18 +29,21 @@ public class FoodProducer implements ComputerPlayer {
     private final List<Fishery>   fisheries;
     private final List<HunterHut> hunterHuts;
 
-    private State     state;
-    private Building  headquarter;
+    private State       state;
+    private Headquarter headquarter;
+    private Farm        farm;
+    private Well        well;
+    private Mill        mill;
+    private Bakery      bakery;
 
     private enum State {
         INITIALIZING,
         NEEDS_FOOD,
-        LOOKING_FOR_GEOLOGIST,
-        FOUND_MINERALS, 
-        WAITING_FOR_GEOLOGY_RESULTS, 
-        BUILD_FISHERY, WAITING_FOR_FISHERY, 
+        BUILD_FISHERY, 
+        WAITING_FOR_FISHERY, 
         BUILD_HUNTER_HUT, 
-        WAITING_FOR_HUNTER_HUT
+        WAITING_FOR_HUNTER_HUT,
+        NEEDS_BREAD
     }
     
     public FoodProducer(Player player, GameMap m) {
@@ -45,6 +52,10 @@ public class FoodProducer implements ComputerPlayer {
 
         fisheries  = new ArrayList<>();
         hunterHuts = new ArrayList<>();
+        farm       = null;
+        well       = null;
+        mill       = null;
+        bakery     = null;
 
         state = State.INITIALIZING;
     }
@@ -56,7 +67,7 @@ public class FoodProducer implements ComputerPlayer {
 
             for (Building building : controlledPlayer.getBuildings()) {
                 if (building instanceof Headquarter) {
-                    headquarter = building;
+                    headquarter = (Headquarter) building;
 
                     break;
                 }
@@ -139,7 +150,25 @@ public class FoodProducer implements ComputerPlayer {
             }
 
             if (buildingsDone) {
-                state = State.NEEDS_FOOD;
+                state = State.NEEDS_BREAD;
+            }
+        } else if (state == State.NEEDS_BREAD) {
+            if (!Utils.buildingInPlace(farm)) {
+
+                /* Place a farm */
+                farm = Utils.placeBuilding(controlledPlayer, headquarter, new Farm(controlledPlayer));
+            } else if (Utils.buildingDone(farm) && !Utils.buildingInPlace(well)) {
+
+                /* Place a well */
+                well = Utils.placeBuilding(controlledPlayer, headquarter, new Well(controlledPlayer));
+            } else if (Utils.buildingDone(well) && !Utils.buildingInPlace(mill)) {
+
+                /* Place a mill */
+                mill = Utils.placeBuilding(controlledPlayer, headquarter, new Mill(controlledPlayer));
+            } else if (Utils.buildingDone(mill) && !Utils.buildingInPlace(bakery)) {
+
+                /* Place bakery */
+                bakery = Utils.placeBuilding(controlledPlayer, headquarter, new Bakery(controlledPlayer));
             }
         }
     }
@@ -208,5 +237,13 @@ public class FoodProducer implements ComputerPlayer {
 
         return (Utils.listContainsAtLeastOneReadyBuilding(fisheries) &&
                 Utils.listContainsAtLeastOneReadyBuilding(hunterHuts));
+    }
+
+    boolean fullFoodProductionDone() {
+        return basicFoodProductionDone() &&
+               Utils.buildingDone(farm)  && 
+               Utils.buildingDone(mill)  && 
+               Utils.buildingDone(well)  && 
+               Utils.buildingDone(bakery);
     }
 }

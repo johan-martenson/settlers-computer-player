@@ -49,6 +49,10 @@ public class CompositePlayer implements ComputerPlayer {
             foodPlayer.turn();
         } else if (player.getInventory().get(GOLD) > 0 && !coinPlayer.coinProductionDone()) {
             coinPlayer.turn();
+        } else if (mineralsPlayer.hasCoalMine() &&
+                   mineralsPlayer.hasIronMine() &&
+                   !foodPlayer.fullFoodProductionDone()) {
+            foodPlayer.turn();
         } else if (mineralsPlayer.hasCoalMine() && 
                    mineralsPlayer.hasIronMine() &&
                    !militaryProducer.productionDone()){

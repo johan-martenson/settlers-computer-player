@@ -15,7 +15,6 @@ import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Quarry;
 import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Sawmill;
-import static org.appland.settlers.model.Size.MEDIUM;
 import static org.appland.settlers.model.Size.SMALL;
 import org.appland.settlers.model.Woodcutter;
 
@@ -30,99 +29,35 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
     private Sawmill     sawmill;
     private Quarry      quarry;
 
-    private enum State {
-        NO_CONSTRUCTION,
-        WAITING_FOR_FORESTER,
-        FORESTER_CONSTRUCTED,
-        WOODCUTTER_CONSTRUCTED,
-        SAWMILL_CONSTRUCTED, 
-        WAITING_FOR_WOODCUTTER, 
-        WAITING_FOR_SAWMILL, 
-        NO_STONE_WITHIN_BORDER, 
-        WAITING_FOR_QUARRY, 
-        IDLE, 
-        NEED_STONE
-    }
-
-    private static final int QUARRY_STONE_DISTANCE = 4;
-
     private final GameMap map;
     private final Player  player;
 
-    private State state;
-    
     public ConstructionPreparationPlayer(Player p, GameMap m) {
         player = p;
         map    = m;
-
-        /* Set the initial state */
-        state = State.NO_CONSTRUCTION;
     }
 
     @Override
     public void turn() throws Exception {
 
+        /* Find the headquarter if needed */
+        if (headquarter == null) {
+            headquarter = Utils.findHeadquarter(player);
+        }
+
         /* Construct a forester */
         if (noForester()) {
 
-            /* Find headquarter */
-            headquarter = Utils.findHeadquarter(player);
-
-            /* Find a site for the forester hut */
-            Point site = findSpotForForesterHut();
-
-            /* Place forester hut */
-            foresterHut = map.placeBuilding(new ForesterHut(player), site);
-
-            /* Connect the forester hut with the headquarter */
-            Road road = Utils.connectPointToBuilding(player, map, 
-                    foresterHut.getFlag().getPosition(), headquarter);
-
-            /* Place flags where possible */
-            if (road != null) {
-                Utils.fillRoadWithFlags(map, road);
-            }
-
-            /* Change state to wait for the forester to be ready */
-            state = State.WAITING_FOR_FORESTER;
+            /* Place a forester hut */
+            foresterHut = Utils.placeBuilding(player, headquarter, new ForesterHut(player));
         } else if (foresterDone() && noWoodcutter()) {
 
-            /* Find a site for the woodcutter close to the forester hut */
-            Point site = findSpotForWoodcutterNextToForesterHut(foresterHut);
-
             /* Place the woodcutter */
-            woodcutter = map.placeBuilding(new Woodcutter(player), site);
-
-            /* Connect the forester hut with the headquarter */
-            Road road = Utils.connectPointToBuilding(player, map, 
-                    woodcutter.getFlag().getPosition(), headquarter);
-
-            /* Place flags where possible */
-            if (road != null) {
-                Utils.fillRoadWithFlags(map, road);
-            }
-
-            /* Change state to wait for the woodcutter */
-            state = State.WAITING_FOR_WOODCUTTER;
+            woodcutter = Utils.placeBuilding(player, headquarter, new Woodcutter(player));
         } else if (woodcutterDone() && noSawmill()) {
 
-            /* Find a site for the sawmill close to the headquarter */
-            Point site = findSpotForSawmill(headquarter);
-
             /* Place the sawmill */
-            sawmill = map.placeBuilding(new Sawmill(player), site);
-
-            /* Connect the sawmill with the headquarter */
-            Road road = Utils.connectPointToBuilding(player, map, 
-                    sawmill.getFlag().getPosition(), headquarter);
-
-            /* Place flags where possible */
-            if (road != null) {
-                Utils.fillRoadWithFlags(map, road);
-            }
-
-            /* Change state to wait for the woodcutter */
-            state = State.WAITING_FOR_SAWMILL;
+            sawmill = Utils.placeBuilding(player, headquarter, new Sawmill(player));
         } else if (sawmillDone() && noQuarry()) {
 
             /* Look for stone within the border */
@@ -131,8 +66,6 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
             /* Write a warning and exit if no stone is found */
             if (stonePoint == null) {
                 System.out.println("WARNING: No stone found within border");
-
-                state = State.NO_STONE_WITHIN_BORDER;
 
                 return;
             }
@@ -158,38 +91,6 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
             /* Remove the part of the road that is used only by the quarry */
             Utils.removeRoadWithoutAffectingOthers(map, quarry.getFlag());
         }
-    }
-
-    private Point findSpotForForesterHut() throws Exception {
-        return Utils.findAvailableSpotForBuilding(map, player);
-    }
-
-    private Point findSpotForWoodcutterNextToForesterHut(ForesterHut foresterHut) throws Exception {
-
-        /* Find available spots close to the forester */
-        List<Point> spots = Utils.findAvailableHousePointsWithinRadius(map, player, foresterHut.getPosition(), SMALL, 4);
-
-        /* Return null if there are no available spots */
-        if (spots.isEmpty()) {
-            return null;
-        }
-
-        /* Return any point from the available ones */
-        return spots.get(0);
-    }
-
-    private Point findSpotForSawmill(Headquarter headquarter) throws Exception {
-
-        /* Find available spots close to the forester */
-        List<Point> spots = Utils.findAvailableHousePointsWithinRadius(map, player, headquarter.getPosition(), MEDIUM, 4);
-
-        /* Return null if there are no available spots */
-        if (spots.isEmpty()) {
-            return null;
-        }
-
-        /* Return any point from the available ones */
-        return spots.get(0);
     }
 
     @Override
