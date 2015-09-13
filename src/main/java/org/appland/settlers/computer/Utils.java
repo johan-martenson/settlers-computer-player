@@ -201,6 +201,15 @@ public class Utils {
             }
         }
 
+        /* Attempt to connect directly if there is no nearby flag */
+        if (distance > 3) {
+            List<Point> path = map.findAutoSelectedRoad(player, start, end, null);
+
+            if (path != null) {
+                return map.placeRoad(player, path);
+            }
+        }
+
         /* Connect via the nearby flag if it existed */
         if (viaPoint != null) {
             return map.placeAutoSelectedRoad(player, start, viaPoint);
