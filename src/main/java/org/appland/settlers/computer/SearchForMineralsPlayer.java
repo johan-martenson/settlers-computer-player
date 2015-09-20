@@ -28,6 +28,7 @@ import static org.appland.settlers.model.Material.IRON;
 import static org.appland.settlers.model.Material.STONE;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
+import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Sign;
 import org.appland.settlers.model.Worker;
 
@@ -148,7 +149,10 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
                             flag = map.placeFlag(controlledPlayer, flagPoint);
 
                             /* Build a road that connects with the headquarter */
-                            Utils.connectPointToBuilding(controlledPlayer, map, flagPoint, headquarter);
+                            Road road = Utils.connectPointToBuilding(controlledPlayer, map, flagPoint, headquarter);
+
+                            /* Fill the road with flags */
+                            Utils.fillRoadWithFlags(map, road);
                         }
                     }
 
@@ -283,7 +287,9 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
             }
 
             if (activeMines.get(type) == 0) {
-                Utils.connectPointToBuilding(controlledPlayer, map, p.downRight(), headquarter);
+                Road road = Utils.connectPointToBuilding(controlledPlayer, map, p.downRight(), headquarter);
+
+                Utils.fillRoadWithFlags(map, road);
 
                 activeMines.put(type, 1);
             }

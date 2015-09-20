@@ -85,13 +85,15 @@ public class MoreUtils {
         assertTrue(building.ready());
     }
 
-    public static <T extends Building> void verifyPlayerPlacesOnlyBuilding(ComputerPlayer computerPlayer, GameMap map, Class<T> aClass) throws Exception {
+    public static <T extends Building> T verifyPlayerPlacesOnlyBuilding(ComputerPlayer computerPlayer, GameMap map, Class<T> aClass) throws Exception {
         Player player = computerPlayer.getControlledPlayer();
         int amount    = player.getBuildings().size();
 
         T building = waitForComputerPlayerToPlaceBuilding(computerPlayer, aClass, map);
 
         assertEquals(player.getBuildings().size(), amount + 1);
+
+        return building;
     }
 
     public static void waitForStoneToRunOut(ComputerPlayer computerPlayer, GameMap map, Stone stone) throws Exception {

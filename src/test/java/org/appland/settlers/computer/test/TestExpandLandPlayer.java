@@ -323,7 +323,7 @@ public class TestExpandLandPlayer {
                         continue;
                     }
 
-                    if (point.distance(barracks0.getPosition()) < 10) {
+                    if (point.distance(barracks0.getPosition()) < 6) {
                         borderClose = true;
 
                         break;
@@ -566,5 +566,44 @@ public class TestExpandLandPlayer {
             /* Verify that there is only one road from the barracks' flag */
             assertEquals(map.getRoadsFromFlag(barracksToAttack.getFlag()).size(), 1);
         }
+    }
+
+    @Test
+    public void testPlayerStopsPromotionsInBarracksNotCloseToAnEnemy() throws Exception {
+
+        /* Create players */
+        Player player0 = new Player("Player 0", java.awt.Color.BLUE);
+        List<Player> players = new ArrayList<>();
+        players.add(player0);
+
+        /* Create game map */
+        GameMap map = new GameMap(players, 100, 100);
+
+        /* Create the computer player */
+        ComputerPlayer computerPlayer = new ExpandLandPlayer(player0, map);
+
+        /* Place headquarter */
+        Point point0 = new Point(10, 10);
+        Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
+
+        /* Give the player extra building materials and militaries */
+        Utils.adjustInventoryTo(headquarter, PLANCK, 40, map);
+        Utils.adjustInventoryTo(headquarter, STONE, 40, map);
+        Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
+
+        /* Wait for the player to place barracks */
+        Barracks barracks0 = MoreUtils.verifyPlayerPlacesOnlyBuilding(computerPlayer, map, Barracks.class);
+
+        assertEquals(player0.getBuildings().size(), 2);
+
+        MoreUtils.verifyPlayersBuildingsContain(player0, Barracks.class);
+
+        /* Wait for the barracks to get constructed */
+        Utils.fastForwardUntilBuildingIsConstructed(barracks0, map);
+
+        /* Verify that the player stops promotions because there is no enemy in the map */
+        computerPlayer.turn();
+
+        assertFalse(barracks0.isPromotionEnabled());
     }
 }

@@ -37,7 +37,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
     private final static int GOOD_DISTANCE_BETWEEN_BARRACKS = 10;
     private final static int MAX_DISTANCE_FROM_BORDER = 3;
     private final static int MIN_DISTANCE_TO_EDGE = 3;
-    private final static int THRESHOLD_FOR_EVACUATION = 10;
+    private final static int THRESHOLD_FOR_EVACUATION = 6;
 
     public ExpandLandPlayer(Player p, GameMap m) {
         player = p;
@@ -89,6 +89,12 @@ public class ExpandLandPlayer implements ComputerPlayer {
 
                 /* Set state to build new barracks */
                 state = State.READY_FOR_CONSTRUCTION;
+
+            /* Disable promotions directly when the barracks is ready */
+            } else if (unfinishedBarracks.ready() && unfinishedBarracks.getHostedMilitary() == 0) {
+
+                /* Disable promotions */
+                unfinishedBarracks.disablePromotions();
 
             /* Check if construction is done and the building is occupied */
             } else if (unfinishedBarracks.ready() && unfinishedBarracks.getHostedMilitary() > 0) {
