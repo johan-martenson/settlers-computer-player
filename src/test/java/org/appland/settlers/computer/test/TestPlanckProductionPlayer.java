@@ -17,9 +17,9 @@ import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Sawmill;
 import org.appland.settlers.model.Woodcutter;
 import org.appland.settlers.test.MoreUtils;
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 /**
  *

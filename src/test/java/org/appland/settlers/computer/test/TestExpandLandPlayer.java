@@ -25,12 +25,12 @@ import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Road;
 import org.appland.settlers.test.MoreUtils;
 import org.appland.settlers.test.Utils;
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 /**
  *
@@ -605,5 +605,72 @@ public class TestExpandLandPlayer {
         computerPlayer.turn();
 
         assertFalse(barracks0.isPromotionEnabled());
+    }
+
+    @Test
+    public void testPlayerEnablesPromotionsForBarracksCloseToEnemy() throws Exception {
+
+        /* Create players */
+        Player player0 = new Player("Player 0", java.awt.Color.BLUE);
+        Player player1 = new Player("Player 1", java.awt.Color.RED);
+        List<Player> players = new ArrayList<>();
+        players.add(player0);
+        players.add(player1);
+
+        /* Create game map */
+        GameMap map = new GameMap(players, 100, 100);
+
+        /* Create the computer player */
+        ComputerPlayer computerPlayer = new ExpandLandPlayer(player0, map);
+
+        /* Place headquarter */
+        Point point0 = new Point(5, 5);
+        Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
+
+        /* Place the enemy's headquarter */
+        Point point1 = new Point(50, 10);
+        Headquarter headquarter1 = map.placeBuilding(new Headquarter(player1), point1);
+
+        /* Give the player extra building materials and militaries */
+        Utils.adjustInventoryTo(headquarter, PLANCK, 500, map);
+        Utils.adjustInventoryTo(headquarter, STONE, 500, map);
+        Utils.adjustInventoryTo(headquarter, PRIVATE, 500, map);
+
+        /* Verify that the player enables promotions in barracks close to the
+           enemy
+        */
+        Barracks latestBarracks = null;
+
+        for (int i = 0; i < 100; i++) {
+
+            /* Wait for the player to with place a barracks */
+            Barracks barracks = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Barracks.class, map);
+
+            /* Wait for the barracks to be occupied */
+            MoreUtils.waitForBuildingToGetOccupied(computerPlayer, map, barracks);
+
+            assertTrue(barracks.getHostedMilitary() > 0);
+
+            /* Check how close the barracks is to the enemy's border */
+            if (MoreUtils.distanceToKnownBorder(barracks, player1) < 8) {
+
+                latestBarracks = barracks;
+
+                break;
+            }
+        }
+
+        assertNotNull(latestBarracks);
+        assertTrue(MoreUtils.distanceToKnownBorder(latestBarracks, player1) < 8);
+        assertTrue(latestBarracks.isPromotionEnabled());
+
+        /* Verify that promotions stay enabled */
+        MoreUtils.waitForBuildingToGetConstructed(computerPlayer, map, latestBarracks);
+
+        MoreUtils.waitForBuildingToGetOccupied(computerPlayer, map, latestBarracks);
+
+        Utils.fastForward(100, map);
+
+        assertTrue(latestBarracks.isPromotionEnabled());
     }
 }

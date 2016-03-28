@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.appland.settlers.model.Barracks;
 
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.EndPoint;
@@ -525,5 +526,40 @@ public class Utils {
         Utils.fillRoadWithFlags(map, road);
 
         return building;
+    }
+
+    static int distanceToKnownEnemiesWithinRange(Building building, int range) {
+
+        GameMap map      = building.getMap();
+        Point   center   = building.getPosition();
+        Player  player   = building.getPlayer();
+        double  distance = Double.MAX_VALUE;
+
+        /* Walk through surrounding points and find the closest point belonging
+           to an enemy
+        */
+        for (Point p : map.getPointsWithinRadius(center, range)) {
+
+            /* Ignore un-discovered points */
+            if (!player.getDiscoveredLand().contains(p)) {
+                continue;
+            }
+
+            /* Ignore points further away than the current distance */
+            double tmpDistance = center.distance(p);
+            if (tmpDistance >= distance) {
+                continue;
+            }
+
+            /* Filter points not belonging to an enemy */
+            Player playerAtPoint = player.getPlayerAtPoint(p);
+            if (playerAtPoint == null || playerAtPoint == player) {
+                continue;
+            }
+
+            distance = tmpDistance;
+        }
+
+        return (int)distance;
     }
 }

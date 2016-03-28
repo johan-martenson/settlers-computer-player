@@ -5,6 +5,7 @@
  */
 package org.appland.settlers.test;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import org.appland.settlers.computer.ComputerPlayer;
@@ -16,6 +17,10 @@ import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Stone;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -164,5 +169,37 @@ public class MoreUtils {
 
         assertEquals(building.getPlayer(), player);
     }
-    
+
+    public static double distanceToKnownBorder(Barracks barracks, Player player1) {
+
+        /* Check how close the barracks is to the enemy's border */
+        double distance = Double.MAX_VALUE;
+
+        for (Collection<Point> border : player1.getBorders()) {
+            for (Point p : border) {
+                double tmpDistance = barracks.getPosition().distance(p);
+
+                if (barracks.getPlayer().getDiscoveredLand().contains(p) && tmpDistance < distance) {
+                    distance = tmpDistance;
+                }
+            }
+        }
+
+        return distance;
+    }
+
+    public static void waitForBuildingToGetOccupied(ComputerPlayer computerPlayer, GameMap map, Building building) throws Exception {
+
+        for (int i = 0; i < 10000; i++) {
+            if (building.occupied()) {
+                break;
+            }
+
+            computerPlayer.turn();
+
+            map.stepTime();
+        }
+
+        assertTrue(building.occupied());
+    }
 }

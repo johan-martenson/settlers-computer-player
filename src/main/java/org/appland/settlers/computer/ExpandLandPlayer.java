@@ -93,8 +93,14 @@ public class ExpandLandPlayer implements ComputerPlayer {
             /* Disable promotions directly when the barracks is ready */
             } else if (unfinishedBarracks.ready() && unfinishedBarracks.getHostedMilitary() == 0) {
 
-                /* Disable promotions */
-                unfinishedBarracks.disablePromotions();
+                /* Disable promotions if the barracks is not close to the enemy */
+                if (Utils.distanceToKnownEnemiesWithinRange(unfinishedBarracks, 20) > 9) {
+
+                    if (unfinishedBarracks.isPromotionEnabled()) {
+                        unfinishedBarracks.disablePromotions();
+                    }
+
+                }
 
             /* Check if construction is done and the building is occupied */
             } else if (unfinishedBarracks.ready() && unfinishedBarracks.getHostedMilitary() > 0) {
