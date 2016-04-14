@@ -12,7 +12,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.appland.settlers.model.Barracks;
 
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.EndPoint;
