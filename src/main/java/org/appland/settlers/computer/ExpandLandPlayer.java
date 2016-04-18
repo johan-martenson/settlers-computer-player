@@ -100,6 +100,12 @@ public class ExpandLandPlayer implements ComputerPlayer {
                         unfinishedBarracks.disablePromotions();
                     }
 
+                } else {
+
+                    /* Upgrade barracks close to the enemy */
+                    if (!unfinishedBarracks.isUpgrading()) {
+                        unfinishedBarracks.upgrade();
+                    }
                 }
 
             /* Check if construction is done and the building is occupied */
