@@ -5,6 +5,7 @@
  */
 package org.appland.settlers.computer;
 
+import org.appland.settlers.model.Building;
 import org.appland.settlers.model.GameMap;
 import static org.appland.settlers.model.Material.BEER;
 import static org.appland.settlers.model.Material.BREAD;
@@ -83,6 +84,15 @@ public class CompositePlayer implements ComputerPlayer {
 
             militaryProducer.turn();
             previousPlayer = militaryProducer;
+        } else if (Utils.getCloseEnemyBuilding(player) != null) {
+
+            /* Get the building */
+            Building enemyBuilding = Utils.getCloseEnemyBuilding(player);
+
+            /* Attack if possible */
+            if (player.getAvailableAttackersForBuilding(enemyBuilding) > 0) {
+                attackingPlayer.turn();
+            }
         } else {
 
             /* Change transport priorities if needed */

@@ -31,6 +31,9 @@ import org.appland.settlers.model.Size;
  */
 public class Utils {
 
+    public static final int THRESHOLD_CLOSE_TO_ENEMY = 10;
+    public static final int THRESHOLD_VERY_CLOSE_TO_ENEMY = 5;
+    
     static Point findAvailableSpotForBuilding(GameMap map, Player player) throws Exception {
         Map<Point, Size> spots = map.getAvailableHousePoints(player);
 
@@ -560,5 +563,57 @@ public class Utils {
         }
 
         return (int)distance;
+    }
+
+    static Building getCloseEnemyBuilding(Player player) {
+        double distanceToBorder = Double.MAX_VALUE;
+        Building closeEnemyBuilding = null;
+        GameMap map = player.getMap();
+
+        for(Point p : player.getDiscoveredLand()) {
+
+            /* Get the owner */
+            Player owner = player.getPlayerAtPoint(p);
+
+            /* Ignore the point if it is unoccupied */
+            if (owner == null) {
+                continue;
+            }
+
+            /* Ignore the point if it is the player's own */
+            if (owner.equals(player)) {
+                continue;
+            }
+
+            /* Ignore the point if there is no military building on it */
+            if (!map.isBuildingAtPoint(p)) {
+                continue;
+            }
+
+            Building tmpBuilding = map.getBuildingAtPoint(p);
+
+            /* Ignore the point if the building is not military */
+            if (!tmpBuilding.isMilitaryBuilding()) {
+                continue;
+            }
+
+            /* Find out the distance to the closest military building */
+            double tmpDistanceToBorder = getDistanceToBorder(p, player);
+
+            if (tmpDistanceToBorder < distanceToBorder) {
+                closeEnemyBuilding = tmpBuilding;
+                distanceToBorder = tmpDistanceToBorder;
+            }
+
+            if (tmpDistanceToBorder < THRESHOLD_VERY_CLOSE_TO_ENEMY) {
+                return tmpBuilding;
+            }
+        }
+
+        if (distanceToBorder < THRESHOLD_CLOSE_TO_ENEMY) {
+            return closeEnemyBuilding;
+        } else {
+            return null;
+        }
     }
 }
