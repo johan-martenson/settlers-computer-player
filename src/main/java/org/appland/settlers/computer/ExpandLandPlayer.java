@@ -1,5 +1,6 @@
 package org.appland.settlers.computer;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -9,6 +10,7 @@ import org.appland.settlers.model.Barracks;
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
+import org.appland.settlers.model.InvalidUserActionException;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Road;
@@ -25,6 +27,8 @@ public class ExpandLandPlayer implements ComputerPlayer {
     private Barracks    unfinishedBarracks;
     private Headquarter headquarter;
     private State       state;
+    private boolean     newBuildings;
+    private final Set<Point>  impossibleSpots;
 
     private enum State {
         INITIAL_STATE, 
@@ -47,6 +51,9 @@ public class ExpandLandPlayer implements ComputerPlayer {
 
         /* Set the initial state */
         state = State.INITIAL_STATE;
+
+        newBuildings = false;
+        impossibleSpots = new HashSet<>();
     }
 
     @Override
@@ -64,7 +71,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
         } else if (state == State.READY_FOR_CONSTRUCTION) {
 
             /* Find the spot for the next barracks */
-            Point site = findSpotForNextBarracks(player);
+            Point site = findSpotForNextBarracks(player, impossibleSpots);
 
             /* Stay in the ready to build state if there is no suitable site to build at */
             if (site == null) {
@@ -120,7 +127,10 @@ public class ExpandLandPlayer implements ComputerPlayer {
                 /* Change the state to construction done */
                 state = State.READY_FOR_CONSTRUCTION;
 
-            /* Verify that the barracks under construction is still reachable from the headquarter */
+                /* Signal that there is at least one new building in place */
+                newBuildings = true;
+
+                /* Verify that the barracks under construction is still reachable from the headquarter */
             } else if (map.findWayWithExistingRoads(headquarter.getPosition(), unfinishedBarracks.getPosition()) == null) {
 
                 /* Try to repair the connection */
@@ -142,6 +152,9 @@ public class ExpandLandPlayer implements ComputerPlayer {
 
                 /* Destroy the building */
                 unfinishedBarracks.tearDown();
+
+                /* Remember that this spot didn't work out */
+                impossibleSpots.add(unfinishedBarracks.getPosition());
 
                 /* Construct a new building */
                 state = State.READY_FOR_CONSTRUCTION;
@@ -174,7 +187,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
         return false;
     }
 
-    private Point findSpotForNextBarracks(Player player) throws Exception {
+    private Point findSpotForNextBarracks(Player player, Set<Point> ignore) throws Exception {
         double qualityOfLeastBad = Double.MAX_VALUE;
 
         Set<Point> alreadyTried = new HashSet<>();
@@ -194,12 +207,22 @@ public class ExpandLandPlayer implements ComputerPlayer {
             /* Go through points for construction close to the border point */
             for (Point point : map.getPointsWithinRadius(borderPoint, MAX_DISTANCE_FROM_BORDER)) {
 
+                /* Filter out spots we have tried before and failed at */
+                if (ignore.contains(point)) {
+                    continue;
+                }
+
+                /* Filter out impossible points */
+                if (impossibleSpots.contains(point)) {
+                    continue;
+                }
+
                 /* Filter out already tried points */
                 if (alreadyTried.contains(point)) {
                     continue;
                 }
 
-                /* Don't try the point again */
+                /* Don't try the point again this time */
                 alreadyTried.add(point);
 
                 /* Filter out points that are too close to the edge */
@@ -217,6 +240,13 @@ public class ExpandLandPlayer implements ComputerPlayer {
 
                 /* Filter out points that are too close to existing military buildings */
                 if (tooCloseToMilitaryBuilding(player, point, MIN_DISTANCE_BETWEEN_BARRACKS)) {
+                    continue;
+                }
+
+                /* Check that the point can be connected to the headquarter */
+                if (map.findWayWithExistingRoads(point.downRight(), headquarter.getPosition()) == null &&
+                    Utils.pointToConnectViaToGetToBuilding(player, map, point.downRight(), headquarter) == null) {
+
                     continue;
                 }
 
@@ -306,6 +336,44 @@ public class ExpandLandPlayer implements ComputerPlayer {
             /* Evacuate the building if it's not close to the border */
             if (!borderClose) {
                 building.evacuate();
+            }
+        }
+    }
+
+    void clearNewBuildings() {
+        newBuildings = false;
+    }
+
+    boolean hasNewBuildings() {
+        return newBuildings;
+    }
+
+    void registerBuildings(List<Building> wonBuildings) throws InvalidUserActionException {
+
+        for (Building building : wonBuildings) {
+
+            /* Connect the building to the headquarter if it's not already done */
+            try {
+                if (map.findWayWithExistingRoads(headquarter.getPosition(), building.getPosition()) == null) {
+                    Utils.connectPointToBuilding(player, map, building.getFlag().getPosition(), headquarter);
+                }
+            } catch (Exception e) {
+                
+            }
+        
+            /* Disable promotions if the barracks is not close to the enemy */
+            if (Utils.distanceToKnownEnemiesWithinRange(building, 20) > 9) {
+
+                if (building.isPromotionEnabled()) {
+                    building.disablePromotions();
+                }
+
+            } else {
+
+                /* Upgrade barracks close to the enemy */
+                if (!building.isUpgrading()) {
+                    building.upgrade();
+                }
             }
         }
     }

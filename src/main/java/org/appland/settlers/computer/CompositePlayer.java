@@ -41,10 +41,14 @@ public class CompositePlayer implements ComputerPlayer {
     private final AttackPlayer attackingPlayer;
 
     private ComputerPlayer previousPlayer;
+    private int counter;
+    private final static int PERIODIC_ENEMY_SCAN = 100;
+    private final static int COUNTER_MAX         = 1000;
 
     public CompositePlayer(Player player, GameMap map) {
         this.player = player;
         this.map    = map;
+        counter     = 0;
 
         constructionPlayer = new ConstructionPreparationPlayer(player, map);
         mineralsPlayer     = new SearchForMineralsPlayer(player, map);
@@ -58,19 +62,59 @@ public class CompositePlayer implements ComputerPlayer {
     @Override
     public void turn() throws Exception {
 
+        if (counter > COUNTER_MAX) {
+            counter = 0;
+        } else {
+            counter++;
+        }
+
         /* Determine if there is a need for maintenance */
         if (!constructionPlayer.basicConstructionDone()) {
             constructionPlayer.turn();
+
+            if (previousPlayer != constructionPlayer) {
+                System.out.println(" -- Switched to construction player");
+            }
+
+            previousPlayer = constructionPlayer;
+
         } else if (!mineralsPlayer.allCurrentMineralsKnown()) {
             mineralsPlayer.turn();
+
+            if (previousPlayer != mineralsPlayer) {
+                System.out.println(" -- Switched to minerals player");
+            }
+
+            previousPlayer = mineralsPlayer;
+
         } else if (mineralsPlayer.hasMines() && !foodPlayer.basicFoodProductionDone()) {
             foodPlayer.turn();
+
+            if (previousPlayer != foodPlayer) {
+                System.out.println(" -- Switched to food player");
+            }
+
+            previousPlayer = foodPlayer;
+
         } else if (player.getInventory().get(GOLD) > 0 && !coinPlayer.coinProductionDone()) {
             coinPlayer.turn();
+
+            if (previousPlayer != coinPlayer) {
+                System.out.println(" -- Switched to coin player");
+            }
+
+            previousPlayer = coinPlayer;
+
         } else if (mineralsPlayer.hasCoalMine() &&
                    mineralsPlayer.hasIronMine() &&
                    !foodPlayer.fullFoodProductionDone()) {
             foodPlayer.turn();
+
+            if (previousPlayer != foodPlayer) {
+                System.out.println(" -- Switched to food player");
+            }
+
+            previousPlayer = foodPlayer;
         } else if (mineralsPlayer.hasCoalMine() && 
                    mineralsPlayer.hasIronMine() &&
                    !militaryProducer.productionDone()){
@@ -83,16 +127,40 @@ public class CompositePlayer implements ComputerPlayer {
             }
 
             militaryProducer.turn();
-            previousPlayer = militaryProducer;
-        } else if (Utils.getCloseEnemyBuilding(player) != null) {
 
-            /* Get the building */
+            if (previousPlayer != militaryProducer) {
+                System.out.println(" -- Switched to military player");
+            }
+
+            previousPlayer = militaryProducer;
+        } else if (attackingPlayer.hasWonBuildings()) {
+
+            /* Notify the expanding player about newly acquired enemy buildings */
+            expandingPlayer.registerBuildings(attackingPlayer.getWonBuildings());
+            attackingPlayer.clearWonBuildings();
+        } else if (expandingPlayer.hasNewBuildings() || counter % PERIODIC_ENEMY_SCAN == 0) {
+
+            expandingPlayer.clearNewBuildings();
+
+            /* Look for enemies close by to attack */
             Building enemyBuilding = Utils.getCloseEnemyBuilding(player);
+
+            if (enemyBuilding == null) {
+                return;
+            }
 
             /* Attack if possible */
             if (player.getAvailableAttackersForBuilding(enemyBuilding) > 0) {
                 attackingPlayer.turn();
             }
+
+            expandingPlayer.clearNewBuildings();
+
+            if (previousPlayer != attackingPlayer) {
+                System.out.println(" -- Switched to attacking player");
+            }
+
+            previousPlayer = attackingPlayer;
         } else {
 
             /* Change transport priorities if needed */
@@ -114,6 +182,11 @@ public class CompositePlayer implements ComputerPlayer {
             }
 
             expandingPlayer.turn();
+
+            if (previousPlayer != expandingPlayer) {
+                System.out.println(" -- Switched to expanding player");
+            }
+
             previousPlayer = expandingPlayer;
         }
     }

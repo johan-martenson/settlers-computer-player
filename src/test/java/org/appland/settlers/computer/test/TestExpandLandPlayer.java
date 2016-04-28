@@ -258,9 +258,9 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANCK, 40, map);
-        Utils.adjustInventoryTo(headquarter, STONE, 40, map);
-        Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANCK, 400, map);
+        Utils.adjustInventoryTo(headquarter, STONE, 400, map);
+        Utils.adjustInventoryTo(headquarter, PRIVATE, 400, map);
 
         /* Wait for the player to place a barracks that is close to the edge */
         for (int i = 0; i < 20; i++) {
@@ -275,9 +275,9 @@ public class TestExpandLandPlayer {
                 break;
             }
         }
-            
-        /* Verify that the player barracks again */
-        MoreUtils.verifyPlayerPlacesOnlyBuilding(computerPlayer, map, Barracks.class);
+
+        /* Verify that the player places barracks again */
+        MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Barracks.class, map);
     }
 
     @Test
@@ -375,6 +375,7 @@ public class TestExpandLandPlayer {
         /* Verify that the player does not place barracks too close to the edges */
 
         for (int i = 0; i < 15; i++) {
+
             /* Wait for the player to with place a barracks */
             Barracks barracks = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Barracks.class, map);
 
@@ -654,7 +655,6 @@ public class TestExpandLandPlayer {
 
             /* Check how close the barracks is to the enemy's border */
             if (MoreUtils.distanceToKnownBorder(barracks, player1) < 8) {
-
                 latestBarracks = barracks;
 
                 break;
@@ -696,7 +696,7 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Place the enemy's headquarter */
-        Point point1 = new Point(50, 10);
+        Point point1 = new Point(40, 10);
         Headquarter headquarter1 = map.placeBuilding(new Headquarter(player1), point1);
 
         /* Give the player extra building materials and militaries */
@@ -711,24 +711,27 @@ public class TestExpandLandPlayer {
 
             /* Wait for the player to with place a barracks */
             Barracks barracks = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Barracks.class, map);
-            System.out.println("I: " + i);
+
             MoreUtils.waitForBuildingToGetConstructed(computerPlayer, map, barracks);
+
+            /* Check how close the barracks is to the enemy's border */
+            if (MoreUtils.distanceToKnownBorder(barracks, player1) < 8) {
+                latestBarracks = barracks;
+                break;
+            }
+
             assertNotNull(map.findWayWithExistingRoads(headquarter.getPosition(), barracks.getPosition()));
             assertTrue(barracks.needsMilitaryManning());
             assertTrue(headquarter.getAmount(Material.PRIVATE) > 10);
+
             /* Wait for the barracks to be occupied */
             MoreUtils.waitForBuildingToGetOccupied(computerPlayer, map, barracks);
 
             assertTrue(barracks.getHostedMilitary() > 0);
-
-            /* Check how close the barracks is to the enemy's border */
-            if (MoreUtils.distanceToKnownBorder(barracks, player1) < 8) {
-
-                latestBarracks = barracks;
-
-                break;
-            }
         }
+
+        map.stepTime();
+        computerPlayer.turn();
 
         assertNotNull(latestBarracks);
         assertTrue(latestBarracks.isUpgrading());

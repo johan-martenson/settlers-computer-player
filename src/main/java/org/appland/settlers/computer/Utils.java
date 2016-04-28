@@ -160,6 +160,16 @@ public class Utils {
     }
 
     static Road connectPointToBuilding(Player player, GameMap map, Point start, Building building2) throws InvalidRouteException, Exception {
+        Point via = pointToConnectViaToGetToBuilding(player, map, start, building2);
+
+        if (via != null) {
+            return map.placeAutoSelectedRoad(player, start, via);
+        }
+
+        return null;
+    }
+
+    static Point pointToConnectViaToGetToBuilding(Player player, GameMap map, Point start, Building building2) throws Exception {
         Point end = building2.getFlag().getPosition();
 
         /* Return directly if they are already connected */
@@ -209,18 +219,18 @@ public class Utils {
             List<Point> path = map.findAutoSelectedRoad(player, start, end, null);
 
             if (path != null) {
-                return map.placeRoad(player, path);
+                return end;
             }
         }
 
         /* Connect via the nearby flag if it existed */
         if (viaPoint != null) {
-            return map.placeAutoSelectedRoad(player, start, viaPoint);
+            return viaPoint;
         }
 
         /* Try to connect directly to the headquarter */
         if (map.findAutoSelectedRoad(player, start, end, null) != null) {
-            return map.placeAutoSelectedRoad(player, start, end);
+            return end;
         }
 
         return null;
@@ -297,7 +307,6 @@ public class Utils {
 
     public static void repairConnection(GameMap map, Player player, Flag from, Flag to) throws Exception {
 
-        System.out.println("Repairing connection");
         /* Get the connected flags on each side */
         Set<Flag> fromFlags = findConnectedFlags(map, from);
         Set<Flag> toFlags   = findConnectedFlags(map, to);
@@ -554,8 +563,40 @@ public class Utils {
             }
 
             /* Filter points not belonging to an enemy */
+
+            /* Other players' borders */
+            boolean enemyBorder = false;
+            for (Player enemyPlayer : map.getPlayers()) {
+
+                if (enemyPlayer.equals(player)) {
+                    continue;
+                }
+
+                for (Collection<Point> borderPoints : enemyPlayer.getBorders()) {
+                    for (Point borderPoint : borderPoints) {
+
+                        if (!player.getDiscoveredLand().contains(borderPoint)) {
+                            continue;
+                        }
+
+                        if (p.equals(borderPoint)) {
+                            enemyBorder = true;
+
+                            break;
+                        }
+                    }
+                }
+            }
+
             Player playerAtPoint = player.getPlayerAtPoint(p);
-            if (playerAtPoint == null || playerAtPoint == player) {
+
+            /* Filter out no-man's land */
+            if (playerAtPoint == null && !enemyBorder) {
+                continue;
+            }
+
+            /* Filter out the player's own land */
+            if (!enemyBorder && playerAtPoint.equals(player)) {
                 continue;
             }
 

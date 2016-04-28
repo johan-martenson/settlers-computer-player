@@ -5,6 +5,7 @@
  */
 package org.appland.settlers.computer;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.GameMap;
@@ -16,10 +17,12 @@ import org.appland.settlers.model.Player;
  * @author johan
  */
 public class AttackPlayer implements ComputerPlayer {
-    private final GameMap map;
-    private final Player  player;
-    private State         state;
-    private Headquarter   headquarter;
+    private final GameMap  map;
+    private final Player   player;
+    private State          state;
+    private Headquarter    headquarter;
+    private List<Building> recentlyWonBuildings;
+    private Building       buildingUnderAttack;
 
     enum State {
         INITIAL_STATE, 
@@ -32,6 +35,9 @@ public class AttackPlayer implements ComputerPlayer {
         map    = m;
 
         state = State.INITIAL_STATE;
+
+        buildingUnderAttack = null;
+        recentlyWonBuildings = new ArrayList<>();
     }
 
     @Override
@@ -66,6 +72,18 @@ public class AttackPlayer implements ComputerPlayer {
 
             /* Change state to attacking */
             state = State.ATTACKING;
+
+            buildingUnderAttack = buildingToAttack;
+        } else if (state == State.ATTACKING) {
+
+            /* Check if the attack is finished */
+            if (!buildingUnderAttack.isUnderAttack()) {
+                state = State.LOOK_FOR_BUILDINGS_TO_ATTACK;
+
+                if (buildingUnderAttack.getPlayer().equals(player)) {
+                    recentlyWonBuildings.add(buildingUnderAttack);
+                }
+            }
         }
 
         /* Print the old and new state if the state changed */
@@ -100,5 +118,18 @@ public class AttackPlayer implements ComputerPlayer {
         }
 
         return null;
+    }
+
+
+    boolean hasWonBuildings() {
+        return !recentlyWonBuildings.isEmpty();
+    }
+
+    void clearWonBuildings() {
+        recentlyWonBuildings.clear();
+    }
+
+    public List<Building> getWonBuildings() {
+        return recentlyWonBuildings;
     }
 }

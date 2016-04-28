@@ -179,7 +179,8 @@ public class MoreUtils {
             for (Point p : border) {
                 double tmpDistance = barracks.getPosition().distance(p);
 
-                if (barracks.getPlayer().getDiscoveredLand().contains(p) && tmpDistance < distance) {
+                if (barracks.getPlayer().getDiscoveredLand().contains(p) && 
+                    tmpDistance < distance) {
                     distance = tmpDistance;
                 }
             }
