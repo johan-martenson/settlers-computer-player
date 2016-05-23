@@ -109,7 +109,7 @@ public class Utils {
         }
     }
 
-    public static double getDistanceToBorder(Point position, Player player0) {
+    public static double getDistanceToOwnBorder(Point position, Player player0) {
         double distance = Double.MAX_VALUE;
 
         for (Collection<Point> border : player0.getBorders()) {
@@ -639,7 +639,7 @@ public class Utils {
             }
 
             /* Find out the distance to the closest military building */
-            double tmpDistanceToBorder = getDistanceToBorder(p, player);
+            double tmpDistanceToBorder = getDistanceToOwnBorder(p, player);
 
             if (tmpDistanceToBorder < distanceToBorder) {
                 closeEnemyBuilding = tmpBuilding;

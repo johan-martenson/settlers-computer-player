@@ -118,6 +118,17 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
                 }
             }
 
+            /* Update points to investigate */
+            List<Point> noLongerValid = new LinkedList<>();
+
+            for (Point p : pointsToInvestigate) {
+                if (!isAvailableForSign(p)) {
+                    noLongerValid.add(p);
+                }
+            }
+
+            pointsToInvestigate.removeAll(noLongerValid);
+
             if (pointsToInvestigate.isEmpty()) {
                 state = State.ALL_CURRENTLY_CONCLUDED;
             } else {
@@ -318,5 +329,38 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
 
     boolean hasMines() {
         return !activeMines.isEmpty();
+    }
+
+    private boolean isAvailableForSign(Point p) {
+
+        if (!map.getTerrain().isOnMountain(p)) {
+            return false;
+        }
+
+        if (map.isBuildingAtPoint(p)) {
+            return false;
+        }
+
+        if (map.isCropAtPoint(p)) {
+            return false;
+        }
+
+        if (map.isFlagAtPoint(p)) {
+            return false;
+        }
+
+        if (map.isSignAtPoint(p)) {
+            return false;
+        }
+
+        if (map.isStoneAtPoint(p)) {
+            return false;
+        }
+
+        if (map.isTreeAtPoint(p)) {
+            return false;
+        }
+
+        return true;
     }
 }

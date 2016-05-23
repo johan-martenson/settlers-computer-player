@@ -1,6 +1,5 @@
 package org.appland.settlers.computer;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -23,12 +22,13 @@ public class ExpandLandPlayer implements ComputerPlayer {
     private final List<Building> placedBarracks;
     private final GameMap        map;
     private final Player         player;
+    private final Set<Point>     impossibleSpots;
 
-    private Barracks    unfinishedBarracks;
+    private Building    unfinishedBarracks;
     private Headquarter headquarter;
     private State       state;
     private boolean     newBuildings;
-    private final Set<Point>  impossibleSpots;
+    int                 counter;
 
     private enum State {
         INITIAL_STATE, 
@@ -37,6 +37,8 @@ public class ExpandLandPlayer implements ComputerPlayer {
         BUILDING_NOT_CONNECTED
     }
 
+    private final static int MAX_PERIOD = 1000;
+    private final static int MAINTENANCE_PERIOD = 50;
     private final static int MIN_DISTANCE_BETWEEN_BARRACKS = 4;
     private final static int GOOD_DISTANCE_BETWEEN_BARRACKS = 10;
     private final static int MAX_DISTANCE_FROM_BORDER = 3;
@@ -60,6 +62,21 @@ public class ExpandLandPlayer implements ComputerPlayer {
     public void turn() throws Exception {
         State stateBefore = state;
 
+        if (counter % MAINTENANCE_PERIOD == 0) {
+            System.out.println("RUNNING MAINTENANCE, EVACUATING WHERE POSSIBLE");
+            evacuateWherePossible(player);
+        }
+
+        if (counter == MAX_PERIOD) {
+            counter = 0;
+        } else {
+            counter++;
+        }
+
+        if (unfinishedBarracks != null) {
+            unfinishedBarracks = (Building)map.getBuildingAtPoint(unfinishedBarracks.getPosition());
+        }
+
         /* Start with finding the headquarter */
         if (state == State.INITIAL_STATE) {
 
@@ -81,11 +98,23 @@ public class ExpandLandPlayer implements ComputerPlayer {
             /* Place barracks */
             unfinishedBarracks = map.placeBuilding(new Barracks(player), site);
 
+            System.out.println("\n\nPlaced barracks at: " + site);
+
             /* Connect the barracks with the headquarter */
             Road road = Utils.connectPointToBuilding(player, map, unfinishedBarracks.getFlag().getPosition(), headquarter);
 
+            List<Point> myPath = map.findWayWithExistingRoads(headquarter.getPosition(), site);
+            if (myPath == null) {
+                System.out.println("\nBarracks at " + site + " is not connected!");
+            }
+
             /* Place flags where possible */
             Utils.fillRoadWithFlags(map, road);
+
+            myPath = map.findWayWithExistingRoads(headquarter.getPosition(), site);
+            if (myPath == null) {
+                System.out.println("\nBarracks at " + site + " is not connected after filling with flags!");
+            }
 
             /* Change state to wait for the barracks to be ready and occupied */
             state = State.WAITING_FOR_CONSTRUCTION;
@@ -110,7 +139,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
                 } else {
 
                     /* Upgrade barracks close to the enemy */
-                    if (!unfinishedBarracks.isUpgrading()) {
+                    if (unfinishedBarracks instanceof Barracks && !unfinishedBarracks.isUpgrading()) {
                         unfinishedBarracks.upgrade();
                     }
                 }
@@ -137,6 +166,11 @@ public class ExpandLandPlayer implements ComputerPlayer {
                 state = State.BUILDING_NOT_CONNECTED;
             }
         } else if (state == State.BUILDING_NOT_CONNECTED) {
+            System.out.println("\nRepairing: " + unfinishedBarracks.getFlag().getPosition() + " to " +
+                    headquarter.getFlag().getPosition());
+            System.out.println(" - On map: " + map.getBuildingAtPoint(unfinishedBarracks.getPosition()));
+            System.out.println(" - On map: " + map.getBuildingAtPoint(headquarter.getPosition()));
+            System.out.println(" - Connection now: " + map.findWayWithExistingRoads(headquarter.getPosition(), unfinishedBarracks.getPosition()));
 
             /* Try to repair the connection */
             Utils.repairConnection(map, player, unfinishedBarracks.getFlag(), headquarter.getFlag());
@@ -293,7 +327,10 @@ public class ExpandLandPlayer implements ComputerPlayer {
     private void evacuateWherePossible(Player player) throws Exception {
 
         /* Go through the buildings and evacuate where possible */
-        for (Building building : placedBarracks) {
+        for (Building storedBuilding : placedBarracks) {
+
+            /* Cater for upgrades */
+            Building building = map.getBuildingAtPoint(storedBuilding.getPosition());
 
             /* Only investigate military buildings */
             if (!building.isMilitaryBuilding()) {
@@ -355,7 +392,13 @@ public class ExpandLandPlayer implements ComputerPlayer {
             /* Connect the building to the headquarter if it's not already done */
             try {
                 if (map.findWayWithExistingRoads(headquarter.getPosition(), building.getPosition()) == null) {
-                    Utils.connectPointToBuilding(player, map, building.getFlag().getPosition(), headquarter);
+                    Road road = Utils.connectPointToBuilding(player, map, building.getFlag().getPosition(), headquarter);
+
+                    if (road != null) {
+                        Utils.fillRoadWithFlags(map, road);
+                    } else {
+                        System.out.println("Could not place road for newly registered barracks at " + building.getPosition());
+                    }
                 }
             } catch (Exception e) {
                 
@@ -374,6 +417,11 @@ public class ExpandLandPlayer implements ComputerPlayer {
                 if (!building.isUpgrading()) {
                     building.upgrade();
                 }
+            }
+
+            /* Treat these as regular buildings placed by the expand land player */
+            if (!placedBarracks.contains(building)) {
+                placedBarracks.add(building);
             }
         }
     }

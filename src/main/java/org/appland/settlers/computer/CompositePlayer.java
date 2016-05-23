@@ -6,10 +6,14 @@
 package org.appland.settlers.computer;
 
 import org.appland.settlers.model.Building;
+import org.appland.settlers.model.CoalMine;
 import org.appland.settlers.model.GameMap;
+import org.appland.settlers.model.GoldMine;
+import org.appland.settlers.model.IronMine;
 import static org.appland.settlers.model.Material.BEER;
 import static org.appland.settlers.model.Material.BREAD;
 import static org.appland.settlers.model.Material.COAL;
+import static org.appland.settlers.model.Material.COIN;
 import static org.appland.settlers.model.Material.FISH;
 import static org.appland.settlers.model.Material.FLOUR;
 import static org.appland.settlers.model.Material.GOLD;
@@ -43,7 +47,9 @@ public class CompositePlayer implements ComputerPlayer {
     private ComputerPlayer previousPlayer;
     private int counter;
     private final static int PERIODIC_ENEMY_SCAN = 100;
+    private final static int PERIODIC_PRIO_SCAN  = 100;
     private final static int COUNTER_MAX         = 1000;
+    private final static int ATTACK_FOLLOW_UP    = 20;
 
     public CompositePlayer(Player player, GameMap map) {
         this.player = player;
@@ -133,7 +139,18 @@ public class CompositePlayer implements ComputerPlayer {
             }
 
             previousPlayer = militaryProducer;
+        } else if (attackingPlayer.isAttacking() && counter % ATTACK_FOLLOW_UP == 0) {
+
+            if (previousPlayer != attackingPlayer) {
+                System.out.println(" -- Switched to attacking player");
+            }
+
+            attackingPlayer.turn();
+
+            previousPlayer = attackingPlayer;
         } else if (attackingPlayer.hasWonBuildings()) {
+            System.out.println("\nComposite player: Has won building\n");
+            System.out.println("  " + attackingPlayer.getWonBuildings());
 
             /* Notify the expanding player about newly acquired enemy buildings */
             expandingPlayer.registerBuildings(attackingPlayer.getWonBuildings());
@@ -146,39 +163,44 @@ public class CompositePlayer implements ComputerPlayer {
             Building enemyBuilding = Utils.getCloseEnemyBuilding(player);
 
             if (enemyBuilding == null) {
+                System.out.println("Composite player: No close enemy to attack");
                 return;
             }
 
             /* Attack if possible */
             if (player.getAvailableAttackersForBuilding(enemyBuilding) > 0) {
+                System.out.println("Composite player: Can attack");
                 attackingPlayer.turn();
-            }
 
-            expandingPlayer.clearNewBuildings();
-
-            if (previousPlayer != attackingPlayer) {
-                System.out.println(" -- Switched to attacking player");
+                if (previousPlayer != attackingPlayer) {
+                    System.out.println(" -- Switched to attacking player");
+                }
+            } else {
+                System.out.println("Composite player: Cannot attack enemy at " + enemyBuilding.getPosition());
             }
 
             previousPlayer = attackingPlayer;
         } else {
 
+            player.setFoodQuota(CoalMine.class, 1);
+            player.setFoodQuota(GoldMine.class, 1);
+            player.setFoodQuota(IronMine.class, 1);
+
+            if (player.getInventory().get(COAL) < 5) {
+                player.setFoodQuota(CoalMine.class, 10);
+            }
+
+            if (player.getInventory().get(GOLD) < 5) {
+                player.setFoodQuota(GoldMine.class, 10);
+            }
+
+            if (player.getInventory().get(IRON) < 5) {
+                player.setFoodQuota(IronMine.class, 10);
+            }
+
             /* Change transport priorities if needed */
-            if (previousPlayer != expandingPlayer) {
-                player.setTransportPriority(0, GOLD);
-                player.setTransportPriority(1, SHIELD);
-                player.setTransportPriority(2, SWORD);
-                player.setTransportPriority(3, IRON_BAR);
-                player.setTransportPriority(4, BEER);
-                player.setTransportPriority(5, COAL);
-                player.setTransportPriority(6, IRON);
-                player.setTransportPriority(7, WHEAT);
-                player.setTransportPriority(8, WATER);
-                player.setTransportPriority(9, MEAT);
-                player.setTransportPriority(10, BREAD);
-                player.setTransportPriority(11, FISH);
-                player.setTransportPriority(11, FLOUR);
-                player.setTransportPriority(11, WATER);
+            if (previousPlayer != expandingPlayer || counter % PERIODIC_PRIO_SCAN == 0) {
+                tuneTransportPriorities();
             }
 
             expandingPlayer.turn();
@@ -194,5 +216,82 @@ public class CompositePlayer implements ComputerPlayer {
     @Override
     public Player getControlledPlayer() {
         return player;
+    }
+
+    private void tuneTransportPriorities() {
+
+        /* Create a baseline for materials that tend to overflow */
+
+        player.setTransportPriority(0, GOLD);
+        player.setTransportPriority(1, SHIELD);
+        player.setTransportPriority(2, SWORD);
+        player.setTransportPriority(4, PLANCK);
+        player.setTransportPriority(3, IRON_BAR);
+        player.setTransportPriority(5, COAL);
+        player.setTransportPriority(6, STONE);
+        player.setTransportPriority(7, IRON);
+        player.setTransportPriority(8, MEAT);
+        player.setTransportPriority(9, BREAD);
+        player.setTransportPriority(10, FISH);
+        player.setTransportPriority(11, FLOUR);
+        player.setTransportPriority(12, WHEAT);
+        player.setTransportPriority(13, PLANCK);
+        player.setTransportPriority(14, BEER);
+        player.setTransportPriority(15, WOOD);
+        player.setTransportPriority(16, WATER);
+
+        /* Main priority: GOLD, PRIVATE, PLANCKS, STONES
+           Handle backwards to get the priority right 
+        */
+
+        /* First stones */
+        if (player.getInventory().get(STONE) < 20) {
+            player.setTransportPriority(0, STONE);
+        }
+
+        /* Then plancks */
+        if (player.getInventory().get(PLANCK) < 20) {
+            player.setTransportPriority(0, PLANCK);
+            player.setTransportPriority(1, WOOD);
+        }
+
+        /* Then privates - handle beer */
+        if (player.getInventory().get(BEER) < 5) {
+            player.setTransportPriority(0, BEER);
+            player.setTransportPriority(1, WATER);
+            player.setTransportPriority(2, WHEAT);
+        }
+
+        /* Then privates - handle weapons */
+        if (player.getInventory().get(BEER) > 10) {
+            player.setTransportPriority(0, SWORD);
+            player.setTransportPriority(1, SHIELD);
+
+            player.setTransportPriority(2, IRON_BAR);
+
+            if (player.getInventory().get(IRON_BAR) < 5) {
+                player.setTransportPriority(3, COAL);
+                player.setTransportPriority(4, IRON);
+
+                player.setTransportPriority(5, BREAD);
+                player.setTransportPriority(6, FISH);
+                player.setTransportPriority(7, MEAT);
+
+                if (player.getInventory().get(BREAD) < 5) {
+                    player.setTransportPriority(8, FLOUR);
+                    player.setTransportPriority(9, WATER);
+
+                    if (player.getInventory().get(FLOUR) < 5) {
+                        player.setTransportPriority(10, WHEAT);
+                    }
+                }
+            }
+        }
+
+        /* Then gold */
+        if (player.getInventory().get(COIN) < 5) {
+            player.setTransportPriority(0, COAL);
+            player.setTransportPriority(1, GOLD);
+        }
     }
 }

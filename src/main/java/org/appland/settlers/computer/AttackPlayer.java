@@ -17,17 +17,19 @@ import org.appland.settlers.model.Player;
  * @author johan
  */
 public class AttackPlayer implements ComputerPlayer {
-    private final GameMap  map;
-    private final Player   player;
+    private final GameMap        map;
+    private final Player         player;
+    private final List<Building> recentlyWonBuildings;
+
     private State          state;
     private Headquarter    headquarter;
-    private List<Building> recentlyWonBuildings;
     private Building       buildingUnderAttack;
 
     enum State {
         INITIAL_STATE, 
         LOOK_FOR_BUILDINGS_TO_ATTACK, 
         ATTACKING,
+        WAITING_FOR_ATTACK_TO_START
     }
 
     public AttackPlayer(Player p, GameMap m) {
@@ -67,13 +69,17 @@ public class AttackPlayer implements ComputerPlayer {
                 return;
             }
 
+            /* Change state to attacking */
+            state = State.WAITING_FOR_ATTACK_TO_START;
+            buildingUnderAttack = buildingToAttack;
+
             /* Attack the identified building */
             player.attack(buildingToAttack, player.getAvailableAttackersForBuilding(buildingToAttack));
+        } else if (state == State.WAITING_FOR_ATTACK_TO_START) {
 
-            /* Change state to attacking */
-            state = State.ATTACKING;
-
-            buildingUnderAttack = buildingToAttack;
+            if (buildingUnderAttack.isUnderAttack()) {
+                state = State.ATTACKING;
+            }
         } else if (state == State.ATTACKING) {
 
             /* Check if the attack is finished */
@@ -81,8 +87,15 @@ public class AttackPlayer implements ComputerPlayer {
                 state = State.LOOK_FOR_BUILDINGS_TO_ATTACK;
 
                 if (buildingUnderAttack.getPlayer().equals(player)) {
+
+                    System.out.println("Attack player: Adding won building at " + buildingUnderAttack.getPosition() + " to list");
+
                     recentlyWonBuildings.add(buildingUnderAttack);
                 }
+
+                state = State.LOOK_FOR_BUILDINGS_TO_ATTACK;
+
+                buildingUnderAttack = null;
             }
         }
 
@@ -131,5 +144,9 @@ public class AttackPlayer implements ComputerPlayer {
 
     public List<Building> getWonBuildings() {
         return recentlyWonBuildings;
+    }
+
+    boolean isAttacking() {
+        return state == State.ATTACKING || state == State.WAITING_FOR_ATTACK_TO_START;
     }
 }

@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.List;
 import org.appland.settlers.computer.ComputerPlayer;
 import org.appland.settlers.computer.ExpandLandPlayer;
-import static org.appland.settlers.computer.Utils.getDistanceToBorder;
 import org.appland.settlers.model.Barracks;
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.GameMap;
@@ -32,6 +31,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.appland.settlers.computer.Utils.getDistanceToOwnBorder;
 
 /**
  *
@@ -112,7 +112,7 @@ public class TestExpandLandPlayer {
         Barracks barracks = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Barracks.class, map);
 
         /* Verify that the barracks is close to the border */
-        double distance = getDistanceToBorder(barracks.getPosition(), player0);
+        double distance = getDistanceToOwnBorder(barracks.getPosition(), player0);
 
         assertTrue(distance < 3);
     }
