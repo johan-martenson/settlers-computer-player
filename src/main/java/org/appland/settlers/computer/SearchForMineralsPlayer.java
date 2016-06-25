@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.CoalMine;
+import org.appland.settlers.model.Countdown;
 import org.appland.settlers.model.Flag;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Geologist;
@@ -38,13 +39,15 @@ import org.appland.settlers.model.Worker;
  */
 public class SearchForMineralsPlayer implements ComputerPlayer {
     private final int RANGE_BETWEEN_FLAG_AND_POINT = 5;
+    private final int GEOLOGIST_WAIT_TIMEOUT = 200;
 
-    private final Player controlledPlayer;
-    private final GameMap map;
-    private final Set<Point> concludedPoints;
-    private final Set<Point> pointsToInvestigate;
-    private final Map<Point, Material> foundMinerals;
+    private final Player                 controlledPlayer;
+    private final GameMap                map;
+    private final Set<Point>             concludedPoints;
+    private final Set<Point>             pointsToInvestigate;
+    private final Map<Point, Material>   foundMinerals;
     private final Map<Material, Integer> activeMines;
+    private final Countdown              countdown;
 
     private State     state;
     private Building  headquarter;
@@ -75,12 +78,14 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
         activeMines.put(COAL, 0);
         activeMines.put(STONE, 0);
 
+        countdown = new Countdown();
+
         state = State.INITIALIZING;
     }
 
     @Override
     public void turn() throws Exception {
-
+        System.out.println(" -- Mineral player state: " + state);
         if (state == State.INITIALIZING) {
 
             for (Building building : controlledPlayer.getBuildings()) {
@@ -130,6 +135,8 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
             pointsToInvestigate.removeAll(noLongerValid);
 
             if (pointsToInvestigate.isEmpty()) {
+                System.out.println(" - Has investigated all available spots");
+
                 state = State.ALL_CURRENTLY_CONCLUDED;
             } else {
 
@@ -174,6 +181,9 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
 
                         flag.callGeologist();
 
+                        /* Set a countdown for how long to wait for the geologist */
+                        countdown.countFrom(GEOLOGIST_WAIT_TIMEOUT);
+
                         break;
                     }
                 }
@@ -193,6 +203,14 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
 
                     break;
                 }
+            }
+
+            if (countdown.reachedZero()) {
+
+                /* Give up on waiting for the geologist if the timeout expired */
+                state = State.LOOKING_FOR_MINERALS;
+            } else {
+                countdown.step();
             }
         } else if (state == State.WAITING_FOR_GEOLOGY_RESULTS) {
 

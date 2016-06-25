@@ -102,7 +102,7 @@ public class MoreUtils {
     }
 
     public static void waitForStoneToRunOut(ComputerPlayer computerPlayer, GameMap map, Stone stone) throws Exception {
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 20000; i++) {
 
             computerPlayer.turn();
 
