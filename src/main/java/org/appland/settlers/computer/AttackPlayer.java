@@ -81,8 +81,7 @@ public class AttackPlayer implements ComputerPlayer {
 
             /* Attack the identified building */
             player.attack(buildingToAttack, player.getAvailableAttackersForBuilding(buildingToAttack));
-            System.out.println(" - Attacking " + buildingToAttack);
-            System.out.println("   - Owned by " + buildingToAttack.getPlayer().getName());
+            System.out.println(" - Attacking " + buildingToAttack + ", owned by " + buildingToAttack.getPlayer().getName());
         } else if (state == State.WAITING_FOR_ATTACK_TO_START) {
 
             if (buildingUnderAttack == null) {
@@ -98,14 +97,14 @@ public class AttackPlayer implements ComputerPlayer {
                 state = State.ATTACKING;
             }
         } else if (state == State.ATTACKING) {
-            System.out.println("Building still under attack: " + buildingUnderAttack.isUnderAttack());
+
             /* Check if the attack is finished */
             if (!buildingUnderAttack.isUnderAttack()) {
                 state = State.LOOK_FOR_BUILDINGS_TO_ATTACK;
 
                 if (buildingUnderAttack.getPlayer().equals(player)) {
 
-                    System.out.println("Attack player: Adding won building at " + buildingUnderAttack.getPosition() + " to list");
+                    System.out.println(" - Attack player: Adding won building at " + buildingUnderAttack.getPosition() + " to list");
 
                     recentlyWonBuildings.add(buildingUnderAttack);
                 }

@@ -180,7 +180,6 @@ public class CompositePlayer implements ComputerPlayer {
                 /* Wait to get a chance to get promoted soldiers before attacking */
                 if (countdown.isActive()) {
                     if (!countdown.reachedZero()) {
-                        System.out.println("Attack countdown now at: " + countdown.getCount());
                         countdown.step();
 
                         return;

@@ -71,7 +71,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
         State stateBefore = state;
 
         if (counter % MAINTENANCE_PERIOD == 0) {
-            System.out.println("RUNNING MAINTENANCE, EVACUATING WHERE POSSIBLE");
+            System.out.println(" - Evacuating where possible");
             evacuateWherePossible(player);
         }
 
