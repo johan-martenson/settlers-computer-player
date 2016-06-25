@@ -22,7 +22,7 @@ import org.appland.settlers.model.Well;
  * @author johan
  */
 public class FoodProducer implements ComputerPlayer {
-    private final int RANGE_FISHERY_TO_WATER = 3;
+    private final int RANGE_FISHERY_TO_WATER = 5;
 
     private final Player          controlledPlayer;
     private final GameMap         map;
@@ -41,6 +41,7 @@ public class FoodProducer implements ComputerPlayer {
         NEEDS_FOOD,
         BUILD_FISHERY, 
         WAITING_FOR_FISHERY, 
+        BUILDING_FISHERY_FAILED,
         BUILD_HUNTER_HUT, 
         WAITING_FOR_HUNTER_HUT,
         NEEDS_BREAD
@@ -76,10 +77,10 @@ public class FoodProducer implements ComputerPlayer {
             if (headquarter != null) {
                 state = State.NEEDS_FOOD;
             }
-        } else if (state == State.NEEDS_FOOD) {
+        } else if (state == State.NEEDS_FOOD || state == State.BUILDING_FISHERY_FAILED) {
 
             /* Try to build a fishery if there isn't already one placed */
-            if (fisheries.isEmpty()) {
+            if (fisheries.isEmpty() && state != State.BUILDING_FISHERY_FAILED) {
                 state = State.BUILD_FISHERY;
             } else if (hunterHuts.isEmpty()) {
                 state = State.BUILD_HUNTER_HUT;
@@ -90,6 +91,10 @@ public class FoodProducer implements ComputerPlayer {
             Point pointForFishery = findPointForFishery();
 
             if (pointForFishery == null) {
+                System.out.println(" -- No place available for fishery");
+
+                state = State.BUILDING_FISHERY_FAILED;
+
                 return;
             }
 

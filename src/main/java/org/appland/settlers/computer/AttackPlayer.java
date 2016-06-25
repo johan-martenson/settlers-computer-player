@@ -44,9 +44,14 @@ public class AttackPlayer implements ComputerPlayer {
 
     @Override
     public void turn() throws Exception {
-
+        System.out.println(" - State: " + state);
         /* Record the state before the turn */
         State stateBefore = state;
+
+        /* Update the building under attack in case it was upgraded */
+        if (buildingUnderAttack != null) {
+            buildingUnderAttack = map.getBuildingAtPoint(buildingUnderAttack.getPosition());
+        }
 
         /* Start with finding the headquarte */
         if (state == State.INITIAL_STATE) {
@@ -66,6 +71,7 @@ public class AttackPlayer implements ComputerPlayer {
 
             /* Keep looking for buildings to attack if there is no building now */
             if (buildingToAttack == null) {
+                System.out.println(" - Nothing to attack");
                 return;
             }
 
@@ -75,13 +81,16 @@ public class AttackPlayer implements ComputerPlayer {
 
             /* Attack the identified building */
             player.attack(buildingToAttack, player.getAvailableAttackersForBuilding(buildingToAttack));
+            System.out.println(" - Attacking " + buildingToAttack);
+            System.out.println("   - Owned by " + buildingToAttack.getPlayer().getName());
         } else if (state == State.WAITING_FOR_ATTACK_TO_START) {
 
             if (buildingUnderAttack.isUnderAttack()) {
+                System.out.println(" - Attack has started");
                 state = State.ATTACKING;
             }
         } else if (state == State.ATTACKING) {
-
+            System.out.println("Building still under attack: " + buildingUnderAttack.isUnderAttack());
             /* Check if the attack is finished */
             if (!buildingUnderAttack.isUnderAttack()) {
                 state = State.LOOK_FOR_BUILDINGS_TO_ATTACK;
