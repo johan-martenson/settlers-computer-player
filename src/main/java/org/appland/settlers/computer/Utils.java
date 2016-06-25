@@ -448,7 +448,7 @@ public class Utils {
 	    return result;
 	}
 
-	public static Point findPointForBuildingCloseToPoint(Point point, Size neededSize, Player controlledPlayer, GameMap map) throws Exception {
+    public static Point findPointForBuildingCloseToPoint(Point point, Size neededSize, Player controlledPlayer, GameMap map) throws Exception {
 
         /* Find a good point to build on, close to the given point */
         Point site = null;
@@ -474,7 +474,7 @@ public class Utils {
         }
 
         return site;
-	}
+    }
 
     static <T extends Building> boolean listContainsAtLeastOneReadyBuilding(List<T> wells) {
         for (T b : wells) {
@@ -514,24 +514,25 @@ public class Utils {
                map.getBuildingAtPoint(building.getPosition()).equals(building);
     }
 
-    static <T extends Building> T placeBuilding(Player player, Headquarter headquarter, T building) throws Exception {
+    static <T extends Building> T placeBuilding(Player player, Building buildingCloseBy, T building) throws Exception {
 
         GameMap map  = player.getMap();
         Size    size = building.getSize();
 
         /* Find a spot for the building */
-        Point location = Utils.findPointForBuildingCloseToPoint(headquarter.getPosition(), size, player, map);
+        Point location = Utils.findPointForBuildingCloseToPoint(buildingCloseBy.getPosition(), size, player, map);
 
         /* Return null if we couldn't place the building */
         if (location == null) {
             return null;
         }
 
+        System.out.println("Placing " + buildingCloseBy + " at " + location);
         /* Place the building on the map */
         map.placeBuilding(building, location);
 
         /* Connect the farm with the headquarter */
-        Road road = Utils.connectPointToBuilding(player, map, building.getFlag().getPosition(), headquarter);
+        Road road = Utils.connectPointToBuilding(player, map, building.getFlag().getPosition(), buildingCloseBy);
 
         /* Fill the road with flags */
         Utils.fillRoadWithFlags(map, road);
@@ -544,12 +545,17 @@ public class Utils {
         GameMap map      = building.getMap();
         Point   center   = building.getPosition();
         Player  player   = building.getPlayer();
+
+        return distanceToKnownEnemiesWithinRange(map, player, center, range);
+    }
+
+    static int distanceToKnownEnemiesWithinRange(GameMap map, Player player, Point point, int range) {
         double  distance = Double.MAX_VALUE;
 
         /* Walk through surrounding points and find the closest point belonging
            to an enemy
         */
-        for (Point p : map.getPointsWithinRadius(center, range)) {
+        for (Point p : map.getPointsWithinRadius(point, range)) {
 
             /* Ignore un-discovered points */
             if (!player.getDiscoveredLand().contains(p)) {
@@ -557,7 +563,7 @@ public class Utils {
             }
 
             /* Ignore points further away than the current distance */
-            double tmpDistance = center.distance(p);
+            double tmpDistance = point.distance(p);
             if (tmpDistance >= distance) {
                 continue;
             }

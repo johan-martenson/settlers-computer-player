@@ -24,7 +24,8 @@ import org.appland.settlers.model.Woodcutter;
  */
 public class ConstructionPreparationPlayer implements ComputerPlayer {
     private ForesterHut foresterHut;
-    private Woodcutter  woodcutter;
+    private Woodcutter  woodcutter0;
+    private Woodcutter  woodcutter1;
     private Headquarter headquarter;
     private Sawmill     sawmill;
     private Quarry      quarry;
@@ -50,15 +51,29 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
 
             /* Place a forester hut */
             foresterHut = Utils.placeBuilding(player, headquarter, new ForesterHut(player));
-        } else if (foresterDone() && noWoodcutter()) {
+            System.out.println(" - Built forester at " + foresterHut.getPosition());
+        } else if (woodCuttersNotPlaced()) {
 
             /* Place the woodcutter */
-            woodcutter = Utils.placeBuilding(player, headquarter, new Woodcutter(player));
-        } else if (woodcutterDone() && noSawmill()) {
+            if (!Utils.buildingInPlace(woodcutter0)) {
+                woodcutter0 = Utils.placeBuilding(player, foresterHut, new Woodcutter(player));
+
+                System.out.println(" - Built woodcutter at " + woodcutter0.getPosition());
+            }
+            
+            /* Place the woodcutter */
+            if (!Utils.buildingInPlace(woodcutter1)) {
+                woodcutter1 = Utils.placeBuilding(player, foresterHut, new Woodcutter(player));
+
+                System.out.println(" - Built woodcutter at " + woodcutter1.getPosition());
+            }
+
+        } else if (noSawmill()) {
 
             /* Place the sawmill */
             sawmill = Utils.placeBuilding(player, headquarter, new Sawmill(player));
-        } else if (sawmillDone() && noQuarry()) {
+            System.out.println(" - Built sawmill at " + sawmill.getPosition());
+        } else if (noQuarry()) {
 
             /* Look for stone within the border */
             Point stonePoint = findStoneWithinBorder();
@@ -71,25 +86,35 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
             }
 
             /* Find spot close to stone to place quarry */
-            Point site = findSpotForQuarry(stonePoint);
+            List<Point> points = Utils.findAvailableHousePointsWithinRadius(map, player, stonePoint, SMALL, 5);
+
+            /* Return null if there are no available places */
+            if (points.isEmpty()) {
+                System.out.println(" -- No site available to build quarry!");
+                return;
+            }
 
             /* Place the quarry */
-            quarry = map.placeBuilding(new Quarry(player), site);
+            quarry = map.placeBuilding(new Quarry(player), points.get(0));
+            System.out.println(" - Built quarry at " + quarry.getPosition());
 
             /* Connect the quarry to the headquarter */
             Road road = Utils.connectPointToBuilding(player, map, quarry.getFlag().getPosition(), headquarter);
 
             /* Place flags on the road where possible */
             if (road != null) {
+                System.out.println(" - Connected the quarry: " + road.getWayPoints());
                 Utils.fillRoadWithFlags(map, road);
             }
         } else if (quarryDone() && quarry.outOfNaturalResources()) {
-
+            System.out.println(" - No more stone in quarry");
             /* Destroy the quarry if it can't reach any stone */
             quarry.tearDown();
 
             /* Remove the part of the road that is used only by the quarry */
             Utils.removeRoadWithoutAffectingOthers(map, quarry.getFlag());
+
+            quarry = null;
         }
     }
 
@@ -113,7 +138,7 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
     private Point findSpotForQuarry(Point stonePoint) throws Exception {
 
         /* Get points with available space for houses close to the stone point */
-        List<Point> points = Utils.findAvailableHousePointsWithinRadius(map, player, stonePoint, SMALL, 3);
+        List<Point> points = Utils.findAvailableHousePointsWithinRadius(map, player, stonePoint, SMALL, 5);
 
         /* Return null if there are no available places */
         if (points.isEmpty()) {
@@ -127,7 +152,7 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
     boolean basicConstructionDone() {
 
         return (foresterDone()   &&
-                woodcutterDone() &&
+                woodcuttersDone() &&
                 sawmillDone()    &&
                 ((quarryDone() && !quarry.outOfNaturalResources()) ||
                  (noQuarry() && !Utils.hasStoneWithinArea(map, player))));
@@ -141,12 +166,14 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
         return !Utils.buildingInPlace(foresterHut);
     }
 
-    private boolean noWoodcutter() {
-        return !Utils.buildingInPlace(woodcutter);
+    private boolean woodCuttersNotPlaced() {
+        return !Utils.buildingInPlace(woodcutter0) ||
+               !Utils.buildingInPlace(woodcutter1);
     }
 
-    private boolean woodcutterDone() {
-        return Utils.buildingDone(woodcutter);
+    private boolean woodcuttersDone() {
+        return Utils.buildingDone(woodcutter0) &&
+               Utils.buildingDone(woodcutter1);
     }
 
     private boolean noSawmill() {

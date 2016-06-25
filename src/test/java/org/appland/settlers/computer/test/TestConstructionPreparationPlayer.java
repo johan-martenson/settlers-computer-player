@@ -22,9 +22,11 @@ import org.appland.settlers.model.Sawmill;
 import org.appland.settlers.model.Stone;
 import org.appland.settlers.model.Woodcutter;
 import org.appland.settlers.test.MoreUtils;
+import org.appland.settlers.test.Utils;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -102,23 +104,6 @@ public class TestConstructionPreparationPlayer {
 
         /* Wait for the player to place a forester hut */
         ForesterHut foresterHut = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, ForesterHut.class, map);
-
-        /* Verify that the player doesn't build anything else until the forester hut is done */
-        int amount = player0.getBuildings().size();
-
-        for (int i = 0; i < 1000; i++) {
-            if (foresterHut.ready()) {
-                break;
-            }
-
-            assertEquals(player0.getBuildings().size(), amount);
-
-            computerPlayer.turn();
-
-            map.stepTime();
-        }
-
-        assertTrue(foresterHut.ready());
     }
 
     @Test
@@ -142,11 +127,25 @@ public class TestConstructionPreparationPlayer {
         /* Wait for the player to place a forester hut */
         ForesterHut foresterHut = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, ForesterHut.class, map);
 
-        /* Wait for the forester hut to get finished */
-        MoreUtils.waitForBuildingToGetConstructed(computerPlayer, map, foresterHut);
+        /* Verify that the player now places two  woodcutters */
+        int woodcutters = 0;
+        for (int i = 0; i < 1000; i++) {
 
-        /* Verify that the player now places a woodcutter */
-        MoreUtils.verifyPlayerPlacesOnlyBuilding(computerPlayer, map, Woodcutter.class);
+            for (Building b : player0.getBuildings()) {
+                if (b instanceof Woodcutter) {
+                    woodcutters++;
+                }
+            }
+
+            if (woodcutters == 2) {
+                break;
+            }
+
+            computerPlayer.turn();
+            map.stepTime();
+        }
+
+        assertEquals(woodcutters, 2);
     }
 
     @Test
@@ -170,14 +169,8 @@ public class TestConstructionPreparationPlayer {
         /* Wait for the player to place a forester hut */
         ForesterHut foresterHut = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, ForesterHut.class, map);
 
-        /* Wait for the forester hut to get finished */
-        MoreUtils.waitForBuildingToGetConstructed(computerPlayer, map, foresterHut);
-
         /* Wait for the player to place a woodcutter */
         Woodcutter woodcutter = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Woodcutter.class, map);
-
-        /* Wait for the woodcutter to get finished */
-        MoreUtils.waitForBuildingToGetConstructed(computerPlayer, map, woodcutter);
 
         /* Verify that the player now places a sawmill */
         MoreUtils.verifyPlayerPlacesOnlyBuilding(computerPlayer, map, Sawmill.class);
@@ -208,14 +201,8 @@ public class TestConstructionPreparationPlayer {
         /* Wait for the player to place a forester hut */
         ForesterHut foresterHut = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, ForesterHut.class, map);
 
-        /* Wait for the forester hut to get finished */
-        MoreUtils.waitForBuildingToGetConstructed(computerPlayer, map, foresterHut);
-
         /* Wait for the player to place a woodcutter */
         Woodcutter woodcutter = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Woodcutter.class, map);
-
-        /* Wait for the woodcutter to get finished */
-        MoreUtils.waitForBuildingToGetConstructed(computerPlayer, map, woodcutter);
 
         /* Wait for the player to place the sawmill */
         MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Sawmill.class, map);
@@ -249,14 +236,8 @@ public class TestConstructionPreparationPlayer {
         /* Wait for the player to place a forester hut */
         ForesterHut foresterHut = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, ForesterHut.class, map);
 
-        /* Wait for the forester hut to get finished */
-        MoreUtils.waitForBuildingToGetConstructed(computerPlayer, map, foresterHut);
-
         /* Wait for the player to place a woodcutter */
         Woodcutter woodcutter = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Woodcutter.class, map);
-
-        /* Wait for the woodcutter to get finished */
-        MoreUtils.waitForBuildingToGetConstructed(computerPlayer, map, woodcutter);
 
         /* Wait for the player to place the sawmill */
         MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Sawmill.class, map);
@@ -293,11 +274,40 @@ public class TestConstructionPreparationPlayer {
         /* Fast forward until player builds quarry */
         Quarry quarry = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Quarry.class, map);
 
+        assertNotNull(quarry);
+        assertEquals(map.getBuildingAtPoint(quarry.getPosition()), quarry);
+
         /* Wait for the stone to run out */
+        assertTrue(map.isStoneAtPoint(stone0.getPosition()));
+        assertFalse(quarry.outOfNaturalResources());
+
         MoreUtils.waitForStoneToRunOut(computerPlayer, map, stone0);
+
+        assertFalse(map.isStoneAtPoint(stone0.getPosition()));
+
+        /* Wait for stonemason to return to the quarry */
+        for (int i = 0; i < 500; i++) {
+
+            /* Loop until the stonemason is inside the quarry */
+            if (quarry.getWorker().isInsideBuilding()) {
+                break;
+            }
+
+            map.stepTime();
+        }
+
+        assertTrue(quarry.getWorker().isInsideBuilding());
+        assertEquals(quarry.getWorker().getPosition(), quarry.getPosition());
+
+        /* Give the stonemason time to figure out that there is no more stone */
+        Utils.fastForward(200, map);
+
+        assertTrue(quarry.outOfNaturalResources());
 
         /* Verify that the player destroys the quarry */
         for (int i = 0; i < 150; i++) {
+
+            assertNotNull(computerPlayer);
 
             computerPlayer.turn();
 
