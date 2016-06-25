@@ -651,7 +651,7 @@ public class TestExpandLandPlayer {
             /* Wait for the barracks to be occupied */
             MoreUtils.waitForBuildingToGetOccupied(computerPlayer, map, barracks);
 
-            assertTrue(barracks.getHostedMilitary() > 0);
+            assertTrue(barracks.getNumberOfHostedMilitary() > 0);
 
             /* Check how close the barracks is to the enemy's border */
             if (MoreUtils.distanceToKnownBorder(barracks, player1) < 8) {
@@ -727,7 +727,7 @@ public class TestExpandLandPlayer {
             /* Wait for the barracks to be occupied */
             MoreUtils.waitForBuildingToGetOccupied(computerPlayer, map, barracks);
 
-            assertTrue(barracks.getHostedMilitary() > 0);
+            assertTrue(barracks.getNumberOfHostedMilitary() > 0);
         }
 
         map.stepTime();
