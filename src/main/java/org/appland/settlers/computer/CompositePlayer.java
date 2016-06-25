@@ -7,6 +7,7 @@ package org.appland.settlers.computer;
 
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.CoalMine;
+import org.appland.settlers.model.Countdown;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.GoldMine;
 import org.appland.settlers.model.GraniteMine;
@@ -44,19 +45,23 @@ public class CompositePlayer implements ComputerPlayer {
     private final MiltaryProducer               militaryProducer;
     private final ExpandLandPlayer              expandingPlayer;
     private final AttackPlayer                  attackingPlayer;
+    private final Countdown                     countdown;
 
     private ComputerPlayer previousPlayer;
     private ComputerPlayer currentPlayer;
     private int counter;
     private final static int PERIODIC_ENEMY_SCAN = 100;
     private final static int PERIODIC_PRIO_SCAN  = 100;
+    private final static int TRANSPORT_PRIORITY_REVIEW_PERIOD = 200;
     private final static int COUNTER_MAX         = 1000;
     private final static int ATTACK_FOLLOW_UP    = 20;
+    private final static int TIME_TO_WAIT_FOR_PROMOTED_SOLDIERS = 200;
 
     public CompositePlayer(Player player, GameMap map) {
         this.player = player;
         this.map    = map;
         counter     = 0;
+        countdown   = new Countdown();
 
         constructionPlayer = new ConstructionPreparationPlayer(player, map);
         mineralsPlayer     = new SearchForMineralsPlayer(player, map);
@@ -74,90 +79,18 @@ public class CompositePlayer implements ComputerPlayer {
     @Override
     public void turn() throws Exception {
 
+        /* Keep track of how many times the method is run to support periodic tasks */
         if (counter > COUNTER_MAX) {
             counter = 0;
         } else {
             counter++;
         }
 
+        /* Remember the previous player to detect player changes */
         previousPlayer = currentPlayer;
 
-        /* Determine if there is a need for maintenance */
-        if (!constructionPlayer.basicConstructionDone()) {
-            constructionPlayer.turn();
-
-            currentPlayer = constructionPlayer;
-
-        } else if (!mineralsPlayer.allCurrentMineralsKnown()) {
-            mineralsPlayer.turn();
-
-            currentPlayer = mineralsPlayer;
-
-        } else if (mineralsPlayer.hasMines() && !foodPlayer.basicFoodProductionDone()) {
-            foodPlayer.turn();
-
-            currentPlayer = foodPlayer;
-
-        } else if (player.getInventory().get(GOLD) > 0 && !coinPlayer.coinProductionDone()) {
-            coinPlayer.turn();
-
-            currentPlayer = coinPlayer;
-
-        } else if (mineralsPlayer.hasCoalMine() &&
-                   mineralsPlayer.hasIronMine() &&
-                   !foodPlayer.fullFoodProductionDone()) {
-            foodPlayer.turn();
-
-            currentPlayer = foodPlayer;
-        } else if (mineralsPlayer.hasCoalMine() && 
-                   mineralsPlayer.hasIronMine() &&
-                   !militaryProducer.productionDone()){
-
-            /* Change transport priorities if needed */
-            if (previousPlayer != expandingPlayer) {
-                player.setTransportPriority(0, PLANCK);
-                player.setTransportPriority(1, STONE);
-                player.setTransportPriority(2, WOOD);
-            }
-
-            militaryProducer.turn();
-
-            currentPlayer = militaryProducer;
-        } else if (attackingPlayer.isAttacking() && counter % ATTACK_FOLLOW_UP == 0) {
-
-            attackingPlayer.turn();
-
-            currentPlayer = attackingPlayer;
-        } else if (attackingPlayer.hasWonBuildings()) {
-            System.out.println("\nComposite player: Has won building\n");
-            System.out.println("  " + attackingPlayer.getWonBuildings());
-
-            /* Notify the expanding player about newly acquired enemy buildings */
-            expandingPlayer.registerBuildings(attackingPlayer.getWonBuildings());
-            attackingPlayer.clearWonBuildings();
-        } else if (expandingPlayer.hasNewBuildings() || counter % PERIODIC_ENEMY_SCAN == 0) {
-
-            expandingPlayer.clearNewBuildings();
-
-            /* Look for enemies close by to attack */
-            Building enemyBuilding = Utils.getCloseEnemyBuilding(player);
-
-            if (enemyBuilding == null) {
-                System.out.println("Composite player: No close enemy to attack");
-                return;
-            }
-
-            /* Attack if possible */
-            if (player.getAvailableAttackersForBuilding(enemyBuilding) > 0) {
-                System.out.println("Composite player: Can attack");
-                attackingPlayer.turn();
-
-                currentPlayer = attackingPlayer;
-            } else {
-                System.out.println("Composite player: Cannot attack enemy at " + enemyBuilding.getPosition());
-            }
-
-        } else {
+        /* Tweak transport priority regularly */
+        if (counter % TRANSPORT_PRIORITY_REVIEW_PERIOD == 0) {
 
             player.setFoodQuota(CoalMine.class, 1);
             player.setFoodQuota(GoldMine.class, 1);
@@ -177,9 +110,108 @@ public class CompositePlayer implements ComputerPlayer {
             }
 
             /* Change transport priorities if needed */
-            if (previousPlayer != expandingPlayer || counter % PERIODIC_PRIO_SCAN == 0) {
-                tuneTransportPriorities();
+            tuneTransportPriorities();
+
+        /* Handle basic construction if it's not in place */
+        } else if (!constructionPlayer.basicConstructionDone()) {
+            constructionPlayer.turn();
+
+            currentPlayer = constructionPlayer;
+
+        /* Scan for minerals if there are unknown areas */
+        } else if (!mineralsPlayer.allCurrentMineralsKnown()) {
+            mineralsPlayer.turn();
+
+            currentPlayer = mineralsPlayer;
+
+        /* Build first level of food production if it's missing and there are mines needing it */
+        } else if (mineralsPlayer.hasMines() && !foodPlayer.basicFoodProductionDone()) {
+            foodPlayer.turn();
+
+            currentPlayer = foodPlayer;
+
+        /* Build up coin production if gold is available */
+        } else if (player.getInventory().get(GOLD) > 0 && !coinPlayer.coinProductionDone()) {
+            coinPlayer.turn();
+
+            currentPlayer = coinPlayer;
+
+        /* Build up full food production after the coin production is available */
+        } else if (mineralsPlayer.hasCoalMine() &&
+                   mineralsPlayer.hasIronMine() &&
+                   !foodPlayer.fullFoodProductionDone()) {
+            foodPlayer.turn();
+
+            currentPlayer = foodPlayer;
+   
+        /* Build up military production when full food production is done */
+        } else if (mineralsPlayer.hasCoalMine() && 
+                   mineralsPlayer.hasIronMine() &&
+                   !militaryProducer.productionDone()){
+
+            militaryProducer.turn();
+
+            currentPlayer = militaryProducer;
+
+        /* Handle ongoing attacks */
+        } else if (attackingPlayer.isAttacking() && counter % ATTACK_FOLLOW_UP == 0) {
+
+            attackingPlayer.turn();
+
+            currentPlayer = attackingPlayer;
+
+        /* Handle the case where an ongoing attack has been won */
+        } else if (attackingPlayer.hasWonBuildings()) {
+            System.out.println("\nComposite player: Has won building\n");
+            System.out.println("  " + attackingPlayer.getWonBuildings());
+
+            /* Notify the expanding player about newly acquired enemy buildings */
+            expandingPlayer.registerBuildings(attackingPlayer.getWonBuildings());
+            attackingPlayer.clearWonBuildings();
+
+        /* Look for enemies to attack */
+        } else if (expandingPlayer.hasNewBuildings() || counter % PERIODIC_ENEMY_SCAN == 0) {
+
+            expandingPlayer.clearNewBuildings();
+
+            /* Wait with attack if there is gold available but not enough promotions yet */
+            if (mineralsPlayer.hasGoldMine()) {
+
+                /* Wait to get a chance to get promoted soldiers before attacking */
+                if (countdown.isActive()) {
+                    if (!countdown.reachedZero()) {
+                        System.out.println("Attack countdown now at: " + countdown.getCount());
+                        countdown.step();
+
+                        return;
+                    }
+                } else {
+                    countdown.countFrom(TIME_TO_WAIT_FOR_PROMOTED_SOLDIERS);
+
+                    return;
+                }
             }
+
+            /* Look for enemies close by to attack */
+            Building enemyBuilding = Utils.getCloseEnemyBuilding(player);
+
+            if (enemyBuilding == null) {
+                System.out.println("Composite player: No close enemy to attack");
+                return;
+            }
+
+            /* Attack if possible */
+            if (player.getAvailableAttackersForBuilding(enemyBuilding) > 0) {
+                System.out.println("Composite player: Can attack");
+                attackingPlayer.turn();
+
+                currentPlayer = attackingPlayer;
+            } else {
+                System.out.println("Composite player: Cannot attack enemy at " + enemyBuilding.getPosition());
+            }
+
+        /* Expand the land if there is nothing else to do */
+        } else {
 
             expandingPlayer.turn();
 

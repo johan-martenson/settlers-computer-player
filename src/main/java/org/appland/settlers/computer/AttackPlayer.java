@@ -85,6 +85,14 @@ public class AttackPlayer implements ComputerPlayer {
             System.out.println("   - Owned by " + buildingToAttack.getPlayer().getName());
         } else if (state == State.WAITING_FOR_ATTACK_TO_START) {
 
+            if (buildingUnderAttack == null) {
+                System.out.println(" - Building under attack is gone");
+
+                state = State.LOOK_FOR_BUILDINGS_TO_ATTACK;
+
+                return;
+            }
+
             if (buildingUnderAttack.isUnderAttack()) {
                 System.out.println(" - Attack has started");
                 state = State.ATTACKING;
