@@ -85,7 +85,7 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
 
     @Override
     public void turn() throws Exception {
-        System.out.println(" -- Mineral player state: " + state);
+
         if (state == State.INITIALIZING) {
 
             for (Building building : controlledPlayer.getBuildings()) {
