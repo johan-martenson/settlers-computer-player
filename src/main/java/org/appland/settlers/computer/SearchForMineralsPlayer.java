@@ -48,6 +48,7 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
     private final Map<Point, Material>   foundMinerals;
     private final Map<Material, Integer> activeMines;
     private final Countdown              countdown;
+    private final Set<Point>             unreachablePoints;
 
     private State     state;
     private Building  headquarter;
@@ -62,13 +63,14 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
         WAITING_FOR_GEOLOGY_RESULTS, 
         ALL_CURRENTLY_CONCLUDED
     }
-    
+
     public SearchForMineralsPlayer(Player player, GameMap m) {
         controlledPlayer = player;
         map              = m;
 
         concludedPoints     = new HashSet<>();
         pointsToInvestigate = new HashSet<>();
+        unreachablePoints   = new HashSet<>();
         geologistFlag       = null;
         foundMinerals       = new HashMap<>();
         activeMines         = new HashMap<>();
@@ -143,6 +145,11 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
                 /* Send out geologists if needed and possible */
                 for (Point p : pointsToInvestigate) {
 
+                    /* Skip un-reachable points */
+                    if (unreachablePoints.contains(p)) {
+                        continue;
+                    }
+
                     /* Temporarily skip points if needed */
                     if (map.isBuildingAtPoint(p)) {
                         continue;
@@ -171,6 +178,8 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
 
                             /* Fill the road with flags */
                             Utils.fillRoadWithFlags(map, road);
+                        } else {
+                            unreachablePoints.add(p);
                         }
                     }
 

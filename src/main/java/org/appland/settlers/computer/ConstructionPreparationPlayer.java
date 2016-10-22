@@ -6,6 +6,7 @@
 package org.appland.settlers.computer;
 
 import java.util.List;
+import org.appland.settlers.model.Countdown;
 import org.appland.settlers.model.ForesterHut;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
@@ -23,19 +24,27 @@ import org.appland.settlers.model.Woodcutter;
  * @author johan
  */
 public class ConstructionPreparationPlayer implements ComputerPlayer {
+    private final static int PERIODIC_STONES_CHECK = 100;
+    private final static int STONE_RECHECK_COUNTER_MAX = 10000;
+
     private ForesterHut foresterHut;
     private Woodcutter  woodcutter0;
     private Woodcutter  woodcutter1;
     private Headquarter headquarter;
     private Sawmill     sawmill;
     private Quarry      quarry;
+    private int         stoneRecheckCounter;
 
-    private final GameMap map;
-    private final Player  player;
+    private final GameMap   map;
+    private final Player    player;
+    private boolean hasStonesOnLand;
 
     public ConstructionPreparationPlayer(Player p, GameMap m) {
         player = p;
         map    = m;
+
+        stoneRecheckCounter = 0;
+        hasStonesOnLand = true;
     }
 
     @Override
@@ -151,11 +160,22 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
 
     boolean basicConstructionDone() {
 
+        /* Periodically check if there are remaining stones */
+        if (stoneRecheckCounter < STONE_RECHECK_COUNTER_MAX) {
+            stoneRecheckCounter++;
+        } else {
+            stoneRecheckCounter = 0;
+        }
+
+        if (stoneRecheckCounter % PERIODIC_STONES_CHECK == 0) {
+            hasStonesOnLand = Utils.hasStoneWithinArea(map, player);
+        }
+
         return (foresterDone()   &&
                 woodcuttersDone() &&
                 sawmillDone()    &&
                 ((quarryDone() && !quarry.outOfNaturalResources()) ||
-                 (noQuarry() && !Utils.hasStoneWithinArea(map, player))));
+                 (noQuarry() && !hasStonesOnLand)));
     }
 
     private boolean foresterDone() {
