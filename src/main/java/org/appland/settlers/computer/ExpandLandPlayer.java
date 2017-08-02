@@ -1,5 +1,6 @@
 package org.appland.settlers.computer;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -19,6 +20,9 @@ import org.appland.settlers.model.Road;
  * @author johan
  */
 public class ExpandLandPlayer implements ComputerPlayer {
+    private static final int CLOSE_TO_ENEMY_WEIGHT = 2;
+    private static final int TOO_CLOSE_TO_ENEMY_WEIGHT = 2;
+
     private final List<Building> placedBarracks;
     private final GameMap        map;
     private final Player         player;
@@ -43,7 +47,6 @@ public class ExpandLandPlayer implements ComputerPlayer {
     private final static int MAX_PERIOD = 1000;
     private final static int MAINTENANCE_PERIOD = 50;
     private final static int MIN_DISTANCE_BETWEEN_BARRACKS = 4;
-    private final static int GOOD_DISTANCE_BETWEEN_BARRACKS = 10;
     private final static int MAX_DISTANCE_FROM_BORDER = 3;
     private final static int MIN_DISTANCE_TO_EDGE = 3;
     private final static int THRESHOLD_FOR_EVACUATION = 6;
@@ -241,31 +244,29 @@ public class ExpandLandPlayer implements ComputerPlayer {
     }
 
     private Point findSpotForNextBarracks(Player player, Set<Point> ignore) throws Exception {
-        double qualityOfLeastBad = Double.MAX_VALUE;
+        Set<Point> candidates = new HashSet<>();
 
-        Set<Point> alreadyTried = new HashSet<>();
-        Point      leastBad     = null;
-        boolean    closeToEnemy = false;
-
-        /* Find the next one clockwise, if possible with a good distance to the previous one */
+        /* First collect all possible points to build on */
         for (Point borderPoint : player.getBorders().get(0)) {
 
-            /* Filter out border too close to the edge of the map */
-            if (borderPoint.x < MIN_DISTANCE_TO_EDGE                  ||
-                borderPoint.x > map.getWidth() - MIN_DISTANCE_TO_EDGE ||
-                borderPoint.y < MIN_DISTANCE_TO_EDGE                  ||
-                borderPoint.y > map.getHeight() - MIN_DISTANCE_TO_EDGE) {
+            /* Filter border points that are too close to the edge of the map */
+            if (borderPoint.x < 3 || borderPoint.x > map.getWidth() - 3 &&
+                borderPoint.y < 3 || borderPoint.y > map.getHeight() - 3) {
                 continue;
-            }
-
-            /* Determine if this border point is close to an enemy */
-            if (preferEnemyDirection &&
-                Utils.distanceToKnownEnemiesWithinRange(map, player, borderPoint, 4) < ENEMY_CLOSE) {
-                closeToEnemy = true;
             }
 
             /* Go through points for construction close to the border point */
             for (Point point : map.getPointsWithinRadius(borderPoint, MAX_DISTANCE_FROM_BORDER)) {
+
+                /* Don't re-examine already added candidates */
+                if (candidates.contains(point)) {
+                    continue;
+                }
+
+                /* Filter out points that cannot be built on */
+                if (map.isAvailableHousePoint(player, point) == null) {
+                    continue;
+                }
 
                 /* Filter out spots we have tried before and failed at */
                 if (ignore.contains(point)) {
@@ -277,15 +278,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
                     continue;
                 }
 
-                /* Filter out already tried points */
-                if (alreadyTried.contains(point)) {
-                    continue;
-                }
-
-                /* Don't try the point again this time */
-                alreadyTried.add(point);
-
-                /* Filter out points that are too close to the edge */
+                /* Filter out border too close to the edge of the map */
                 if (point.x < MIN_DISTANCE_TO_EDGE                  ||
                     point.x > map.getWidth() - MIN_DISTANCE_TO_EDGE ||
                     point.y < MIN_DISTANCE_TO_EDGE                  ||
@@ -293,67 +286,62 @@ public class ExpandLandPlayer implements ComputerPlayer {
                     continue;
                 }
 
-                /* Filter out points that cannot be built on */
-                if (map.isAvailableHousePoint(player, point) == null) {
-                    continue;
-                }
-
-                /* Filter out points that are too close to existing military buildings */
-                if (tooCloseToMilitaryBuilding(player, point, MIN_DISTANCE_BETWEEN_BARRACKS)) {
-                    continue;
-                }
-
-                /* Check that the point can be connected to the headquarter */
+                /* Filter points that cannot be connected to the headquarter */
                 if (map.findWayWithExistingRoads(point.downRight(), headquarter.getPosition()) == null &&
                     Utils.pointToConnectViaToGetToBuilding(player, map, point.downRight(), headquarter) == null) {
-
                     continue;
                 }
 
-                /* Check if this building is close to any already built military buildings */
-                boolean tooClose = false;
+                /* Add the point as a candidate if it passed the filters */
+                candidates.add(point);
+            }
+        }
 
-                for (int i = 0; i < player.getBuildings().size(); i++) {
-                    Building existingBuilding = player.getBuildings().get(i);
+        /* Score the candidates and pick the one with the best score */
+        int bestScore = 0;
+        Point bestPoint = null;
+        for (Point point : candidates) {
+            int score = 0;
 
-                    /* Don't investigate non-military buildings */
-                    if (!existingBuilding.isMilitaryBuilding()) {
-                        continue;
-                    }
+            /* Determine if this point is close to an enemy */
+            if (preferEnemyDirection &&
+                Utils.distanceToKnownEnemiesWithinRange(map, player, point, 6) < ENEMY_CLOSE) {
+                score = score + CLOSE_TO_ENEMY_WEIGHT;
+            }
 
-                    double tempDistance = point.distance(existingBuilding.getPosition());
+            /* Punish points that are too close to existing military buildings */
+            if (tooCloseToMilitaryBuilding(player, point, MIN_DISTANCE_BETWEEN_BARRACKS)) {
+                score = score - TOO_CLOSE_TO_ENEMY_WEIGHT;
+            }
 
-                    if (tempDistance >= GOOD_DISTANCE_BETWEEN_BARRACKS ||
-                        (preferEnemyDirection && tempDistance >= MIN_DISTANCE_BETWEEN_BARRACKS)) {
-                        continue;
-                    }
+            /* Reward points that are far from military buildings */
+            double distanceToClosestMilitaryBuilding = Double.MAX_VALUE;
+            for (int i = 0; i < player.getBuildings().size(); i++) {
+                Building existingBuilding = player.getBuildings().get(i);
 
-                    tooClose = true;
-
-                    if (i < qualityOfLeastBad) {
-                        qualityOfLeastBad = i;
-
-                        leastBad = point;
-                    }
-                }
-
-                /* Filter the point if it's close to other military buildings */
-                if (tooClose) {
+                /* Don't investigate non-military buildings */
+                if (!existingBuilding.isMilitaryBuilding()) {
                     continue;
                 }
 
-                /* Filter the point if it's not close to an enemy and this is preferred  */
-                if (preferEnemyDirection && !closeToEnemy) {
-                    continue;
-                }
+                double tempDistance = point.distance(existingBuilding.getPosition());
 
-                /* Select the point if it passed all the filters */
-                return point;
+                if (tempDistance < distanceToClosestMilitaryBuilding) {
+                    distanceToClosestMilitaryBuilding = tempDistance;
+                }
+            }
+
+            score = score + (int)distanceToClosestMilitaryBuilding;
+
+            if (score > bestScore) {
+                bestScore = score;
+
+                bestPoint = point;
             }
         }
 
         /* Return the least bad alternative if no good point was found */
-        return leastBad;
+        return bestPoint;
     }
 
     private void evacuateWherePossible(Player player) throws Exception {
