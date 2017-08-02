@@ -354,8 +354,12 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
         return activeMines.containsKey(GOLD) && activeMines.get(GOLD) > 0;
     }
 
+    boolean hasGraniteMine() {
+        return activeMines.containsKey(STONE) && activeMines.get(STONE) > 0;
+    }
+
     boolean hasMines() {
-        return !activeMines.isEmpty();
+        return hasCoalMine() || hasIronMine() || hasGoldMine() || hasGraniteMine();
     }
 
     private boolean isAvailableForSign(Point p) {
