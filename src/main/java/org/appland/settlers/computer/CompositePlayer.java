@@ -51,11 +51,12 @@ public class CompositePlayer implements ComputerPlayer {
     private ComputerPlayer currentPlayer;
     private int counter;
     private final static int PERIODIC_ENEMY_SCAN = 100;
-    private final static int PERIODIC_PRIO_SCAN  = 100;
-    private final static int TRANSPORT_PRIORITY_REVIEW_PERIOD = 200;
+    private final static int PERIODIC_SCAN_FOR_NEW_MINERALS = 30;
+    private final static int PERIODIC_TRANSPORT_PRIO_REVIEW = 200;
     private final static int COUNTER_MAX         = 1000;
     private final static int ATTACK_FOLLOW_UP    = 20;
     private final static int TIME_TO_WAIT_FOR_PROMOTED_SOLDIERS = 200;
+    private final static int PERIODIC_LAKE_SCAN = 40;
 
     public CompositePlayer(Player player, GameMap map) {
         this.player = player;
@@ -90,7 +91,7 @@ public class CompositePlayer implements ComputerPlayer {
         previousPlayer = currentPlayer;
 
         /* Tweak transport priority regularly */
-        if (counter % TRANSPORT_PRIORITY_REVIEW_PERIOD == 0) {
+        if (counter % PERIODIC_TRANSPORT_PRIO_REVIEW == 0) {
 
             player.setFoodQuota(CoalMine.class, 1);
             player.setFoodQuota(GoldMine.class, 1);
@@ -111,14 +112,25 @@ public class CompositePlayer implements ComputerPlayer {
 
             /* Change transport priorities if needed */
             tuneTransportPriorities();
+        }
+
+        /* Scan for new potential mines periodically */
+        if (counter % PERIODIC_SCAN_FOR_NEW_MINERALS == 0 ) {
+            mineralsPlayer.scanForNewMinerals();
+        }
+
+        /* Scan for lakes periodically */
+        if (counter % PERIODIC_LAKE_SCAN == 0) {
+            foodPlayer.scanForNewLakes();
+        }
 
         /* Handle basic construction if it's not in place */
-        } else if (!constructionPlayer.basicConstructionDone()) {
+        if (!constructionPlayer.basicConstructionDone()) {
             constructionPlayer.turn();
 
             currentPlayer = constructionPlayer;
 
-        /* Scan for minerals if there are unknown areas */
+        /* Scan for minerals if there are unknown areas and re-scan periodically */
         } else if (!mineralsPlayer.allCurrentMineralsKnown()) {
             mineralsPlayer.turn();
 
@@ -218,7 +230,7 @@ public class CompositePlayer implements ComputerPlayer {
         }
 
         if (previousPlayer != currentPlayer) {
-            System.out.println(" -- Switched to " + currentPlayer.getClass().getSimpleName());
+            System.out.println(" -- Switched to " + currentPlayer.getClass().getSimpleName() + " from " + previousPlayer);
         }
     }
 

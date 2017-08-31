@@ -173,7 +173,7 @@ public class Utils {
         Point end = building2.getFlag().getPosition();
 
         /* Return directly if they are already connected */
-        if (map.findWayWithExistingRoads(start, end) != null) {
+        if (map.isConnectedByRoads(start, end)) {
             return null;
         }
 
@@ -194,8 +194,7 @@ public class Utils {
             }
 
             /* Filter points that are not connected to the headquarter */
-            List<Point> pathViaPointToHeadquarter = map.findWayWithExistingRoads(point, end);
-            if (pathViaPointToHeadquarter == null) {
+            if (!map.isConnectedByRoads(point, end)) {
                 continue;
             }
 
@@ -255,8 +254,7 @@ public class Utils {
             }
 
             /* Filter points that are not connected to the headquarter */
-            List<Point> pathViaPointToHeadquarter = map.findWayWithExistingRoads(point, end);
-            if (pathViaPointToHeadquarter == null) {
+            if (map.isConnectedByRoads(point, end)) {
                 continue;
             }
 
@@ -527,7 +525,6 @@ public class Utils {
             return null;
         }
 
-        System.out.println("Placing " + buildingCloseBy + " at " + location);
         /* Place the building on the map */
         map.placeBuilding(building, location);
 

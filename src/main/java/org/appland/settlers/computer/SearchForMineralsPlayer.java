@@ -103,27 +103,7 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
             }
         } else if (state == State.LOOKING_FOR_MINERALS) {
 
-            /* Look for any new points to handle */
-            for (Land land : controlledPlayer.getLands()) {
-                for (Point p : land.getPointsInLand()) {
-
-                    if (concludedPoints.contains(p)) {
-                        continue;
-                    }
-
-                    if (!map.getTerrain().isOnMountain(p)) {
-                        concludedPoints.add(p);
-
-                        continue;
-                    }
-
-                    if (pointsToInvestigate.contains(p)) {
-                        continue;
-                    }
-
-                    pointsToInvestigate.add(p);
-                }
-            }
+            lookForNewPointsToHandle();
 
             /* Update points to investigate */
             List<Point> noLongerValid = new LinkedList<>();
@@ -188,6 +168,8 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
 
                         geologistFlag = flag;
 
+                        /* Call two geologist to speed up search */
+                        flag.callGeologist();
                         flag.callGeologist();
 
                         /* Set a countdown for how long to wait for the geologist */
@@ -259,6 +241,26 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
         }
     }
 
+    private void lookForNewPointsToHandle() {
+        /* Look for any new points to handle */
+        for (Land land : controlledPlayer.getLands()) {
+            for (Point p : land.getPointsInLand()) {
+                
+                if (concludedPoints.contains(p)) {
+                    continue;
+                }
+
+                if (!map.getTerrain().isOnMountain(p)) {
+                    concludedPoints.add(p);
+                    
+                    continue;
+                }
+
+                pointsToInvestigate.add(p);
+            }
+        }
+    }
+
     @Override
     public Player getControlledPlayer() {
         return controlledPlayer;
@@ -291,7 +293,7 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
                 continue;
             }
 
-            if (map.findWayWithExistingRoads(p, headquarter.getFlag().getPosition()) == null) {
+            if (!map.isConnectedByRoads(p, headquarter.getFlag().getPosition())) {
                 continue;
             }
 
@@ -393,5 +395,12 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
         }
 
         return true;
+    }
+
+    void scanForNewMinerals() {
+
+        if (state != State.INITIALIZING) {
+            state = State.LOOKING_FOR_MINERALS;
+        }
     }
 }

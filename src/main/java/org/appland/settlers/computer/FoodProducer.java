@@ -35,6 +35,7 @@ public class FoodProducer implements ComputerPlayer {
     private Well        well;
     private Mill        mill;
     private Bakery      bakery;
+    private boolean     noPlaceForFishery;
 
     private enum State {
         INITIALIZING,
@@ -59,6 +60,8 @@ public class FoodProducer implements ComputerPlayer {
         bakery     = null;
 
         state = State.INITIALIZING;
+
+        noPlaceForFishery = false;
     }
 
     @Override
@@ -94,6 +97,7 @@ public class FoodProducer implements ComputerPlayer {
                 System.out.println(" -- No place available for fishery");
 
                 state = State.BUILDING_FISHERY_FAILED;
+                noPlaceForFishery = true;
 
                 return;
             }
@@ -240,15 +244,19 @@ public class FoodProducer implements ComputerPlayer {
 
     boolean basicFoodProductionDone() {
 
-        return (Utils.listContainsAtLeastOneReadyBuilding(fisheries) &&
+        return ((Utils.listContainsAtLeastOneReadyBuilding(fisheries) || noPlaceForFishery) &&
                 Utils.listContainsAtLeastOneReadyBuilding(hunterHuts));
     }
 
     boolean fullFoodProductionDone() {
         return basicFoodProductionDone() &&
-               Utils.buildingDone(farm)  && 
-               Utils.buildingDone(mill)  && 
-               Utils.buildingDone(well)  && 
+               Utils.buildingDone(farm)  &&
+               Utils.buildingDone(mill)  &&
+               Utils.buildingDone(well)  &&
                Utils.buildingDone(bakery);
+    }
+
+    void scanForNewLakes() {
+        noPlaceForFishery = false;
     }
 }
