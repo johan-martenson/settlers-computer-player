@@ -293,7 +293,7 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
                 continue;
             }
 
-            if (!map.isConnectedByRoads(p, headquarter.getFlag().getPosition())) {
+            if (!map.arePointsConnectedByRoads(p, headquarter.getFlag().getPosition())) {
                 continue;
             }
 

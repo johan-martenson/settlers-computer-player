@@ -173,7 +173,7 @@ public class Utils {
         Point end = building2.getFlag().getPosition();
 
         /* Return directly if they are already connected */
-        if (map.isConnectedByRoads(start, end)) {
+        if (map.arePointsConnectedByRoads(start, end)) {
             return null;
         }
 
@@ -194,7 +194,7 @@ public class Utils {
             }
 
             /* Filter points that are not connected to the headquarter */
-            if (!map.isConnectedByRoads(point, end)) {
+            if (!map.arePointsConnectedByRoads(point, end)) {
                 continue;
             }
 
@@ -254,7 +254,7 @@ public class Utils {
             }
 
             /* Filter points that are not connected to the headquarter */
-            if (map.isConnectedByRoads(point, end)) {
+            if (map.arePointsConnectedByRoads(point, end)) {
                 continue;
             }
 

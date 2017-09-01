@@ -463,13 +463,13 @@ public class TestExpandLandPlayer {
 
         map.removeRoad(roads.get(0));
 
-        assertNull(map.findWayWithExistingRoads(barracks0.getPosition(), headquarter.getPosition()));
+        assertFalse(map.areFlagsOrBuildingsConnectedViaRoads(barracks0, headquarter));
 
         /* Verify that the player builds a road to connect the barracks again */
         computerPlayer.turn();
         computerPlayer.turn();
 
-        assertNotNull(map.findWayWithExistingRoads(barracks0.getPosition(), headquarter.getPosition()));
+        assertTrue(map.areFlagsOrBuildingsConnectedViaRoads(barracks0, headquarter));
     }
 
     @Test
@@ -720,7 +720,7 @@ public class TestExpandLandPlayer {
                 break;
             }
 
-            assertNotNull(map.findWayWithExistingRoads(headquarter.getPosition(), barracks.getPosition()));
+            assertTrue(map.areFlagsOrBuildingsConnectedViaRoads(headquarter, barracks));
             assertTrue(barracks.needsMilitaryManning());
             assertTrue(headquarter.getAmount(Material.PRIVATE) > 10);
 

@@ -120,14 +120,14 @@ public class ExpandLandPlayer implements ComputerPlayer {
             /* Connect the barracks with the headquarter */
             Road road = Utils.connectPointToBuilding(player, map, unfinishedBarracks.getFlag().getPosition(), headquarter);
 
-            if (!map.pathViaRoadsExists(road.getWayPoints())) {
+            if (!map.isValidRouteViaRoads(road.getWayPoints())) {
                 System.out.println("\nBarracks at " + site + " is not connected!");
             }
 
             /* Place flags where possible */
             Utils.fillRoadWithFlags(map, road);
 
-            if (!map.pathViaRoadsExists(road.getWayPoints())) {
+            if (!map.isValidRouteViaRoads(road.getWayPoints())) {
                 System.out.println("\nBarracks at " + site + " is not connected after filling with flags!");
             }
 
@@ -176,7 +176,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
                 newBuildings = true;
 
                 /* Verify that the barracks under construction is still reachable from the headquarter */
-            } else if (!map.isConnectedByRoads(headquarter.getPosition(), unfinishedBarracks.getPosition())) {
+            } else if (!map.areFlagsOrBuildingsConnectedViaRoads(headquarter, unfinishedBarracks)) {
 
                 /* Try to repair the connection */
                 state = State.BUILDING_NOT_CONNECTED;
@@ -192,7 +192,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
             Utils.repairConnection(map, player, unfinishedBarracks.getFlag(), headquarter.getFlag());
 
             /* Wait for the building to get constructed if the repair worked */
-            if (map.isConnectedByRoads(headquarter.getPosition(), unfinishedBarracks.getPosition())) {
+            if (map.areFlagsOrBuildingsConnectedViaRoads(headquarter, unfinishedBarracks)) {
 
                 /* Wait for construction */
                 state = State.WAITING_FOR_CONSTRUCTION;
@@ -289,7 +289,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
                 }
 
                 /* Filter points that cannot be connected to the headquarter */
-                if (!map.isConnectedByRoads(point.downRight(), headquarter.getPosition()) &&
+                if (!map.arePointsConnectedByRoads(point.downRight(), headquarter.getPosition()) &&
                     Utils.pointToConnectViaToGetToBuilding(player, map, point.downRight(), headquarter) == null) {
                     continue;
                 }
@@ -413,7 +413,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
 
             /* Connect the building to the headquarter if it's not already done */
             try {
-                if (!map.isConnectedByRoads(headquarter.getPosition(), building.getPosition())) {
+                if (!map.areFlagsOrBuildingsConnectedViaRoads(headquarter, building)) {
                     Road road = Utils.connectPointToBuilding(player, map, building.getFlag().getPosition(), headquarter);
 
                     if (road != null) {
