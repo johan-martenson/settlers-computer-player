@@ -423,9 +423,9 @@ public class ExpandLandPlayer implements ComputerPlayer {
                     }
                 }
             } catch (Exception e) {
-                
+
             }
-        
+
             /* Disable promotions if the barracks is not close to the enemy */
             if (Utils.distanceToKnownEnemiesWithinRange(building, 20) > 9) {
 

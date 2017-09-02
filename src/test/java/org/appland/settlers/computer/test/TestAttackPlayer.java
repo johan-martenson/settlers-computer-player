@@ -117,6 +117,6 @@ public class TestAttackPlayer {
 
     @Test
     public void testAttackerAttacksWithAllAvailableMilitaries() {
-        
+
     }
 }

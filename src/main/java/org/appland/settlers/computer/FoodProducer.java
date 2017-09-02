@@ -47,7 +47,7 @@ public class FoodProducer implements ComputerPlayer {
         WAITING_FOR_HUNTER_HUT,
         NEEDS_BREAD
     }
-    
+
     public FoodProducer(Player player, GameMap m) {
         controlledPlayer = player;
         map              = m;

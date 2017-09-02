@@ -28,7 +28,7 @@ public class TestFiltering {
 
         /* Create a filter to observe woodcutters */
         Filter filter = new Filter();
-        
+
         filter.filterOnBuildingType(Woodcutter.class);
     }
 
@@ -37,12 +37,12 @@ public class TestFiltering {
 
         /* Create a filter to observe woodcutters */
         Filter filter = new Filter();
-        
+
         filter.filterOnBuildingType(Woodcutter.class);
-    
+
         /* Verify that the filter has one criteria */
         List<Criteria> criterias = filter.getCriterias();
-        
+
         assertNotNull(criterias);
         assertEquals(criterias.size(), 1);
     }
@@ -52,7 +52,7 @@ public class TestFiltering {
 
         /* Create a filter to observe woodcutters */
         Filter filter = new Filter();
-        
+
         filter.filterOnBuildingType(Woodcutter.class);
 
         /* Verify that the filter matches woodcutters */
@@ -64,7 +64,7 @@ public class TestFiltering {
 
         /* Create a filter to observe woodcutters */
         Filter filter = new Filter();
-        
+
         filter.filterOnBuildingType(ForesterHut.class);
 
         /* Verify that the filter matches woodcutters */

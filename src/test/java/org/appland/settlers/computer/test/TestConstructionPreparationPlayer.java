@@ -34,7 +34,7 @@ import static org.junit.Assert.assertTrue;
  * @author johan
  */
 public class TestConstructionPreparationPlayer {
-    
+
     @Test
     public void testCreatePlayer() throws Exception {
 
@@ -381,7 +381,7 @@ public class TestConstructionPreparationPlayer {
             assertFalse(map.isFlagAtPoint(point));
         }
     }
-    
+
     /*
        - Test that the the player is smart about choosing a spot to create a forest
        - Test player removes the quarry when it doesn't reach any stones

@@ -69,7 +69,7 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
 
                 System.out.println(" - Built woodcutter at " + woodcutter0.getPosition());
             }
-            
+
             /* Place the woodcutter */
             if (!Utils.buildingInPlace(woodcutter1)) {
                 woodcutter1 = Utils.placeBuilding(player, foresterHut, new Woodcutter(player));

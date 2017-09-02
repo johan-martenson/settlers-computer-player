@@ -26,7 +26,7 @@ import static org.junit.Assert.assertTrue;
  * @author johan
  */
 public class TestPlanckProductionPlayer {
-    
+
     @Test
     public void testCreatePlanckProductionPlayer() throws Exception {
 
@@ -224,6 +224,6 @@ public class TestPlanckProductionPlayer {
 
     /*
        - Test that the the player is smart about choosing a spot to create a forest
-        
+
     */
 }

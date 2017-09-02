@@ -35,7 +35,7 @@ public class CoinProducer implements ComputerPlayer {
         WAITING_FOR_MINT,
         DONE
     }
-    
+
     public CoinProducer(Player player, GameMap m) {
         controlledPlayer = player;
         map              = m;

@@ -16,15 +16,15 @@ import static org.appland.settlers.computer.Filter.SearchFor.BUILDING_OF_TYPE;
  */
 public class Filter {
     private final List<Criteria>criterias;
-    
+
     public enum SearchFor {
         BUILDING_OF_TYPE
     }
-    
+
     enum Limit {
         ALL
     }
-    
+
     public Filter() {
         criterias = new LinkedList<>();
     }
@@ -35,7 +35,7 @@ public class Filter {
                 return false;
             }
         }
-    
+
         return true;
     }
 
@@ -51,10 +51,10 @@ public class Filter {
         public SearchFor getSearchType();
         public boolean matches(Object o);
     }
-    
+
     private class BuildingOfTypeCriteria implements Criteria {
         private final Class type;
-        
+
         public BuildingOfTypeCriteria(Class type, Limit limit) {
             this.type = type;
         }

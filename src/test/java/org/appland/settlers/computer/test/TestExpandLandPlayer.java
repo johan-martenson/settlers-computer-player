@@ -38,7 +38,7 @@ import static org.appland.settlers.computer.Utils.getDistanceToOwnBorder;
  * @author johan
  */
 public class TestExpandLandPlayer {
-    
+
     @Test
     public void testCreateExpandLandPlayer() throws Exception {
 

@@ -155,7 +155,7 @@ public class CompositePlayer implements ComputerPlayer {
             foodPlayer.turn();
 
             currentPlayer = foodPlayer;
-   
+
         /* Build up military production when full food production is done */
         } else if (mineralsPlayer.hasCoalMine() && 
                    mineralsPlayer.hasIronMine() &&

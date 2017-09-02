@@ -33,7 +33,7 @@ public class Utils {
 
     public static final int THRESHOLD_CLOSE_TO_ENEMY = 10;
     public static final int THRESHOLD_VERY_CLOSE_TO_ENEMY = 5;
-    
+
     static Point findAvailableSpotForBuilding(GameMap map, Player player) throws Exception {
         Map<Point, Size> spots = map.getAvailableHousePoints(player);
 
@@ -127,25 +127,25 @@ public class Utils {
 
     static Iterable<Point> getPointsBetweenRadiuses(GameMap map, Point point, int rMin, int rMax) {
         List<Point> result = new ArrayList<>();
-    
+
         int x;
         int y;
         boolean rowFlip = false;
-        
+
         for (y = point.y - rMax; y <= point.y + rMax; y++) {
             int startX = point.x - rMax;
-            
+
             if (rowFlip) {
                 startX++;
             }
-            
+
             for (x = startX; x <= point.x + rMax; x += 2) {
                 Point p = new Point(x, y);
 
                 if (!map.isWithinMap(p)) {
                     continue;
                 }
-                
+
                 double distance = point.distance(p);
 
                 if (distance >= rMin && distance <= rMax) {

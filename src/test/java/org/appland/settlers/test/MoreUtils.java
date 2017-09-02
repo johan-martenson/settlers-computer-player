@@ -51,7 +51,7 @@ public class MoreUtils {
         Set<Building> buildingsBefore = new HashSet<>();
 
         buildingsBefore.addAll(player.getBuildings());
-    
+
         for (int i = 0; i < 10000; i++) {
             for (Building b : player.getBuildings()) {
                 if (b.getClass().equals(aClass) && !buildingsBefore.contains(b)) {
@@ -148,7 +148,7 @@ public class MoreUtils {
     static void printRoads(GameMap map) {
 
         System.out.println("\n\n");
-        
+
         for (Road r : map.getRoads()) {
             System.out.println("Road: " + r.getWayPoints());
         }

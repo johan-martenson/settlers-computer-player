@@ -41,7 +41,7 @@ public class PlanckProductionPlayer implements ComputerPlayer {
     private final Player  player;
 
     private State state;
-    
+
     public PlanckProductionPlayer(Player p, GameMap m) {
         player = p;
         map    = m;

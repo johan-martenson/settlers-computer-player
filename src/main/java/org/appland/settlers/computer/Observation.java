@@ -10,5 +10,5 @@ package org.appland.settlers.computer;
  * @author johan
  */
 class Observation {
-    
+
 }

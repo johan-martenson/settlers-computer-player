@@ -245,14 +245,14 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
         /* Look for any new points to handle */
         for (Land land : controlledPlayer.getLands()) {
             for (Point p : land.getPointsInLand()) {
-                
+
                 if (concludedPoints.contains(p)) {
                     continue;
                 }
 
                 if (!map.getTerrain().isOnMountain(p)) {
                     concludedPoints.add(p);
-                    
+
                     continue;
                 }
 
