@@ -1,10 +1,8 @@
 package org.appland.settlers.test;
 
-import static java.lang.Math.abs;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +18,6 @@ import org.appland.settlers.model.Courier;
 import org.appland.settlers.model.Crop;
 import static org.appland.settlers.model.Crop.GrowthState.FULL_GROWN;
 import org.appland.settlers.model.Farmer;
-import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
 import org.appland.settlers.model.Hunter;
 import org.appland.settlers.model.Land;
@@ -50,6 +47,7 @@ import static org.junit.Assert.assertNull;
 
 import static org.junit.Assert.assertTrue;
 import static java.lang.Math.abs;
+import org.appland.settlers.model.GameMap;
 
 public class Utils {
 

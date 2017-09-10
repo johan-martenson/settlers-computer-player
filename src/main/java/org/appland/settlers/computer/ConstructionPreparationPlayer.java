@@ -6,7 +6,6 @@
 package org.appland.settlers.computer;
 
 import java.util.List;
-import org.appland.settlers.model.Countdown;
 import org.appland.settlers.model.ForesterHut;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;

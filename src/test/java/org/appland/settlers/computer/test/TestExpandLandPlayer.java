@@ -13,7 +13,6 @@ import org.appland.settlers.computer.ComputerPlayer;
 import org.appland.settlers.computer.ExpandLandPlayer;
 import org.appland.settlers.model.Barracks;
 import org.appland.settlers.model.Building;
-import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
 import org.appland.settlers.model.Material;
 import static org.appland.settlers.model.Material.PLANCK;
@@ -29,9 +28,9 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.appland.settlers.computer.Utils.getDistanceToOwnBorder;
+import org.appland.settlers.model.GameMap;
 
 /**
  *
