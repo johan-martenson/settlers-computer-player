@@ -2,7 +2,6 @@ package org.appland.settlers.computer;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.appland.settlers.model.Barracks;
@@ -22,10 +21,10 @@ public class ExpandLandPlayer implements ComputerPlayer {
     private static final int CLOSE_TO_ENEMY_WEIGHT = 2;
     private static final int TOO_CLOSE_TO_ENEMY_WEIGHT = 2;
 
-    private final List<Building> placedBarracks;
-    private final GameMap        map;
-    private final Player         player;
-    private final Set<Point>     impossibleSpots;
+    private final Collection<Building> placedBarracks;
+    private final GameMap              map;
+    private final Player               player;
+    private final Set<Point>           impossibleSpots;
 
     private Building    unfinishedBarracks;
     private Headquarter headquarter;
@@ -55,7 +54,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
         player = p;
         map    = m;
 
-        placedBarracks = new LinkedList<>();
+        placedBarracks = new HashSet<>();
 
         /* Set the initial state */
         state = State.INITIAL_STATE;

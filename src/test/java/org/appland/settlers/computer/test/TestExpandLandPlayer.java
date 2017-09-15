@@ -423,7 +423,7 @@ public class TestExpandLandPlayer {
         /* Verify that the player builds a new barracks */
         Barracks barracks2 = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Barracks.class, map);
 
-        assertTrue(map.getBuildings().contains(barracks2));
+        assertEquals(map.getBuildingAtPoint(barracks2.getPosition()), barracks2);
         assertFalse(barracks2.getPosition().equals(barracks1.getPosition()));
     }
 

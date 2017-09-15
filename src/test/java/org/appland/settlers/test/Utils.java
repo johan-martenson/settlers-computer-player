@@ -615,14 +615,14 @@ public class Utils {
         assertTrue(building.burningDown() || building.destroyed());
 
         for (int i = 0; i < 1000; i++) {
-            if (!map.getBuildings().contains(building)) {
+            if (!building.equals(map.getBuildingAtPoint(building.getPosition()))) {
                 break;
             }
 
             map.stepTime();
         }
 
-        assertFalse(map.getBuildings().contains(building));
+        assertFalse(building.equals(map.getBuildingAtPoint(building.getPosition())));
     }
 
     static void waitForFightToStart(GameMap map, Military attacker, Military defender) throws Exception {
