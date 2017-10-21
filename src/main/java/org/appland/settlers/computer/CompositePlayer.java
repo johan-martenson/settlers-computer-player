@@ -157,7 +157,7 @@ public class CompositePlayer implements ComputerPlayer {
             currentPlayer = foodPlayer;
 
         /* Build up military production when full food production is done */
-        } else if (mineralsPlayer.hasCoalMine() && 
+        } else if (mineralsPlayer.hasCoalMine() &&
                    mineralsPlayer.hasIronMine() &&
                    !militaryProducer.productionDone()){
 
@@ -261,7 +261,7 @@ public class CompositePlayer implements ComputerPlayer {
         player.setTransportPriority(15, WATER);
 
         /* Main priority: GOLD, PRIVATE, PLANCKS, STONES
-           Handle backwards to get the priority right 
+           Handle backwards to get the priority right
         */
 
         /* First stones */

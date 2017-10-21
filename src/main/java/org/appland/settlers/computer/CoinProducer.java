@@ -121,7 +121,7 @@ public class CoinProducer implements ComputerPlayer {
             for (Point p : land.getPointsInLand()) {
 
                 /* Filter out points where it's not possible to build */
-                Size size = map.isAvailableHousePoint(controlledPlayer, p); 
+                Size size = map.isAvailableHousePoint(controlledPlayer, p);
                 if (size == null || size == SMALL) {
                     continue;
                 }

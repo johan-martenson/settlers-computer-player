@@ -26,8 +26,8 @@ public class AttackPlayer implements ComputerPlayer {
     private Building       buildingUnderAttack;
 
     enum State {
-        INITIAL_STATE, 
-        LOOK_FOR_BUILDINGS_TO_ATTACK, 
+        INITIAL_STATE,
+        LOOK_FOR_BUILDINGS_TO_ATTACK,
         ATTACKING,
         WAITING_FOR_ATTACK_TO_START
     }

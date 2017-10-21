@@ -40,10 +40,10 @@ public class FoodProducer implements ComputerPlayer {
     private enum State {
         INITIALIZING,
         NEEDS_FOOD,
-        BUILD_FISHERY, 
-        WAITING_FOR_FISHERY, 
+        BUILD_FISHERY,
+        WAITING_FOR_FISHERY,
         BUILDING_FISHERY_FAILED,
-        BUILD_HUNTER_HUT, 
+        BUILD_HUNTER_HUT,
         WAITING_FOR_HUNTER_HUT,
         NEEDS_BREAD
     }

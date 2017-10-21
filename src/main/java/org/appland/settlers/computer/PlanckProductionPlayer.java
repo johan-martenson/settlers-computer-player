@@ -32,8 +32,8 @@ public class PlanckProductionPlayer implements ComputerPlayer {
         WAITING_FOR_FORESTER,
         FORESTER_CONSTRUCTED,
         WOODCUTTER_CONSTRUCTED,
-        SAWMILL_CONSTRUCTED, 
-        WAITING_FOR_WOODCUTTER, 
+        SAWMILL_CONSTRUCTED,
+        WAITING_FOR_WOODCUTTER,
         WAITING_FOR_SAWMILL
     }
 

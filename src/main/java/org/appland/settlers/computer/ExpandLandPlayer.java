@@ -35,9 +35,9 @@ public class ExpandLandPlayer implements ComputerPlayer {
     private boolean     waitUntilOccupied;
 
     private enum State {
-        INITIAL_STATE, 
-        WAITING_FOR_CONSTRUCTION, 
-        READY_FOR_CONSTRUCTION, 
+        INITIAL_STATE,
+        WAITING_FOR_CONSTRUCTION,
+        READY_FOR_CONSTRUCTION,
         BUILDING_NOT_CONNECTED,
         WAITING_FOR_BUILDINGS_TO_GET_OCCUPIED
     }
@@ -143,7 +143,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
             } else if (unfinishedBarracks.ready() && unfinishedBarracks.getNumberOfHostedMilitary() == 0) {
 
                 /* Disable promotions if the barracks is not close to the enemy */
-                if (unfinishedBarracks.isPromotionEnabled() && 
+                if (unfinishedBarracks.isPromotionEnabled() &&
                     Utils.distanceToKnownEnemiesWithinRange(unfinishedBarracks, 20) > 9) {
 
                     if (unfinishedBarracks.isPromotionEnabled()) {
@@ -374,7 +374,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
                     }
 
                     /* Filter points at the edge of the map since no attack can come that way */
-                    if (borderPoint.x < 3 || borderPoint.x > map.getWidth() - 3 || 
+                    if (borderPoint.x < 3 || borderPoint.x > map.getWidth() - 3 ||
                         borderPoint.y < 3 || borderPoint.y > map.getHeight() - 3) {
                         continue;
                     }

@@ -38,16 +38,16 @@ public class MiltaryProducer implements ComputerPlayer {
 
     private enum State {
         INITIALIZING,
-        NEEDS_IRON_SMELTER, 
-        NEEDS_ARMORY, 
+        NEEDS_IRON_SMELTER,
+        NEEDS_ARMORY,
         NEEDS_FARM,
         NEEDS_WELL,
-        NEEDS_BREWERY, 
-        WAITING_FOR_IRON_SMELTER, 
-        WAITING_FOR_ARMORY, 
+        NEEDS_BREWERY,
+        WAITING_FOR_IRON_SMELTER,
+        WAITING_FOR_ARMORY,
         WAITING_FOR_FARM,
         WAITING_FOR_WELL,
-        WAITING_FOR_BREWERY, 
+        WAITING_FOR_BREWERY,
         DONE,
     }
 
@@ -87,7 +87,7 @@ public class MiltaryProducer implements ComputerPlayer {
         	    ironSmelters.addAll(Utils.getBuildingsOfType(controlledPlayer.getBuildings(), IronSmelter.class));
 
         	    state = State.WAITING_FOR_IRON_SMELTER;
-            } else { 
+            } else {
 
                 /* Find a spot for the iron smelter */
             	Point ironSmelterPoint = Utils.findPointForBuildingCloseToPoint(headquarter.getPosition(), MEDIUM, controlledPlayer, map);
@@ -121,7 +121,7 @@ public class MiltaryProducer implements ComputerPlayer {
         	    armories.addAll(Utils.getBuildingsOfType(controlledPlayer.getBuildings(), Armory.class));
 
         	    state = State.WAITING_FOR_IRON_SMELTER;
-            } else { 
+            } else {
 
                 /* Find a spot for the armory */
             	Point armoryPoint = Utils.findPointForBuildingCloseToPoint(headquarter.getPosition(), MEDIUM, controlledPlayer, map);
@@ -221,7 +221,7 @@ public class MiltaryProducer implements ComputerPlayer {
         	    breweries.addAll(Utils.getBuildingsOfType(controlledPlayer.getBuildings(), Brewery.class));
 
         	    state = State.WAITING_FOR_BREWERY;
-            } else { 
+            } else {
 
                 /* Find a spot for the brewery */
             	Point breweryPoint = Utils.findPointForBuildingCloseToPoint(headquarter.getPosition(), MEDIUM, controlledPlayer, map);

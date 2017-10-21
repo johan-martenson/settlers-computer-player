@@ -39,8 +39,8 @@ public class MoreUtils {
         assertTrue(found);
     }
 
-    public static <T extends Building> 
-        T waitForComputerPlayerToPlaceBuilding(ComputerPlayer computerPlayer, 
+    public static <T extends Building>
+        T waitForComputerPlayerToPlaceBuilding(ComputerPlayer computerPlayer,
             Class<T> aClass, GameMap map) throws Exception {
         Player player = computerPlayer.getControlledPlayer();
         T found       = null;
@@ -149,7 +149,7 @@ public class MoreUtils {
             System.out.println("Road: " + r.getWayPoints());
         }
 
-        System.out.println("\n\n");        
+        System.out.println("\n\n");
     }
 
     public static void waitForBuildingToGetCapturedByPlayer(Building building, Player player, GameMap map) throws Exception {
@@ -175,7 +175,7 @@ public class MoreUtils {
             for (Point p : border) {
                 double tmpDistance = barracks.getPosition().distance(p);
 
-                if (barracks.getPlayer().getDiscoveredLand().contains(p) && 
+                if (barracks.getPlayer().getDiscoveredLand().contains(p) &&
                     tmpDistance < distance) {
                     distance = tmpDistance;
                 }

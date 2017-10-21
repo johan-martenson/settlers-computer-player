@@ -247,7 +247,7 @@ public class Utils {
         }
     }
 
-    public static void setTileToWater(Point p1, Point p2, Point p3, GameMap map) throws Exception {        
+    public static void setTileToWater(Point p1, Point p2, Point p3, GameMap map) throws Exception {
         Tile waterTile = map.getTerrain().getTile(p1, p2, p3);
 
         waterTile.setVegetationType(WATER);
@@ -381,7 +381,7 @@ public class Utils {
                 }
             }
 
-            if (b.needsMaterial(STONE)) {                
+            if (b.needsMaterial(STONE)) {
                 try {
                     Cargo cargo = new Cargo(STONE, map);
 
@@ -886,8 +886,8 @@ public class Utils {
     }
 
     static int getAmountMilitary(Headquarter headquarter0) {
-        return headquarter0.getAmount(PRIVATE) + 
-                headquarter0.getAmount(SERGEANT) + 
+        return headquarter0.getAmount(PRIVATE) +
+                headquarter0.getAmount(SERGEANT) +
                 headquarter0.getAmount(GENERAL);
     }
 }
