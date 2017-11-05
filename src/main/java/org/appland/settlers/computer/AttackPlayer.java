@@ -53,7 +53,7 @@ public class AttackPlayer implements ComputerPlayer {
             buildingUnderAttack = map.getBuildingAtPoint(buildingUnderAttack.getPosition());
         }
 
-        /* Start with finding the headquarte */
+        /* Start with finding the headquarter */
         if (state == State.INITIAL_STATE) {
 
             /* Find headquarter */

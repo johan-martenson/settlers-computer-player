@@ -23,7 +23,7 @@ public enum PlayerType {
         switch (computerPlayerName) {
             case "building":
                 return BUILDING;
-            case "expandsion":
+            case "expansion":
                 return EXPANDING;
             case "attacking":
                 return ATTACKING;

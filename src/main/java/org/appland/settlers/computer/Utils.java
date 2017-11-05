@@ -234,7 +234,7 @@ public class Utils {
         return null;
     }
 
-    static Point findConnectionToDestionationOrExistingRoad(Player player, GameMap map, Point start, Point end) {
+    static Point findConnectionToDestinationOrExistingRoad(Player player, GameMap map, Point start, Point end) {
 
         /* Look for the closest flag with connection to the headquarter within a reasonable range */
         double distance = Double.MAX_VALUE;

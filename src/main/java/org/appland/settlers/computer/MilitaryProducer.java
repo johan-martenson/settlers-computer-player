@@ -23,7 +23,7 @@ import static org.appland.settlers.model.Size.SMALL;
  *
  * @author johan
  */
-public class MiltaryProducer implements ComputerPlayer {
+public class MilitaryProducer implements ComputerPlayer {
 
     private final Player            controlledPlayer;
     private final GameMap           map;
@@ -51,7 +51,7 @@ public class MiltaryProducer implements ComputerPlayer {
         DONE,
     }
 
-    public MiltaryProducer(Player player, GameMap m) {
+    public MilitaryProducer(Player player, GameMap m) {
         controlledPlayer = player;
         map              = m;
 

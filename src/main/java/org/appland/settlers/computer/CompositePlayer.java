@@ -42,7 +42,7 @@ public class CompositePlayer implements ComputerPlayer {
     private final SearchForMineralsPlayer       mineralsPlayer;
     private final FoodProducer                  foodPlayer;
     private final CoinProducer                  coinPlayer;
-    private final MiltaryProducer               militaryProducer;
+    private final MilitaryProducer              militaryProducer;
     private final ExpandLandPlayer              expandingPlayer;
     private final AttackPlayer                  attackingPlayer;
     private final Countdown                     countdown;
@@ -68,7 +68,7 @@ public class CompositePlayer implements ComputerPlayer {
         mineralsPlayer     = new SearchForMineralsPlayer(player, map);
         foodPlayer         = new FoodProducer(player, map);
         coinPlayer         = new CoinProducer(player, map);
-        militaryProducer   = new MiltaryProducer(player, map);
+        militaryProducer   = new MilitaryProducer(player, map);
         expandingPlayer    = new ExpandLandPlayer(player, map);
         attackingPlayer    = new AttackPlayer(player, map);
 

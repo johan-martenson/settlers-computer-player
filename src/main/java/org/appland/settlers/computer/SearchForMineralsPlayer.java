@@ -274,7 +274,7 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
             }
 
             Point hqFlagPoint = headquarter.getFlag().getPosition();
-            Point connectPoint = Utils.findConnectionToDestionationOrExistingRoad(controlledPlayer, map, p, hqFlagPoint);
+            Point connectPoint = Utils.findConnectionToDestinationOrExistingRoad(controlledPlayer, map, p, hqFlagPoint);
 
             if (connectPoint != null) {
                 return p;
