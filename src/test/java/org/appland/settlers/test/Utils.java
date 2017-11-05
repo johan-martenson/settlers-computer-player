@@ -241,19 +241,19 @@ public class Utils {
         assertTrue(found);
     }
 
-    public static void surroundPointWithWater(Point point0, GameMap map) throws Exception {
+    public static void surroundPointWithWater(Point point0, GameMap map) {
         for (Tile t : map.getTerrain().getSurroundingTiles(point0)) {
             t.setVegetationType(WATER);
         }
     }
 
-    public static void setTileToWater(Point p1, Point p2, Point p3, GameMap map) throws Exception {
+    public static void setTileToWater(Point p1, Point p2, Point p3, GameMap map) {
         Tile waterTile = map.getTerrain().getTile(p1, p2, p3);
 
         waterTile.setVegetationType(WATER);
     }
 
-    public static void surroundPointWithMountain(Point point0, GameMap map) throws Exception {
+    public static void surroundPointWithMountain(Point point0, GameMap map) {
         for (Tile t : map.getTerrain().getSurroundingTiles(point0)) {
             t.setVegetationType(MOUNTAIN);
         }
@@ -283,31 +283,31 @@ public class Utils {
         assertNotNull(building.getWorker());
     }
 
-    public static void putGoldAtSurroundingTiles(Point point0, Size size, GameMap map) throws Exception {
+    public static void putGoldAtSurroundingTiles(Point point0, Size size, GameMap map) {
         for (Tile t : map.getTerrain().getSurroundingTiles(point0)) {
             t.setAmountMineral(GOLD, size);
         }
     }
 
-    public static void putIronAtSurroundingTiles(Point point0, Size size, GameMap map) throws Exception {
+    public static void putIronAtSurroundingTiles(Point point0, Size size, GameMap map) {
         for (Tile t : map.getTerrain().getSurroundingTiles(point0)) {
             t.setAmountMineral(IRON, size);
         }
     }
 
-    public static void putCoalAtSurroundingTiles(Point point0, Size size, GameMap map) throws Exception {
+    public static void putCoalAtSurroundingTiles(Point point0, Size size, GameMap map) {
         for (Tile t : map.getTerrain().getSurroundingTiles(point0)) {
             t.setAmountMineral(COAL, size);
         }
     }
 
-    public static void putGraniteAtSurroundingTiles(Point point0, Size size, GameMap map) throws Exception {
+    public static void putGraniteAtSurroundingTiles(Point point0, Size size, GameMap map) {
         for (Tile t : map.getTerrain().getSurroundingTiles(point0)) {
             t.setAmountMineral(STONE, size);
         }
     }
 
-    public static void createMountainWithinRadius(Point point1, int i, GameMap map) throws Exception {
+    public static void createMountainWithinRadius(Point point1, int i, GameMap map) {
         Set<Tile> tiles = new HashSet<>();
         Terrain terrain = map.getTerrain();
 
@@ -320,7 +320,7 @@ public class Utils {
         }
     }
 
-    public static void putMineralWithinRadius(Material mineral, Point point1, int i, GameMap map) throws Exception {
+    public static void putMineralWithinRadius(Material mineral, Point point1, int i, GameMap map) {
         Set<Tile> tiles = new HashSet<>();
         Terrain terrain = map.getTerrain();
 

@@ -8,7 +8,7 @@ import org.appland.settlers.model.Player;
  */
 public interface ComputerPlayer {
 
-    public void turn() throws Exception;
+    void turn() throws Exception;
 
-    public Player getControlledPlayer();
+    Player getControlledPlayer();
 }

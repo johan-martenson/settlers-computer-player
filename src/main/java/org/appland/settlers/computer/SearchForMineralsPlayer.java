@@ -59,7 +59,6 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
         INITIALIZING,
         LOOKING_FOR_MINERALS,
         LOOKING_FOR_GEOLOGIST,
-        FOUND_MINERALS,
         WAITING_FOR_GEOLOGY_RESULTS,
         ALL_CURRENTLY_CONCLUDED
     }

@@ -48,8 +48,8 @@ public class Filter {
     }
 
     public interface Criteria {
-        public SearchFor getSearchType();
-        public boolean matches(Object o);
+        SearchFor getSearchType();
+        boolean matches(Object o);
     }
 
     private class BuildingOfTypeCriteria implements Criteria {

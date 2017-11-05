@@ -78,7 +78,7 @@ public class TestEvaluation {
         GameMap map = new GameMap(players, 40, 40);
 
         Point point0 = new Point(5, 5);
-        Storage headquarter0 = (Storage)map.placeBuilding(new Headquarter(player0), point0);
+        Storage headquarter0 = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Create evaluator */
         Evaluator evaluator = new Evaluator();
@@ -114,7 +114,7 @@ public class TestEvaluation {
         GameMap map = new GameMap(players, 40, 40);
 
         Point point0 = new Point(5, 5);
-        Storage headquarter0 = (Storage)map.placeBuilding(new Headquarter(player0), point0);
+        Storage headquarter0 = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Create evaluator */
         Evaluator evaluator = new Evaluator();
@@ -152,7 +152,7 @@ public class TestEvaluation {
         GameMap map = new GameMap(players, 40, 40);
 
         Point point0 = new Point(5, 5);
-        Storage headquarter0 = (Storage)map.placeBuilding(new Headquarter(player0), point0);
+        Storage headquarter0 = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Create evaluator */
         Evaluator evaluator = new Evaluator();

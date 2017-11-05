@@ -34,13 +34,13 @@ public class Utils {
     public static final int THRESHOLD_CLOSE_TO_ENEMY = 10;
     public static final int THRESHOLD_VERY_CLOSE_TO_ENEMY = 5;
 
-    static Point findAvailableSpotForBuilding(GameMap map, Player player) throws Exception {
+    static Point findAvailableSpotForBuilding(GameMap map, Player player) {
         Map<Point, Size> spots = map.getAvailableHousePoints(player);
 
         return spots.keySet().iterator().next();
     }
 
-    static List<Point> findAvailableHousePointsWithinRadius(GameMap map, Player player, Point position, Size size, int radius) throws Exception {
+    static List<Point> findAvailableHousePointsWithinRadius(GameMap map, Player player, Point position, Size size, int radius) {
         List<Point> availableHousePointsWithinRadius = new LinkedList<>();
 
         /* Collect the available house points within the radius */
@@ -159,7 +159,7 @@ public class Utils {
         return result;
     }
 
-    static Road connectPointToBuilding(Player player, GameMap map, Point start, Building building2) throws InvalidRouteException, Exception {
+    static Road connectPointToBuilding(Player player, GameMap map, Point start, Building building2) throws Exception {
         Point via = pointToConnectViaToGetToBuilding(player, map, start, building2);
 
         if (via != null) {
@@ -169,7 +169,7 @@ public class Utils {
         return null;
     }
 
-    static Point pointToConnectViaToGetToBuilding(Player player, GameMap map, Point start, Building building2) throws Exception {
+    static Point pointToConnectViaToGetToBuilding(Player player, GameMap map, Point start, Building building2) {
         Point end = building2.getFlag().getPosition();
 
         /* Return directly if they are already connected */
@@ -235,7 +235,7 @@ public class Utils {
         return null;
     }
 
-    static Point findConnectionToDestionationOrExistingRoad(Player player, GameMap map, Point start, Point end) throws InvalidRouteException, Exception {
+    static Point findConnectionToDestionationOrExistingRoad(Player player, GameMap map, Point start, Point end) {
 
         /* Look for the closest flag with connection to the headquarter within a reasonable range */
         double distance = Double.MAX_VALUE;
@@ -446,7 +446,7 @@ public class Utils {
 	    return result;
 	}
 
-    public static Point findPointForBuildingCloseToPoint(Point point, Size neededSize, Player controlledPlayer, GameMap map) throws Exception {
+    public static Point findPointForBuildingCloseToPoint(Point point, Size neededSize, Player controlledPlayer, GameMap map) {
 
         /* Find a good point to build on, close to the given point */
         Point site = null;

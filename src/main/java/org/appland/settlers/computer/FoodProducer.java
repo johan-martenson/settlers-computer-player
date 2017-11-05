@@ -187,7 +187,7 @@ public class FoodProducer implements ComputerPlayer {
         return controlledPlayer;
     }
 
-    private Point findPointForFishery() throws Exception {
+    private Point findPointForFishery() {
 
         Terrain terrain = map.getTerrain();
 
@@ -216,7 +216,7 @@ public class FoodProducer implements ComputerPlayer {
         return null;
     }
 
-    private Point findPointForHunterHut() throws Exception {
+    private Point findPointForHunterHut() {
 
         /* Find a good point to build on, close to the headquarter */
         Point site = null;

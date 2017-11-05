@@ -25,7 +25,7 @@ public class Evaluator {
 
         for (Building b : player.getBuildings()) {
             if (b instanceof Headquarter) {
-                headquarter = (Headquarter) b;
+                headquarter = b;
 
                 break;
             }

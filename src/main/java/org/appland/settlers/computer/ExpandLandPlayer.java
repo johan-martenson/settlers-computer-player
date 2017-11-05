@@ -83,7 +83,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
         }
 
         if (unfinishedBarracks != null) {
-            unfinishedBarracks = (Building)map.getBuildingAtPoint(unfinishedBarracks.getPosition());
+            unfinishedBarracks = map.getBuildingAtPoint(unfinishedBarracks.getPosition());
         }
 
         /* Start with finding the headquarter */

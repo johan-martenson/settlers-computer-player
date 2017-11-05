@@ -141,17 +141,6 @@ public class MoreUtils {
         return barracks0;
     }
 
-    static void printRoads(GameMap map) {
-
-        System.out.println("\n\n");
-
-        for (Road r : map.getRoads()) {
-            System.out.println("Road: " + r.getWayPoints());
-        }
-
-        System.out.println("\n\n");
-    }
-
     public static void waitForBuildingToGetCapturedByPlayer(Building building, Player player, GameMap map) throws Exception {
 
         for (int i = 0; i < 5000; i++) {

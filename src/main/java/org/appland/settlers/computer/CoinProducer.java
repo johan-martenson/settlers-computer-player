@@ -67,7 +67,7 @@ public class CoinProducer implements ComputerPlayer {
         	if (headquarter.getAmount(GOLD) > 0 && mints.isEmpty()) {
         	    state = State.MINT_NEEDED;
         	}
-       	
+
         /* Try to build a mint if there isn't already one placed */
         } else if (state == State.MINT_NEEDED) {
 
@@ -111,7 +111,7 @@ public class CoinProducer implements ComputerPlayer {
         return controlledPlayer;
     }
 
-    private Point findPointForMint() throws Exception {
+    private Point findPointForMint() {
 
         /* Find a good point to build on, close to the headquarter */
         Point site = null;
