@@ -32,7 +32,6 @@ public class PlanckProductionPlayer implements ComputerPlayer {
         WAITING_FOR_FORESTER,
         FORESTER_CONSTRUCTED,
         WOODCUTTER_CONSTRUCTED,
-        SAWMILL_CONSTRUCTED,
         WAITING_FOR_WOODCUTTER,
         WAITING_FOR_SAWMILL
     }
@@ -126,11 +125,11 @@ public class PlanckProductionPlayer implements ComputerPlayer {
         }
     }
 
-    private Point findSpotForForesterHut() throws Exception {
+    private Point findSpotForForesterHut() {
         return Utils.findAvailableSpotForBuilding(map, player);
     }
 
-    private Point findSpotForWoodcutterNextToForesterHut(ForesterHut foresterHut) throws Exception {
+    private Point findSpotForWoodcutterNextToForesterHut(ForesterHut foresterHut) {
 
         /* Find available spots close to the forester */
         List<Point> spots = Utils.findAvailableHousePointsWithinRadius(map, player, foresterHut.getPosition(), SMALL, 4);
@@ -144,7 +143,7 @@ public class PlanckProductionPlayer implements ComputerPlayer {
         return spots.get(0);
     }
 
-    private Point findSpotForSawmill(Headquarter headquarter) throws Exception {
+    private Point findSpotForSawmill(Headquarter headquarter) {
 
         /* Find available spots close to the forester */
         List<Point> spots = Utils.findAvailableHousePointsWithinRadius(map, player, headquarter.getPosition(), MEDIUM, 4);

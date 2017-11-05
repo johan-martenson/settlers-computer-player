@@ -15,7 +15,6 @@ import org.appland.settlers.model.GameMap;
 import static org.appland.settlers.model.Military.Rank.PRIVATE_RANK;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
-import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Stone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

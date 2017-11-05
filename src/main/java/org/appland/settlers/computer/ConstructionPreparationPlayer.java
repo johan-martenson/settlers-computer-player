@@ -143,7 +143,7 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
         return null;
     }
 
-    private Point findSpotForQuarry(Point stonePoint) throws Exception {
+    private Point findSpotForQuarry(Point stonePoint) {
 
         /* Get points with available space for houses close to the stone point */
         List<Point> points = Utils.findAvailableHousePointsWithinRadius(map, player, stonePoint, SMALL, 5);

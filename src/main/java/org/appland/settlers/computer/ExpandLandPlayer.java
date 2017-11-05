@@ -30,7 +30,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
     private Headquarter headquarter;
     private State       state;
     private boolean     newBuildings;
-    int                 counter;
+    private int                 counter;
     private boolean     preferEnemyDirection;
     private boolean     waitUntilOccupied;
 
@@ -239,7 +239,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
         return false;
     }
 
-    private Point findSpotForNextBarracks(Player player, Set<Point> ignore) throws Exception {
+    private Point findSpotForNextBarracks(Player player, Set<Point> ignore) {
         Set<Point> candidates = new HashSet<>();
         Set<Point> investigated = new HashSet<>();
 

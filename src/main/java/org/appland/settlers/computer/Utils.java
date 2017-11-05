@@ -18,7 +18,6 @@ import org.appland.settlers.model.EndPoint;
 import org.appland.settlers.model.Flag;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
-import org.appland.settlers.model.InvalidRouteException;
 import org.appland.settlers.model.Land;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
@@ -31,8 +30,8 @@ import org.appland.settlers.model.Size;
  */
 public class Utils {
 
-    public static final int THRESHOLD_CLOSE_TO_ENEMY = 10;
-    public static final int THRESHOLD_VERY_CLOSE_TO_ENEMY = 5;
+    private static final int THRESHOLD_CLOSE_TO_ENEMY = 10;
+    private static final int THRESHOLD_VERY_CLOSE_TO_ENEMY = 5;
 
     static Point findAvailableSpotForBuilding(GameMap map, Player player) {
         Map<Point, Size> spots = map.getAvailableHousePoints(player);
@@ -372,7 +371,7 @@ public class Utils {
         fillRoadWithFlags(map, road);
     }
 
-    public static Set<Flag> findConnectedFlags(GameMap map, Flag from) throws Exception {
+    private static Set<Flag> findConnectedFlags(GameMap map, Flag from) throws Exception {
         Set<Flag>  fromFlags     = new HashSet<>();
         List<Flag> flagsToSearch = new LinkedList<>();
         Set<Road>  searchedRoads = new HashSet<>();

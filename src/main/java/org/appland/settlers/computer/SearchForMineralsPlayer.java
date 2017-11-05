@@ -265,7 +265,7 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
         return controlledPlayer;
     }
 
-    private Point findPointForFlagCloseBy(Point point) throws Exception {
+    private Point findPointForFlagCloseBy(Point point) {
 
         for (Point p : map.getPointsWithinRadius(point, RANGE_BETWEEN_FLAG_AND_POINT)) {
 
@@ -355,7 +355,7 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
         return activeMines.containsKey(GOLD) && activeMines.get(GOLD) > 0;
     }
 
-    boolean hasGraniteMine() {
+    private boolean hasGraniteMine() {
         return activeMines.containsKey(STONE) && activeMines.get(STONE) > 0;
     }
 
