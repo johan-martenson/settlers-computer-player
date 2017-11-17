@@ -8,7 +8,7 @@ package org.appland.settlers.computer.test;
 import java.util.ArrayList;
 import java.util.List;
 import org.appland.settlers.computer.ComputerPlayer;
-import org.appland.settlers.computer.PlanckProductionPlayer;
+import org.appland.settlers.computer.PlankProductionPlayer;
 import org.appland.settlers.model.ForesterHut;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
@@ -25,10 +25,10 @@ import static org.junit.Assert.assertTrue;
  *
  * @author johan
  */
-public class TestPlanckProductionPlayer {
+public class TestPlankProductionPlayer {
 
     @Test
-    public void testCreatePlanckProductionPlayer() throws Exception {
+    public void testCreatePlankProductionPlayer() throws Exception {
 
         /* Create players */
         Player player0 = new Player("Player 0", java.awt.Color.BLUE);
@@ -39,7 +39,7 @@ public class TestPlanckProductionPlayer {
         GameMap map = new GameMap(players, 10, 10);
 
         /* Create the computer player */
-        ComputerPlayer computerPlayer = new PlanckProductionPlayer(player0, map);
+        ComputerPlayer computerPlayer = new PlankProductionPlayer(player0, map);
     }
 
     @Test
@@ -54,7 +54,7 @@ public class TestPlanckProductionPlayer {
         GameMap map = new GameMap(players, 100, 100);
 
         /* Create the computer player */
-        ComputerPlayer computerPlayer = new PlanckProductionPlayer(player0, map);
+        ComputerPlayer computerPlayer = new PlankProductionPlayer(player0, map);
 
         /* Place headquarter */
         Point point0 = new Point(10, 10);
@@ -88,7 +88,7 @@ public class TestPlanckProductionPlayer {
         GameMap map = new GameMap(players, 100, 100);
 
         /* Create the computer player */
-        ComputerPlayer computerPlayer = new PlanckProductionPlayer(player0, map);
+        ComputerPlayer computerPlayer = new PlankProductionPlayer(player0, map);
 
         /* Place headquarter */
         Point point0 = new Point(10, 10);
@@ -127,7 +127,7 @@ public class TestPlanckProductionPlayer {
         GameMap map = new GameMap(players, 100, 100);
 
         /* Create the computer player */
-        ComputerPlayer computerPlayer = new PlanckProductionPlayer(player0, map);
+        ComputerPlayer computerPlayer = new PlankProductionPlayer(player0, map);
 
         /* Place headquarter */
         Point point0 = new Point(10, 10);
@@ -155,7 +155,7 @@ public class TestPlanckProductionPlayer {
         GameMap map = new GameMap(players, 100, 100);
 
         /* Create the computer player */
-        ComputerPlayer computerPlayer = new PlanckProductionPlayer(player0, map);
+        ComputerPlayer computerPlayer = new PlankProductionPlayer(player0, map);
 
         /* Place headquarter */
         Point point0 = new Point(10, 10);
@@ -189,7 +189,7 @@ public class TestPlanckProductionPlayer {
         GameMap map = new GameMap(players, 100, 100);
 
         /* Create the computer player */
-        ComputerPlayer computerPlayer = new PlanckProductionPlayer(player0, map);
+        ComputerPlayer computerPlayer = new PlankProductionPlayer(player0, map);
 
         /* Place headquarter */
         Point point0 = new Point(10, 10);

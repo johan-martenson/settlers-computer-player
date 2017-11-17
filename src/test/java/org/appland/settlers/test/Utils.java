@@ -370,11 +370,11 @@ public class Utils {
         assertTrue(b.underConstruction());
 
         for (int i = 0; i < 20; i++) {
-            if (b.needsMaterial(PLANCK)) {
+            if (b.needsMaterial(PLANK)) {
                 try {
-                    Cargo cargo = new Cargo(PLANCK, map);
+                    Cargo cargo = new Cargo(PLANK, map);
 
-                    b.promiseDelivery(PLANCK);
+                    b.promiseDelivery(PLANK);
                     b.putCargo(cargo);
                 } catch (Exception ex) {
                     Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);

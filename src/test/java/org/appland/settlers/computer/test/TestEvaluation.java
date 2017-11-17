@@ -7,7 +7,7 @@ import org.appland.settlers.model.Building;
 import org.appland.settlers.model.Cargo;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
-import static org.appland.settlers.model.Material.PLANCK;
+import static org.appland.settlers.model.Material.PLANK;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Storage;
@@ -65,7 +65,7 @@ public class TestEvaluation {
     }
 
     @Test
-    public void testPlancksUnderTenAreWorthTen() throws Exception {
+    public void testPlanksUnderTenAreWorthTen() throws Exception {
 
         /* Create player list */
         Player player0 = new Player("Player 0", java.awt.Color.BLUE);
@@ -83,16 +83,16 @@ public class TestEvaluation {
         /* Create evaluator */
         Evaluator evaluator = new Evaluator();
 
-        /* Remove all plancks in the headquarter */
-        Utils.adjustInventoryTo(headquarter0, PLANCK, 0, map);
+        /* Remove all planks in the headquarter */
+        Utils.adjustInventoryTo(headquarter0, PLANK, 0, map);
 
-        assertEquals(headquarter0.getAmount(PLANCK), 0);
+        assertEquals(headquarter0.getAmount(PLANK), 0);
 
-        /* Verify that plancks below ten are worth ten */
+        /* Verify that planks below ten are worth ten */
         for (int i = 0; i < 10; i++) {
             int value = evaluator.evaluateMap(player0);
 
-            Cargo cargo = new Cargo(PLANCK, map);
+            Cargo cargo = new Cargo(PLANK, map);
 
             headquarter0.putCargo(cargo);
 
@@ -101,7 +101,7 @@ public class TestEvaluation {
     }
 
     @Test
-    public void testPlancksBetweenTenAndTwentyAreWorthFive() throws Exception {
+    public void testPlanksBetweenTenAndTwentyAreWorthFive() throws Exception {
 
         /* Create player list */
         Player player0 = new Player("Player 0", java.awt.Color.BLUE);
@@ -119,18 +119,18 @@ public class TestEvaluation {
         /* Create evaluator */
         Evaluator evaluator = new Evaluator();
 
-        /* Set the amount of plancks in the headquarter to 10 */
-        Utils.adjustInventoryTo(headquarter0, PLANCK, 10, map);
+        /* Set the amount of planks in the headquarter to 10 */
+        Utils.adjustInventoryTo(headquarter0, PLANK, 10, map);
 
         int worth = evaluator.evaluateMap(player0);
 
-        assertEquals(headquarter0.getAmount(PLANCK), 10);
+        assertEquals(headquarter0.getAmount(PLANK), 10);
 
-        /* Verify that plancks between ten and twenty are worth five */
+        /* Verify that planks between ten and twenty are worth five */
         for (int i = 0; i < 10; i++) {
             int value = evaluator.evaluateMap(player0);
 
-            Cargo cargo = new Cargo(PLANCK, map);
+            Cargo cargo = new Cargo(PLANK, map);
 
             headquarter0.putCargo(cargo);
 
@@ -139,7 +139,7 @@ public class TestEvaluation {
     }
 
     @Test
-    public void testPlancksOverTwentyAreWorthOne() throws Exception {
+    public void testPlanksOverTwentyAreWorthOne() throws Exception {
 
         /* Create player list */
         Player player0 = new Player("Player 0", java.awt.Color.BLUE);
@@ -157,18 +157,18 @@ public class TestEvaluation {
         /* Create evaluator */
         Evaluator evaluator = new Evaluator();
 
-        /* Set the amount of plancks in the headquarter to 20 */
-        Utils.adjustInventoryTo(headquarter0, PLANCK, 20, map);
+        /* Set the amount of planks in the headquarter to 20 */
+        Utils.adjustInventoryTo(headquarter0, PLANK, 20, map);
 
         int worth = evaluator.evaluateMap(player0);
 
-        assertEquals(headquarter0.getAmount(PLANCK), 20);
+        assertEquals(headquarter0.getAmount(PLANK), 20);
 
-        /* Verify that plancks over twenty are worth one */
+        /* Verify that planks over twenty are worth one */
         for (int i = 0; i < 10; i++) {
             int value = evaluator.evaluateMap(player0);
 
-            Cargo cargo = new Cargo(PLANCK, map);
+            Cargo cargo = new Cargo(PLANK, map);
 
             headquarter0.putCargo(cargo);
 

@@ -21,7 +21,7 @@ import org.appland.settlers.model.Woodcutter;
  *
  * @author johan
  */
-public class PlanckProductionPlayer implements ComputerPlayer {
+public class PlankProductionPlayer implements ComputerPlayer {
     private ForesterHut foresterHut;
     private Woodcutter  woodcutter;
     private Headquarter headquarter;
@@ -41,7 +41,7 @@ public class PlanckProductionPlayer implements ComputerPlayer {
 
     private State state;
 
-    public PlanckProductionPlayer(Player p, GameMap m) {
+    public PlankProductionPlayer(Player p, GameMap m) {
         player = p;
         map    = m;
 

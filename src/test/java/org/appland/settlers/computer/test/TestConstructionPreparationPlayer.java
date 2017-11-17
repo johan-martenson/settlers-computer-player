@@ -309,7 +309,15 @@ public class TestConstructionPreparationPlayer {
 
             assertNotNull(computerPlayer);
 
-            computerPlayer.turn();
+            try {
+                computerPlayer.turn();
+            } catch (Exception e) {
+                for (StackTraceElement ste : e.getStackTrace()) {
+                    System.out.println(ste.getClassName() + "." + ste.getMethodName() + ": " + ste.getLineNumber());
+                }
+
+                System.exit(1);
+            }
 
             if (quarry.burningDown()) {
                 break;

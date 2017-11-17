@@ -15,7 +15,7 @@ import org.appland.settlers.model.Barracks;
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.Headquarter;
 import org.appland.settlers.model.Material;
-import static org.appland.settlers.model.Material.PLANCK;
+import static org.appland.settlers.model.Material.PLANK;
 import static org.appland.settlers.model.Material.PRIVATE;
 import static org.appland.settlers.model.Material.STONE;
 import org.appland.settlers.model.Military;
@@ -72,7 +72,7 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANCK, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
         Utils.adjustInventoryTo(headquarter, STONE, 40, map);
         Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
 
@@ -103,7 +103,7 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANCK, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
         Utils.adjustInventoryTo(headquarter, STONE, 40, map);
         Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
 
@@ -135,7 +135,7 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANCK, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
         Utils.adjustInventoryTo(headquarter, STONE, 40, map);
         Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
 
@@ -191,7 +191,7 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANCK, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
         Utils.adjustInventoryTo(headquarter, STONE, 40, map);
         Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
 
@@ -221,7 +221,7 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANCK, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
         Utils.adjustInventoryTo(headquarter, STONE, 40, map);
         Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
 
@@ -257,7 +257,7 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANCK, 400, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 400, map);
         Utils.adjustInventoryTo(headquarter, STONE, 400, map);
         Utils.adjustInventoryTo(headquarter, PRIVATE, 400, map);
 
@@ -298,7 +298,7 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANCK, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
         Utils.adjustInventoryTo(headquarter, STONE, 40, map);
         Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
 
@@ -367,7 +367,7 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANCK, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
         Utils.adjustInventoryTo(headquarter, STONE, 40, map);
         Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
 
@@ -407,7 +407,7 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANCK, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
         Utils.adjustInventoryTo(headquarter, STONE, 40, map);
         Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
 
@@ -446,7 +446,7 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANCK, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
         Utils.adjustInventoryTo(headquarter, STONE, 40, map);
         Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
 
@@ -506,7 +506,7 @@ public class TestExpandLandPlayer {
         Utils.occupyMilitaryBuilding(Military.Rank.GENERAL_RANK, 2, barracks1, map);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter0, PLANCK, 60, map);
+        Utils.adjustInventoryTo(headquarter0, PLANK, 60, map);
         Utils.adjustInventoryTo(headquarter0, STONE, 60, map);
         Utils.adjustInventoryTo(headquarter0, PRIVATE, 10, map);
 
@@ -588,7 +588,7 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANCK, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
         Utils.adjustInventoryTo(headquarter, STONE, 40, map);
         Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
 
@@ -619,7 +619,7 @@ public class TestExpandLandPlayer {
         players.add(player1);
 
         /* Create game map */
-        GameMap map = new GameMap(players, 100, 100);
+        GameMap map = new GameMap(players, 100, 30);
 
         /* Create the computer player */
         ComputerPlayer computerPlayer = new ExpandLandPlayer(player0, map);
@@ -633,7 +633,7 @@ public class TestExpandLandPlayer {
         Headquarter headquarter1 = map.placeBuilding(new Headquarter(player1), point1);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANCK, 500, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 500, map);
         Utils.adjustInventoryTo(headquarter, STONE, 500, map);
         Utils.adjustInventoryTo(headquarter, PRIVATE, 500, map);
 
@@ -699,7 +699,7 @@ public class TestExpandLandPlayer {
         Headquarter headquarter1 = map.placeBuilding(new Headquarter(player1), point1);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANCK, 500, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 500, map);
         Utils.adjustInventoryTo(headquarter, STONE, 500, map);
         Utils.adjustInventoryTo(headquarter, PRIVATE, 500, map);
 

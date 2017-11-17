@@ -7,7 +7,7 @@ package org.appland.settlers.computer;
 
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.Headquarter;
-import static org.appland.settlers.model.Material.PLANCK;
+import static org.appland.settlers.model.Material.PLANK;
 import org.appland.settlers.model.Player;
 
 
@@ -32,24 +32,24 @@ public class Evaluator {
         }
 
         if (headquarter != null) {
-            int plancks = headquarter.getAmount(PLANCK);
+            int planks = headquarter.getAmount(PLANK);
 
-            if (plancks > 0 && plancks < 11) {
-                value += plancks * 10;
+            if (planks > 0 && planks < 11) {
+                value += planks * 10;
 
-            } else if (plancks > 10 && plancks < 21) {
+            } else if (planks > 10 && planks < 21) {
                 value += 10 * 10;
-                plancks -= 10;
+                planks -= 10;
 
-                value += plancks * 5;
-            } else if (plancks > 20) {
+                value += planks * 5;
+            } else if (planks > 20) {
                 value += 10 * 10;
-                plancks -= 10;
+                planks -= 10;
 
                 value += 10 * 5;
-                plancks -= 10;
+                planks -= 10;
 
-                value += plancks;
+                value += planks;
             }
         }
 

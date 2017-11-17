@@ -22,7 +22,7 @@ import static org.appland.settlers.model.Material.GOLD;
 import static org.appland.settlers.model.Material.IRON;
 import static org.appland.settlers.model.Material.IRON_BAR;
 import static org.appland.settlers.model.Material.MEAT;
-import static org.appland.settlers.model.Material.PLANCK;
+import static org.appland.settlers.model.Material.PLANK;
 import static org.appland.settlers.model.Material.SHIELD;
 import static org.appland.settlers.model.Material.STONE;
 import static org.appland.settlers.model.Material.SWORD;
@@ -255,12 +255,12 @@ public class CompositePlayer implements ComputerPlayer {
         player.setTransportPriority(9, FLOUR);
         player.setTransportPriority(10, WHEAT);
         player.setTransportPriority(11, STONE);
-        player.setTransportPriority(12, PLANCK);
+        player.setTransportPriority(12, PLANK);
         player.setTransportPriority(13, BEER);
         player.setTransportPriority(14, WOOD);
         player.setTransportPriority(15, WATER);
 
-        /* Main priority: GOLD, PRIVATE, PLANCKS, STONES
+        /* Main priority: GOLD, PRIVATE, PLANKS, STONES
            Handle backwards to get the priority right
         */
 
@@ -269,9 +269,9 @@ public class CompositePlayer implements ComputerPlayer {
             player.setTransportPriority(0, STONE);
         }
 
-        /* Then plancks */
-        if (player.getInventory().get(PLANCK) < 20) {
-            player.setTransportPriority(0, PLANCK);
+        /* Then planks */
+        if (player.getInventory().get(PLANK) < 20) {
+            player.setTransportPriority(0, PLANK);
             player.setTransportPriority(1, WOOD);
         }
 
