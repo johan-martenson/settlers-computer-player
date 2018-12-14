@@ -43,9 +43,8 @@ public class MoreUtils {
             Class<T> aClass, GameMap map) throws Exception {
         Player player = computerPlayer.getControlledPlayer();
         T found       = null;
-        Set<Building> buildingsBefore = new HashSet<>();
 
-        buildingsBefore.addAll(player.getBuildings());
+        Set<Building> buildingsBefore = new HashSet<>(player.getBuildings());
 
         for (int i = 0; i < 10000; i++) {
             for (Building b : player.getBuildings()) {

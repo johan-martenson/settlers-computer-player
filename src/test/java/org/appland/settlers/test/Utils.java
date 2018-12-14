@@ -40,13 +40,16 @@ import static org.appland.settlers.model.Tile.Vegetation.WATER;
 import org.appland.settlers.model.Tree;
 import org.appland.settlers.model.WildAnimal;
 import org.appland.settlers.model.Worker;
+
+import static java.lang.Math.abs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
 import static org.junit.Assert.assertTrue;
-import static java.lang.Math.abs;
+import static org.junit.Assert.fail;
+
 import org.appland.settlers.model.GameMap;
 
 public class Utils {
@@ -506,7 +509,7 @@ public class Utils {
 
         for (int i = 0; i < 500; i++) {
             if (courier.getCargo() != null && courier.getCargo().getMaterial() == COIN) {
-                assertFalse(true);
+                fail();
             }
 
             map.stepTime();
@@ -570,7 +573,7 @@ public class Utils {
             map.stepTime();
         }
 
-        assertFalse(true);
+        fail();
 
         return null;
     }
@@ -622,7 +625,7 @@ public class Utils {
             map.stepTime();
         }
 
-        assertFalse(building.equals(map.getBuildingAtPoint(building.getPosition())));
+        assertNotEquals(building, map.getBuildingAtPoint(building.getPosition()));
     }
 
     static void waitForFightToStart(GameMap map, Military attacker, Military defender) throws Exception {
@@ -809,7 +812,7 @@ public class Utils {
             map.stepTime();
         }
 
-        assertTrue(false);
+        fail();
 
         return null;
     }

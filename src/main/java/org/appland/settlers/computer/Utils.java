@@ -47,7 +47,7 @@ public class Utils {
 
             Size availableSize = map.isAvailableHousePoint(player, point);
 
-            if (availableSize != null && Size.contains(availableSize, size)) {
+            if (Size.contains(availableSize, size)) {
                 availableHousePointsWithinRadius.add(point);
             }
         }

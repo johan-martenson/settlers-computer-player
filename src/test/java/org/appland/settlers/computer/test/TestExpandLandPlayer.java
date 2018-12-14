@@ -25,11 +25,14 @@ import org.appland.settlers.model.Road;
 import org.appland.settlers.test.MoreUtils;
 import org.appland.settlers.test.Utils;
 import org.junit.Test;
+
+import static org.appland.settlers.computer.Utils.getDistanceToOwnBorder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.appland.settlers.computer.Utils.getDistanceToOwnBorder;
+
 import org.appland.settlers.model.GameMap;
 
 /**
@@ -424,7 +427,7 @@ public class TestExpandLandPlayer {
         Barracks barracks2 = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Barracks.class, map);
 
         assertEquals(map.getBuildingAtPoint(barracks2.getPosition()), barracks2);
-        assertFalse(barracks2.getPosition().equals(barracks1.getPosition()));
+        assertNotEquals(barracks2.getPosition(), barracks1.getPosition());
     }
 
     @Test
