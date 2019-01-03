@@ -250,12 +250,6 @@ public class Utils {
         }
     }
 
-    public static void setTileToWater(Point p1, Point p2, Point p3, GameMap map) {
-        Tile waterTile = map.getTerrain().getTile(p1, p2, p3);
-
-        waterTile.setVegetationType(WATER);
-    }
-
     public static void surroundPointWithMountain(Point point0, GameMap map) {
         for (Tile t : map.getTerrain().getSurroundingTiles(point0)) {
             t.setVegetationType(MOUNTAIN);
