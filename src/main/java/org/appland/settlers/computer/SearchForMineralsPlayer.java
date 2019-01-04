@@ -242,21 +242,19 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
 
     private void lookForNewPointsToHandle() {
         /* Look for any new points to handle */
-        for (Land land : controlledPlayer.getLands()) {
-            for (Point p : land.getPointsInLand()) {
+        for (Point point : controlledPlayer.getLandInPoints()) {
 
-                if (concludedPoints.contains(p)) {
-                    continue;
-                }
-
-                if (!map.getTerrain().isOnMountain(p)) {
-                    concludedPoints.add(p);
-
-                    continue;
-                }
-
-                pointsToInvestigate.add(p);
+            if (concludedPoints.contains(point)) {
+                continue;
             }
+
+            if (!map.getTerrain().isOnMountain(point)) {
+                concludedPoints.add(point);
+
+                continue;
+            }
+
+            pointsToInvestigate.add(point);
         }
     }
 

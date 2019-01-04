@@ -117,21 +117,19 @@ public class CoinProducer implements ComputerPlayer {
         Point site = null;
         double distance = Double.MAX_VALUE;
 
-        for (Land land : controlledPlayer.getLands()) {
-            for (Point p : land.getPointsInLand()) {
+        for (Point point : controlledPlayer.getLandInPoints()) {
 
-                /* Filter out points where it's not possible to build */
-                Size size = map.isAvailableHousePoint(controlledPlayer, p);
-                if (size == null || size == SMALL) {
-                    continue;
-                }
+            /* Filter out points where it's not possible to build */
+            Size size = map.isAvailableHousePoint(controlledPlayer, point);
+            if (size == null || size == SMALL) {
+                continue;
+            }
 
-                double tempDistance = p.distance(headquarter.getPosition());
+            double tempDistance = point.distance(headquarter.getPosition());
 
-                if (tempDistance < distance) {
-                    site = p;
-                    distance = tempDistance;
-                }
+            if (tempDistance < distance) {
+                site = point;
+                distance = tempDistance;
             }
         }
 

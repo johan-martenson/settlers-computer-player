@@ -286,9 +286,7 @@ public class Utils {
         Set<Point> allLand = new HashSet<>(player.getDiscoveredLand());
 
         /* Subtract the owned land */
-        for (Land land : player.getLands()) {
-            allLand.removeAll(land.getPointsInLand());
-        }
+        allLand.removeAll(player.getLandInPoints());
 
         /* Collect all buildings in the remaining land */
         List<Building> visibleOpponentBuildings = new LinkedList<>();
@@ -451,22 +449,20 @@ public class Utils {
         Point site = null;
         double distance = Double.MAX_VALUE;
 
-        for (Land land : controlledPlayer.getLands()) {
-            for (Point p : land.getPointsInLand()) {
+        for (Point p : controlledPlayer.getLandInPoints()) {
 
-                /* Filter out points where it's not possible to build */
-                Size availableSize = map.isAvailableHousePoint(controlledPlayer, p);
+            /* Filter out points where it's not possible to build */
+            Size availableSize = map.isAvailableHousePoint(controlledPlayer, p);
 
-                if (!Size.contains(availableSize, neededSize)) {
-                    continue;
-                }
+            if (!Size.contains(availableSize, neededSize)) {
+                continue;
+            }
 
-                double tempDistance = p.distance(point);
+            double tempDistance = p.distance(point);
 
-                if (tempDistance < distance) {
-                    site = p;
-                    distance = tempDistance;
-                }
+            if (tempDistance < distance) {
+                site = p;
+                distance = tempDistance;
             }
         }
 
@@ -485,11 +481,9 @@ public class Utils {
 
     static boolean hasStoneWithinArea(GameMap map, Player player) {
 
-        for(Land land : player.getLands()) {
-            for (Point p : land.getPointsInLand()) {
-                if (map.isStoneAtPoint(p)) {
-                    return true;
-                }
+        for (Point point : player.getLandInPoints()) {
+            if (map.isStoneAtPoint(point)) {
+                return true;
             }
         }
 

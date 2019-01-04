@@ -192,24 +192,22 @@ public class FoodProducer implements ComputerPlayer {
         Terrain terrain = map.getTerrain();
 
         /* Look for water */
-        for (Land land : controlledPlayer.getLands()) {
-            for (Point wp : land.getPointsInLand()) {
+        for (Point point : controlledPlayer.getLandInPoints()) {
 
-                /* Filter non-water points */
-                if (!terrain.isInWater(wp)) {
+            /* Filter non-water points */
+            if (!terrain.isInWater(point)) {
+                continue;
+            }
+
+            /* Find point close by to build a fishery */
+            for (Point p : map.getPointsWithinRadius(point, RANGE_FISHERY_TO_WATER)) {
+
+                /* Filter points where it's not possible to build */
+                if (map.isAvailableHousePoint(controlledPlayer, p) == null) {
                     continue;
                 }
 
-                /* Find point close by to build a fishery */
-                for (Point p : map.getPointsWithinRadius(wp, RANGE_FISHERY_TO_WATER)) {
-
-                    /* Filter points where it's not possible to build */
-                    if (map.isAvailableHousePoint(controlledPlayer, p) == null) {
-                        continue;
-                    }
-
-                    return p;
-                }
+                return p;
             }
         }
 
@@ -222,20 +220,18 @@ public class FoodProducer implements ComputerPlayer {
         Point site = null;
         double distance = Double.MAX_VALUE;
 
-        for (Land land : controlledPlayer.getLands()) {
-            for (Point p : land.getPointsInLand()) {
+        for (Point point : controlledPlayer.getLandInPoints()) {
 
-                /* Filter out points where it's not possible to build */
-                if (map.isAvailableHousePoint(controlledPlayer, p) == null) {
-                    continue;
-                }
+            /* Filter out points where it's not possible to build */
+            if (map.isAvailableHousePoint(controlledPlayer, point) == null) {
+                continue;
+            }
 
-                double tempDistance = p.distance(headquarter.getPosition());
+            double tempDistance = point.distance(headquarter.getPosition());
 
-                if (tempDistance < distance) {
-                    site = p;
-                    distance = tempDistance;
-                }
+            if (tempDistance < distance) {
+                site = point;
+                distance = tempDistance;
             }
         }
 
