@@ -9,7 +9,6 @@ import org.appland.settlers.model.Fishery;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
 import org.appland.settlers.model.HunterHut;
-import org.appland.settlers.model.Land;
 import org.appland.settlers.model.Mill;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;

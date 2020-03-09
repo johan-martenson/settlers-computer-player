@@ -32,6 +32,7 @@ public class MoreUtils {
         for (Building b : player0.getBuildings()) {
             if (b.getClass().equals(aClass)) {
                 found = true;
+                break;
             }
         }
 

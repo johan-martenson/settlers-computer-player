@@ -21,7 +21,6 @@ import org.appland.settlers.model.GoldMine;
 import org.appland.settlers.model.GraniteMine;
 import org.appland.settlers.model.Headquarter;
 import org.appland.settlers.model.IronMine;
-import org.appland.settlers.model.Land;
 import org.appland.settlers.model.Material;
 import static org.appland.settlers.model.Material.COAL;
 import static org.appland.settlers.model.Material.GOLD;

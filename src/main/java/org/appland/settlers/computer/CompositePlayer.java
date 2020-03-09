@@ -11,6 +11,7 @@ import org.appland.settlers.model.Countdown;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.GoldMine;
 import org.appland.settlers.model.GraniteMine;
+import org.appland.settlers.model.InvalidUserActionException;
 import org.appland.settlers.model.IronMine;
 import static org.appland.settlers.model.Material.BEER;
 import static org.appland.settlers.model.Material.BREAD;
@@ -52,7 +53,7 @@ public class CompositePlayer implements ComputerPlayer {
     private int counter;
     private final static int PERIODIC_ENEMY_SCAN = 100;
     private final static int PERIODIC_SCAN_FOR_NEW_MINERALS = 30;
-    private final static int PERIODIC_TRANSPORT_PRIO_REVIEW = 200;
+    private final static int PERIODIC_TRANSPORT_PRIORITY_REVIEW = 200;
     private final static int COUNTER_MAX         = 1000;
     private final static int ATTACK_FOLLOW_UP    = 20;
     private final static int TIME_TO_WAIT_FOR_PROMOTED_SOLDIERS = 200;
@@ -91,7 +92,7 @@ public class CompositePlayer implements ComputerPlayer {
         previousPlayer = currentPlayer;
 
         /* Tweak transport priority regularly */
-        if (counter % PERIODIC_TRANSPORT_PRIO_REVIEW == 0) {
+        if (counter % PERIODIC_TRANSPORT_PRIORITY_REVIEW == 0) {
 
             player.setFoodQuota(CoalMine.class, 1);
             player.setFoodQuota(GoldMine.class, 1);
@@ -239,7 +240,7 @@ public class CompositePlayer implements ComputerPlayer {
         return player;
     }
 
-    private void tuneTransportPriorities() {
+    private void tuneTransportPriorities() throws InvalidUserActionException {
 
         /* Create a baseline for materials that tend to overflow */
 

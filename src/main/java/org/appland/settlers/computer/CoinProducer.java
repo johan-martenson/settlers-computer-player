@@ -6,7 +6,6 @@ import java.util.List;
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
-import org.appland.settlers.model.Land;
 import org.appland.settlers.model.Mint;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;

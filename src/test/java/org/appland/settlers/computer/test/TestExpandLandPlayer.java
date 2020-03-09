@@ -678,7 +678,7 @@ public class TestExpandLandPlayer {
     }
 
     @Test
-    public void testPlayerUpgadesBarracksCloseToEnemy() throws Exception {
+    public void testPlayerUpgradesBarracksCloseToEnemy() throws Exception {
 
         /* Create players */
         Player player0 = new Player("Player 0", java.awt.Color.BLUE);

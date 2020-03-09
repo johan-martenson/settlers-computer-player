@@ -35,7 +35,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.min;
 import static org.appland.settlers.model.Crop.GrowthState.FULL_GROWN;
 import static org.appland.settlers.model.Material.COAL;
 import static org.appland.settlers.model.Material.COIN;
@@ -222,6 +221,7 @@ public class Utils {
         for (Worker worker : workers) {
             if (worker.getClass().equals(workerClass)) {
                 found = true;
+                break;
             }
         }
 
@@ -422,8 +422,8 @@ public class Utils {
     public static void verifyPointIsWithinBorder(Player player, Point point) {
         boolean insideLand = false;
 
-        for (Land land : player.getLands()) {
-            if (land.isWithinBorder(point)) {
+        for (Point landPoint : player.getLandInPoints()) {
+            if (landPoint.equals(point)) {
                 insideLand = true;
 
                 break;
@@ -437,8 +437,8 @@ public class Utils {
     public static void verifyPointIsNotWithinBorder(Player player, Point point) {
         boolean insideLand = false;
 
-        for (Land land : player.getLands()) {
-            if (land.isWithinBorder(point)) {
+        for (Point landPoint : player.getLandInPoints()) {
+            if (landPoint.equals(point)) {
                 insideLand = true;
 
                 break;
