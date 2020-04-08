@@ -38,7 +38,6 @@ import org.appland.settlers.model.Player;
  */
 public class CompositePlayer implements ComputerPlayer {
     private final Player player;
-    private final GameMap map;
     private final ConstructionPreparationPlayer constructionPlayer;
     private final SearchForMineralsPlayer       mineralsPlayer;
     private final FoodProducer                  foodPlayer;
@@ -48,6 +47,7 @@ public class CompositePlayer implements ComputerPlayer {
     private final AttackPlayer                  attackingPlayer;
     private final Countdown                     countdown;
 
+    private GameMap map;
     private ComputerPlayer previousPlayer;
     private ComputerPlayer currentPlayer;
     private int counter;
@@ -125,11 +125,24 @@ public class CompositePlayer implements ComputerPlayer {
             foodPlayer.scanForNewLakes();
         }
 
-        /* Handle basic construction if it's not in place */
-        if (!constructionPlayer.basicConstructionDone()) {
+        /* Ensure plank production is active */
+        if (!constructionPlayer.plankProductionWorking()) {
             constructionPlayer.turn();
 
             currentPlayer = constructionPlayer;
+
+        /* Ensure stones are collected. Explore land directly if there are no stones available */
+        } else if (!constructionPlayer.stoneProductionWorking()) {
+
+            if (constructionPlayer.hasAccessToStone()) {
+                constructionPlayer.turn();
+
+                currentPlayer = constructionPlayer;
+            } else {
+                expandingPlayer.turn();
+
+                currentPlayer = expandingPlayer;
+            }
 
         /* Scan for minerals if there are unknown areas and re-scan periodically */
         } else if (!mineralsPlayer.allCurrentMineralsKnown()) {
@@ -233,6 +246,19 @@ public class CompositePlayer implements ComputerPlayer {
         if (previousPlayer != currentPlayer) {
             System.out.println(" -- Switched to " + currentPlayer.getClass().getSimpleName() + " from " + previousPlayer);
         }
+    }
+
+    @Override
+    public void setMap(GameMap map) {
+        expandingPlayer.setMap(map);
+        constructionPlayer.setMap(map);
+        attackingPlayer.setMap(map);
+        mineralsPlayer.setMap(map);
+        coinPlayer.setMap(map);
+        foodPlayer.setMap(map);
+        militaryProducer.setMap(map);
+
+        this.map = map;
     }
 
     @Override

@@ -24,10 +24,10 @@ public class FoodProducer implements ComputerPlayer {
     private final int RANGE_FISHERY_TO_WATER = 5;
 
     private final Player          controlledPlayer;
-    private final GameMap         map;
     private final List<Fishery>   fisheries;
     private final List<HunterHut> hunterHuts;
 
+    private GameMap     map;
     private State       state;
     private Headquarter headquarter;
     private Farm        farm;
@@ -179,6 +179,11 @@ public class FoodProducer implements ComputerPlayer {
                 bakery = Utils.placeBuilding(controlledPlayer, headquarter, new Bakery(controlledPlayer));
             }
         }
+    }
+
+    @Override
+    public void setMap(GameMap map) {
+        this.map = map;
     }
 
     @Override

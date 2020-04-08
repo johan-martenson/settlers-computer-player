@@ -22,15 +22,15 @@ public class ExpandLandPlayer implements ComputerPlayer {
     private static final int TOO_CLOSE_TO_ENEMY_WEIGHT = 2;
 
     private final Collection<Building> placedBarracks;
-    private final GameMap              map;
     private final Player               player;
     private final Set<Point>           impossibleSpots;
 
+    private GameMap     map;
     private Building    unfinishedBarracks;
     private Headquarter headquarter;
     private State       state;
     private boolean     newBuildings;
-    private int                 counter;
+    private int         counter;
     private boolean     preferEnemyDirection;
     private boolean     waitUntilOccupied;
 
@@ -118,16 +118,12 @@ public class ExpandLandPlayer implements ComputerPlayer {
             /* Connect the barracks with the headquarter */
             Road road = Utils.connectPointToBuilding(player, map, unfinishedBarracks.getFlag().getPosition(), headquarter);
 
-            if (!map.isValidRouteViaRoads(road.getWayPoints())) {
+            if (!map.getRoads().contains(road)) {
                 System.out.println("\nBarracks at " + site + " is not connected!");
             }
 
             /* Place flags where possible */
             Utils.fillRoadWithFlags(map, road);
-
-            if (!map.isValidRouteViaRoads(road.getWayPoints())) {
-                System.out.println("\nBarracks at " + site + " is not connected after filling with flags!");
-            }
 
             /* Change state to wait for the barracks to be ready and occupied */
             state = State.WAITING_FOR_CONSTRUCTION;
@@ -217,6 +213,11 @@ public class ExpandLandPlayer implements ComputerPlayer {
         if (stateBefore != state) {
             System.out.println("Transition: " + stateBefore + " -> " + state);
         }
+    }
+
+    @Override
+    public void setMap(GameMap map) {
+        this.map = map;
     }
 
     @Override

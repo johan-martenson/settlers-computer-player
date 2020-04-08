@@ -479,7 +479,6 @@ public class Utils {
     }
 
     static boolean hasStoneWithinArea(GameMap map, Player player) {
-
         for (Point point : player.getLandInPoints()) {
             if (map.isStoneAtPoint(point)) {
                 return true;

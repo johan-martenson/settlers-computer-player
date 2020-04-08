@@ -26,13 +26,13 @@ import static org.appland.settlers.model.Size.SMALL;
 public class MilitaryProducer implements ComputerPlayer {
 
     private final Player            controlledPlayer;
-    private final GameMap           map;
     private final List<IronSmelter> ironSmelters;
     private final List<Armory>      armories;
     private final List<Brewery>     breweries;
     private final List<Farm>        farms;
     private final List<Well>        wells;
 
+    private GameMap  map;
     private State    state;
     private Building headquarter;
 
@@ -248,6 +248,11 @@ public class MilitaryProducer implements ComputerPlayer {
             	state = State.DONE;
             }
         }
+    }
+
+    @Override
+    public void setMap(GameMap map) {
+        this.map = map;
     }
 
     @Override

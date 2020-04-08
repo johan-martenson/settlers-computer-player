@@ -41,7 +41,6 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
     private final int GEOLOGIST_WAIT_TIMEOUT = 200;
 
     private final Player                 controlledPlayer;
-    private final GameMap                map;
     private final Set<Point>             concludedPoints;
     private final Set<Point>             pointsToInvestigate;
     private final Map<Point, Material>   foundMinerals;
@@ -49,6 +48,7 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
     private final Countdown              countdown;
     private final Set<Point>             unreachablePoints;
 
+    private GameMap   map;
     private State     state;
     private Building  headquarter;
     private Flag      geologistFlag;
@@ -237,6 +237,11 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
                 state = State.LOOKING_FOR_MINERALS;
             }
         }
+    }
+
+    @Override
+    public void setMap(GameMap map) {
+        this.map = map;
     }
 
     private void lookForNewPointsToHandle() {

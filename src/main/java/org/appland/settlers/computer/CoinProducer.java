@@ -21,9 +21,9 @@ import static org.appland.settlers.model.Size.SMALL;
  */
 public class CoinProducer implements ComputerPlayer {
     private final Player     controlledPlayer;
-    private final GameMap    map;
     private final List<Mint> mints;
 
+    private GameMap   map;
     private State     state;
     private Building  headquarter;
 
@@ -103,6 +103,11 @@ public class CoinProducer implements ComputerPlayer {
                 state = State.DONE;
             }
         }
+    }
+
+    @Override
+    public void setMap(GameMap map) {
+        this.map = map;
     }
 
     @Override

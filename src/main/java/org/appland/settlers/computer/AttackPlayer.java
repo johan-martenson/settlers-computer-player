@@ -17,10 +17,10 @@ import org.appland.settlers.model.Player;
  * @author johan
  */
 public class AttackPlayer implements ComputerPlayer {
-    private final GameMap        map;
     private final Player         player;
     private final List<Building> recentlyWonBuildings;
 
+    private GameMap        map;
     private State          state;
     private Headquarter    headquarter;
     private Building       buildingUnderAttack;
@@ -119,6 +119,11 @@ public class AttackPlayer implements ComputerPlayer {
         if (stateBefore != state) {
             System.out.println("Transition: " + stateBefore + " -> " + state);
         }
+    }
+
+    @Override
+    public void setMap(GameMap map) {
+        this.map = map;
     }
 
     @Override

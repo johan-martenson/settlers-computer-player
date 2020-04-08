@@ -32,10 +32,11 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
     private Sawmill     sawmill;
     private Quarry      quarry;
     private int         stoneRecheckCounter;
+    private GameMap     map;
+    private boolean     hasStonesOnLand;
 
-    private final GameMap   map;
     private final Player    player;
-    private boolean hasStonesOnLand;
+
 
     public ConstructionPreparationPlayer(Player p, GameMap m) {
         player = p;
@@ -126,6 +127,11 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
     }
 
     @Override
+    public void setMap(GameMap map) {
+        this.map = map;
+    }
+
+    @Override
     public Player getControlledPlayer() {
         return player;
     }
@@ -206,5 +212,29 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
 
     private boolean quarryDone() {
         return Utils.buildingDone(quarry);
+    }
+
+    public boolean plankProductionWorking() {
+        return foresterDone() && woodcuttersDone() && sawmillDone();
+    }
+
+    public boolean stoneProductionWorking() {
+
+        /* Periodically check if there are remaining stones */
+        if (stoneRecheckCounter < STONE_RECHECK_COUNTER_MAX) {
+            stoneRecheckCounter++;
+        } else {
+            stoneRecheckCounter = 0;
+        }
+
+        if (stoneRecheckCounter % PERIODIC_STONES_CHECK == 0) {
+            hasStonesOnLand = Utils.hasStoneWithinArea(map, player);
+        }
+
+        return quarryDone() && !quarry.outOfNaturalResources();
+    }
+
+    public boolean hasAccessToStone() {
+        return Utils.hasStoneWithinArea(map, player);
     }
 }

@@ -26,6 +26,7 @@ public class PlankProductionPlayer implements ComputerPlayer {
     private Woodcutter  woodcutter;
     private Headquarter headquarter;
     private Sawmill     sawmill;
+    private GameMap     map;
 
     private enum State {
         NO_CONSTRUCTION,
@@ -36,7 +37,6 @@ public class PlankProductionPlayer implements ComputerPlayer {
         WAITING_FOR_SAWMILL
     }
 
-    private final GameMap map;
     private final Player  player;
 
     private State state;
@@ -123,6 +123,11 @@ public class PlankProductionPlayer implements ComputerPlayer {
         if (stateBefore != state) {
             System.out.println("Transition: " + stateBefore + " -> " + state);
         }
+    }
+
+    @Override
+    public void setMap(GameMap map) {
+        this.map = map;
     }
 
     private Point findSpotForForesterHut() {
