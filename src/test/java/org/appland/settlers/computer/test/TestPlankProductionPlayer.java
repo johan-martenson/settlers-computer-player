@@ -5,8 +5,6 @@
  */
 package org.appland.settlers.computer.test;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.appland.settlers.computer.ComputerPlayer;
 import org.appland.settlers.computer.PlankProductionPlayer;
 import org.appland.settlers.model.ForesterHut;
@@ -18,6 +16,10 @@ import org.appland.settlers.model.Sawmill;
 import org.appland.settlers.model.Woodcutter;
 import org.appland.settlers.test.MoreUtils;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -101,7 +103,7 @@ public class TestPlankProductionPlayer {
         int amount = player0.getBuildings().size();
 
         for (int i = 0; i < 1000; i++) {
-            if (foresterHut.ready()) {
+            if (foresterHut.isReady()) {
                 break;
             }
 
@@ -112,7 +114,7 @@ public class TestPlankProductionPlayer {
             map.stepTime();
         }
 
-        assertTrue(foresterHut.ready());
+        assertTrue(foresterHut.isReady());
     }
 
     @Test

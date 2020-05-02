@@ -1,8 +1,5 @@
 package org.appland.settlers.computer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
@@ -11,6 +8,9 @@ import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Size;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.appland.settlers.model.Material.GOLD;
 import static org.appland.settlers.model.Size.SMALL;
@@ -94,7 +94,7 @@ public class CoinProducer implements ComputerPlayer {
             boolean buildingsDone = true;
 
             for (Mint mint : mints) {
-                if (!mint.ready()) {
+                if (!mint.isReady()) {
                     buildingsDone = false;
                 }
             }

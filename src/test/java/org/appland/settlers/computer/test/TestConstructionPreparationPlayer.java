@@ -5,10 +5,6 @@
  */
 package org.appland.settlers.computer.test;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.appland.settlers.computer.ComputerPlayer;
 import org.appland.settlers.computer.ConstructionPreparationPlayer;
 import org.appland.settlers.model.Building;
@@ -24,6 +20,12 @@ import org.appland.settlers.model.Woodcutter;
 import org.appland.settlers.test.MoreUtils;
 import org.appland.settlers.test.Utils;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -319,14 +321,14 @@ public class TestConstructionPreparationPlayer {
                 System.exit(1);
             }
 
-            if (quarry.burningDown()) {
+            if (quarry.isBurningDown()) {
                 break;
             }
 
             map.stepTime();
         }
 
-        assertTrue(quarry.burningDown());
+        assertTrue(quarry.isBurningDown());
     }
 
     @Test

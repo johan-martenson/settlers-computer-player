@@ -5,19 +5,13 @@
  */
 package org.appland.settlers.computer.test;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import org.appland.settlers.computer.ComputerPlayer;
 import org.appland.settlers.computer.ExpandLandPlayer;
 import org.appland.settlers.model.Barracks;
 import org.appland.settlers.model.Building;
+import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
 import org.appland.settlers.model.Material;
-import static org.appland.settlers.model.Material.PLANK;
-import static org.appland.settlers.model.Material.PRIVATE;
-import static org.appland.settlers.model.Material.STONE;
 import org.appland.settlers.model.Military;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
@@ -26,14 +20,19 @@ import org.appland.settlers.test.MoreUtils;
 import org.appland.settlers.test.Utils;
 import org.junit.Test;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.appland.settlers.computer.Utils.getDistanceToOwnBorder;
+import static org.appland.settlers.model.Material.PLANK;
+import static org.appland.settlers.model.Material.PRIVATE;
+import static org.appland.settlers.model.Material.STONE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import org.appland.settlers.model.GameMap;
 
 /**
  *
@@ -155,19 +154,13 @@ public class TestExpandLandPlayer {
 
             /* Check that the barracks is close to at least one border point
                that is not close to the edge */
-            for (Collection<Point> border : player0.getBorders()) {
-                for (Point bp : border) {
-                    if (p.distance(bp) < 20) {
-                        if (bp.x > 3 && bp.x < map.getWidth() - 3 && bp.y > 3 && bp.y < map.getHeight() - 3) {
-                            foundBorderPointNotAtEdge = true;
+            for (Point bp : player0.getBorderPoints()) {
+                if (p.distance(bp) < 20) {
+                    if (bp.x > 3 && bp.x < map.getWidth() - 3 && bp.y > 3 && bp.y < map.getHeight() - 3) {
+                        foundBorderPointNotAtEdge = true;
 
-                            break;
-                        }
+                        break;
                     }
-                }
-
-                if (foundBorderPointNotAtEdge) {
-                    break;
                 }
             }
 
@@ -317,23 +310,17 @@ public class TestExpandLandPlayer {
             /* Check if the barracks is still close to the border */
             boolean borderClose = false;
 
-            for (Collection<Point> border : player0.getBorders()) {
-                for (Point point : border) {
+            for (Point point : player0.getBorderPoints()) {
 
-                    /* Filter points too close to the edges of the map */
-                    if (point.x < 3 || point.x > map.getWidth() - 3 ||
-                        point.y < 3 || point.y > map.getHeight() - 3) {
-                        continue;
-                    }
-
-                    if (point.distance(barracks0.getPosition()) < 6) {
-                        borderClose = true;
-
-                        break;
-                    }
+                /* Filter points too close to the edges of the map */
+                if (point.x < 3 || point.x > map.getWidth() - 3 ||
+                    point.y < 3 || point.y > map.getHeight() - 3) {
+                    continue;
                 }
 
-                if (borderClose) {
+                if (point.distance(barracks0.getPosition()) < 6) {
+                    borderClose = true;
+
                     break;
                 }
             }
@@ -456,7 +443,7 @@ public class TestExpandLandPlayer {
         /* Wait for the player to with place a barracks */
         Barracks barracks0 = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Barracks.class, map);
 
-        assertFalse(barracks0.ready());
+        assertFalse(barracks0.isReady());
 
         /* Remove a road */
         List<Road> roads = map.getRoadsFromFlag(barracks0.getFlag());
@@ -538,7 +525,7 @@ public class TestExpandLandPlayer {
                 }
 
                 /* Filter unfinished buildings */
-                if (!building.ready()) {
+                if (!building.isReady()) {
                     continue;
                 }
 

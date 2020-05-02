@@ -1,7 +1,5 @@
 package org.appland.settlers.computer;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.appland.settlers.model.Bakery;
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.Farm;
@@ -15,6 +13,9 @@ import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Terrain;
 import org.appland.settlers.model.Well;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -139,7 +140,7 @@ public class FoodProducer implements ComputerPlayer {
             boolean buildingsDone = true;
 
             for (Fishery fishery : fisheries) {
-                if (!fishery.ready()) {
+                if (!fishery.isReady()) {
                     buildingsDone = false;
                 }
             }
@@ -152,7 +153,7 @@ public class FoodProducer implements ComputerPlayer {
             boolean buildingsDone = true;
 
             for (HunterHut hunterHut : hunterHuts) {
-                if (!hunterHut.ready()) {
+                if (!hunterHut.isReady()) {
                     buildingsDone = false;
                 }
             }

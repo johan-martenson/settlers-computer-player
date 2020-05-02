@@ -242,14 +242,14 @@ public class Utils {
 
     public static void fastForwardUntilBuildingIsConstructed(Building building, GameMap map) throws Exception {
         for (int i = 0; i < 10000; i++) {
-            if (building.ready()) {
+            if (building.isReady()) {
                 break;
             }
 
             map.stepTime();
         }
 
-        assertTrue(building.ready());
+        assertTrue(building.isReady());
     }
 
     public static void fastForwardUntilBuildingIsOccupied(Building building, GameMap map) throws Exception {
@@ -353,14 +353,14 @@ public class Utils {
         }
 
         for (int i = 0; i < 500; i++) {
-            if (building.ready()) {
+            if (building.isReady()) {
                 break;
             }
 
             building.stepTime();
         }
 
-        assertTrue(building.ready());
+        assertTrue(building.isReady());
     }
 
     public static void fastForwardUntilWorkerCarriesCargo(GameMap map, Worker worker, Material material) throws Exception {
@@ -480,7 +480,7 @@ public class Utils {
     }
 
     public static void occupyMilitaryBuilding(Military.Rank rank, int amount, Building building, GameMap map) throws Exception {
-        assertTrue(building.ready());
+        assertTrue(building.isReady());
         for (int i = 0; i < amount; i++) {
             occupyMilitaryBuilding(rank, building, map);
         }
@@ -591,7 +591,7 @@ public class Utils {
     }
 
     public static <T extends Building> void waitForBuildingToDisappear(GameMap map, T building) throws Exception {
-        assertTrue(building.burningDown() || building.destroyed());
+        assertTrue(building.isBurningDown() || building.isDestroyed());
 
         for (int i = 0; i < 1000; i++) {
             if (!map.getBuildings().contains(building)) {
@@ -907,14 +907,14 @@ public class Utils {
     static void waitForBuildingToBurnDown(Building building, GameMap map) throws Exception {
         for (int i = 0; i < 10000; i++) {
 
-            if (building.destroyed()) {
+            if (building.isDestroyed()) {
                 break;
             }
 
             map.stepTime();
         }
 
-        assertTrue(building.destroyed());
+        assertTrue(building.isDestroyed());
     }
 
     static void removePiecesFromStoneUntil(Stone stone, int amountLeft) {

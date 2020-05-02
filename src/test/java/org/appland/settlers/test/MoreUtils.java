@@ -5,17 +5,18 @@
  */
 package org.appland.settlers.test;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import org.appland.settlers.computer.ComputerPlayer;
 import org.appland.settlers.model.Barracks;
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.GameMap;
-import static org.appland.settlers.model.Military.Rank.PRIVATE_RANK;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Stone;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.appland.settlers.model.Military.Rank.PRIVATE_RANK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -73,7 +74,7 @@ public class MoreUtils {
     public static <T extends Building> void waitForBuildingToGetConstructed(ComputerPlayer computerPlayer, GameMap map, T building) throws Exception {
 
         for (int i = 0; i < 1000; i++) {
-            if (building.ready()) {
+            if (building.isReady()) {
                 break;
             }
 
@@ -82,7 +83,7 @@ public class MoreUtils {
             map.stepTime();
         }
 
-        assertTrue(building.ready());
+        assertTrue(building.isReady());
     }
 
     public static <T extends Building> T verifyPlayerPlacesOnlyBuilding(ComputerPlayer computerPlayer, GameMap map, Class<T> aClass) throws Exception {
@@ -116,14 +117,14 @@ public class MoreUtils {
 
             computerPlayer.turn();
 
-            if (quarry.burningDown()) {
+            if (quarry.isBurningDown()) {
                 break;
             }
 
             map.stepTime();
         }
 
-        assertTrue(quarry.burningDown());
+        assertTrue(quarry.isBurningDown());
     }
 
     public static Barracks placeAndOccupyBarracks(GameMap map, Player player, Point point2) throws Exception {
@@ -159,14 +160,12 @@ public class MoreUtils {
         /* Check how close the barracks is to the enemy's border */
         double distance = Double.MAX_VALUE;
 
-        for (Collection<Point> border : player1.getBorders()) {
-            for (Point p : border) {
-                double tmpDistance = barracks.getPosition().distance(p);
+        for (Point p : player1.getBorderPoints()) {
+            double tmpDistance = barracks.getPosition().distance(p);
 
-                if (barracks.getPlayer().getDiscoveredLand().contains(p) &&
-                    tmpDistance < distance) {
-                    distance = tmpDistance;
-                }
+            if (barracks.getPlayer().getDiscoveredLand().contains(p) &&
+                tmpDistance < distance) {
+                distance = tmpDistance;
             }
         }
 
@@ -176,7 +175,7 @@ public class MoreUtils {
     public static void waitForBuildingToGetOccupied(ComputerPlayer computerPlayer, GameMap map, Building building) throws Exception {
 
         for (int i = 0; i < 10000; i++) {
-            if (building.occupied()) {
+            if (building.isOccupied()) {
                 break;
             }
 
@@ -185,6 +184,6 @@ public class MoreUtils {
             map.stepTime();
         }
 
-        assertTrue(building.occupied());
+        assertTrue(building.isOccupied());
     }
 }

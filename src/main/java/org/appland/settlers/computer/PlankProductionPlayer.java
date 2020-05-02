@@ -5,7 +5,6 @@
  */
 package org.appland.settlers.computer;
 
-import java.util.List;
 import org.appland.settlers.model.ForesterHut;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
@@ -13,9 +12,12 @@ import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Sawmill;
+import org.appland.settlers.model.Woodcutter;
+
+import java.util.List;
+
 import static org.appland.settlers.model.Size.MEDIUM;
 import static org.appland.settlers.model.Size.SMALL;
-import org.appland.settlers.model.Woodcutter;
 
 /**
  *
@@ -76,7 +78,7 @@ public class PlankProductionPlayer implements ComputerPlayer {
         } else if (state == State.WAITING_FOR_FORESTER) {
 
             /* Check if the forester hut is constructed */
-            if (foresterHut.ready()) {
+            if (foresterHut.isReady()) {
                 state = State.FORESTER_CONSTRUCTED;
             }
         } else if (state == State.FORESTER_CONSTRUCTED) {
@@ -98,7 +100,7 @@ public class PlankProductionPlayer implements ComputerPlayer {
         } else if (state == State.WAITING_FOR_WOODCUTTER) {
 
             /* Check if the woodcutter is constructed */
-            if (woodcutter.ready()) {
+            if (woodcutter.isReady()) {
                 state = State.WOODCUTTER_CONSTRUCTED;
             }
         } else if (state == State.WOODCUTTER_CONSTRUCTED) {

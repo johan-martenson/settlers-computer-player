@@ -1,9 +1,5 @@
 package org.appland.settlers.computer;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.appland.settlers.model.Barracks;
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.GameMap;
@@ -12,6 +8,11 @@ import org.appland.settlers.model.InvalidUserActionException;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Road;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -130,13 +131,13 @@ public class ExpandLandPlayer implements ComputerPlayer {
         } else if (state == State.WAITING_FOR_CONSTRUCTION) {
 
             /* Build a new barracks if this barracks was destroyed */
-            if (unfinishedBarracks.burningDown() || unfinishedBarracks.destroyed()) {
+            if (unfinishedBarracks.isBurningDown() || unfinishedBarracks.isDestroyed()) {
 
                 /* Set state to build new barracks */
                 state = State.READY_FOR_CONSTRUCTION;
 
             /* Disable promotions directly when the barracks is ready */
-            } else if (unfinishedBarracks.ready() && unfinishedBarracks.getNumberOfHostedMilitary() == 0) {
+            } else if (unfinishedBarracks.isReady() && unfinishedBarracks.getNumberOfHostedMilitary() == 0) {
 
                 /* Disable promotions if the barracks is not close to the enemy */
                 if (unfinishedBarracks.isPromotionEnabled() &&
@@ -155,7 +156,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
                 }
 
             /* Check if construction is done and the building is occupied */
-            } else if (unfinishedBarracks.ready() && unfinishedBarracks.getNumberOfHostedMilitary() > 0) {
+            } else if (unfinishedBarracks.isReady() && unfinishedBarracks.getNumberOfHostedMilitary() > 0) {
 
                 /* Save the barracks */
                 placedBarracks.add(unfinishedBarracks);
@@ -245,7 +246,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
         Set<Point> investigated = new HashSet<>();
 
         /* First collect all possible points to build on */
-        for (Point borderPoint : player.getBorders().get(0)) {
+        for (Point borderPoint : player.getBorderPoints()) {
 
             /* Filter border points that are too close to the edge of the map */
             if (borderPoint.x < 3 || borderPoint.x > map.getWidth() - 3 &&
@@ -366,30 +367,25 @@ public class ExpandLandPlayer implements ComputerPlayer {
             /* Check if the building is far enough from the border */
             boolean borderClose = false;
 
-            for (Collection<Point> border : player.getBorders()) {
-                for (Point borderPoint : border) {
+            for (Point borderPoint : player.getBorderPoints()) {
 
-                    /* Filter points beyond the evacuation threshold */
-                    if (borderPoint.distance(building.getPosition()) >= THRESHOLD_FOR_EVACUATION) {
-                        continue;
-                    }
-
-                    /* Filter points at the edge of the map since no attack can come that way */
-                    if (borderPoint.x < 3 || borderPoint.x > map.getWidth() - 3 ||
-                        borderPoint.y < 3 || borderPoint.y > map.getHeight() - 3) {
-                        continue;
-                    }
-
-                    /* The border is close if we made it here */
-                    borderClose = true;
-
-                    break;
+                /* Filter points beyond the evacuation threshold */
+                if (borderPoint.distance(building.getPosition()) >= THRESHOLD_FOR_EVACUATION) {
+                    continue;
                 }
 
-                if (borderClose) {
-                    break;
+                /* Filter points at the edge of the map since no attack can come that way */
+                if (borderPoint.x < 3 || borderPoint.x > map.getWidth() - 3 ||
+                    borderPoint.y < 3 || borderPoint.y > map.getHeight() - 3) {
+                    continue;
                 }
+
+                /* The border is close if we made it here */
+                borderClose = true;
+
+                break;
             }
+
 
             /* Evacuate the building if it's not close to the border */
             if (!borderClose) {
@@ -469,7 +465,7 @@ public class ExpandLandPlayer implements ComputerPlayer {
             }
 
             /* Filter not constructed buildings */
-            if (!building.ready()) {
+            if (!building.isReady()) {
                 continue;
             }
 

@@ -5,14 +5,6 @@
  */
 package org.appland.settlers.computer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.EndPoint;
 import org.appland.settlers.model.Flag;
@@ -22,6 +14,13 @@ import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Size;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -110,13 +109,11 @@ public class Utils {
     public static double getDistanceToOwnBorder(Point position, Player player0) {
         double distance = Double.MAX_VALUE;
 
-        for (Collection<Point> border : player0.getBorders()) {
-            for (Point borderPoint : border) {
-                double tempDistance = position.distance(borderPoint);
+        for (Point borderPoint : player0.getBorderPoints()) {
+            double tempDistance = position.distance(borderPoint);
 
-                if (tempDistance < distance) {
-                    distance = tempDistance;
-                }
+            if (tempDistance < distance) {
+                distance = tempDistance;
             }
         }
 
@@ -410,7 +407,7 @@ public class Utils {
 	public static <T extends Building> boolean buildingsAreReady(List<T> buildings) {
 
 	    for (T b : buildings) {
-	        if (!b.ready()) {
+	        if (!b.isReady()) {
 	            return false;
 	        }
 	    }
@@ -470,7 +467,7 @@ public class Utils {
 
     static <T extends Building> boolean listContainsAtLeastOneReadyBuilding(List<T> wells) {
         for (T b : wells) {
-            if (b.ready()) {
+            if (b.isReady()) {
                 return true;
             }
         }
@@ -489,7 +486,7 @@ public class Utils {
     }
 
     static boolean buildingDone(Building building) {
-        return building != null && building.ready();
+        return building != null && building.isReady();
     }
 
     static boolean buildingInPlace(Building building) {
@@ -566,18 +563,16 @@ public class Utils {
                     continue;
                 }
 
-                for (Collection<Point> borderPoints : enemyPlayer.getBorders()) {
-                    for (Point borderPoint : borderPoints) {
+                for (Point borderPoint : player.getBorderPoints()) {
 
-                        if (!player.getDiscoveredLand().contains(borderPoint)) {
-                            continue;
-                        }
+                    if (!player.getDiscoveredLand().contains(borderPoint)) {
+                        continue;
+                    }
 
-                        if (p.equals(borderPoint)) {
-                            enemyBorder = true;
+                    if (p.equals(borderPoint)) {
+                        enemyBorder = true;
 
-                            break;
-                        }
+                        break;
                     }
                 }
             }

@@ -5,12 +5,6 @@
  */
 package org.appland.settlers.computer;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.CoalMine;
 import org.appland.settlers.model.Countdown;
@@ -22,15 +16,23 @@ import org.appland.settlers.model.GraniteMine;
 import org.appland.settlers.model.Headquarter;
 import org.appland.settlers.model.IronMine;
 import org.appland.settlers.model.Material;
-import static org.appland.settlers.model.Material.COAL;
-import static org.appland.settlers.model.Material.GOLD;
-import static org.appland.settlers.model.Material.IRON;
-import static org.appland.settlers.model.Material.STONE;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Sign;
 import org.appland.settlers.model.Worker;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.appland.settlers.model.Material.COAL;
+import static org.appland.settlers.model.Material.GOLD;
+import static org.appland.settlers.model.Material.IRON;
+import static org.appland.settlers.model.Material.STONE;
 
 /**
  *
@@ -286,7 +288,7 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
         return null;
     }
 
-    private Flag findFlagCloseBy(Point point) throws Exception {
+    private Flag findFlagCloseBy(Point point) {
 
         for (Point p : map.getPointsWithinRadius(point, RANGE_BETWEEN_FLAG_AND_POINT)) {
 
