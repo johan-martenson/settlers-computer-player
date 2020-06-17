@@ -13,6 +13,8 @@ import org.appland.settlers.model.GoldMine;
 import org.appland.settlers.model.GraniteMine;
 import org.appland.settlers.model.InvalidUserActionException;
 import org.appland.settlers.model.IronMine;
+import org.appland.settlers.model.Player;
+
 import static org.appland.settlers.model.Material.BEER;
 import static org.appland.settlers.model.Material.BREAD;
 import static org.appland.settlers.model.Material.COAL;
@@ -30,7 +32,6 @@ import static org.appland.settlers.model.Material.SWORD;
 import static org.appland.settlers.model.Material.WATER;
 import static org.appland.settlers.model.Material.WHEAT;
 import static org.appland.settlers.model.Material.WOOD;
-import org.appland.settlers.model.Player;
 
 /**
  *
@@ -205,7 +206,7 @@ public class CompositePlayer implements ComputerPlayer {
 
                 /* Wait to get a chance to get promoted soldiers before attacking */
                 if (countdown.isActive()) {
-                    if (!countdown.reachedZero()) {
+                    if (!countdown.hasReachedZero()) {
                         countdown.step();
 
                         return;

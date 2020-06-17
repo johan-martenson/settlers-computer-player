@@ -45,7 +45,11 @@ public class Utils {
 
             Size availableSize = map.isAvailableHousePoint(player, point);
 
-            if (Size.contains(availableSize, size)) {
+            if (availableSize == null) {
+                continue;
+            }
+
+            if (availableSize.contains(size)) {
                 availableHousePointsWithinRadius.add(point);
             }
         }
@@ -450,7 +454,11 @@ public class Utils {
             /* Filter out points where it's not possible to build */
             Size availableSize = map.isAvailableHousePoint(controlledPlayer, p);
 
-            if (!Size.contains(availableSize, neededSize)) {
+            if (availableSize == null) {
+                continue;
+            }
+
+            if (!availableSize.contains(neededSize)) {
                 continue;
             }
 

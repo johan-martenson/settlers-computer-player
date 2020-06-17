@@ -5,9 +5,6 @@
  */
 package org.appland.settlers.computer.test;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
 import org.appland.settlers.computer.AttackPlayer;
 import org.appland.settlers.computer.ComputerPlayer;
 import org.appland.settlers.model.Barracks;
@@ -19,6 +16,11 @@ import org.appland.settlers.model.Point;
 import org.appland.settlers.test.MoreUtils;
 import org.appland.settlers.test.Utils;
 import org.junit.Test;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -79,7 +81,7 @@ public class TestAttackPlayer {
         Headquarter headquarter0 = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Place headquarter for player 1 */
-        Point point1 = new Point(48, 10);
+        Point point1 = new Point(44, 10);
         Headquarter headquarter1 = map.placeBuilding(new Headquarter(player1), point1);
 
         /* Place and occupy barracks for player 0 */

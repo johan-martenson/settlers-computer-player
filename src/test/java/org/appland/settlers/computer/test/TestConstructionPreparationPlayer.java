@@ -263,7 +263,7 @@ public class TestConstructionPreparationPlayer {
         GameMap map = new GameMap(players, 100, 100);
 
         /* Place stone */
-        Point point1 = new Point(15, 17);
+        Point point1 = new Point(16, 10);
         Stone stone0 = map.placeStone(point1);
 
         /* Create the computer player */

@@ -1,6 +1,5 @@
 package org.appland.settlers.test;
 
-import org.appland.settlers.model.Actor;
 import org.appland.settlers.model.Building;
 import org.appland.settlers.model.Cargo;
 import org.appland.settlers.model.Catapult;
@@ -10,7 +9,6 @@ import org.appland.settlers.model.Farmer;
 import org.appland.settlers.model.GameMap;
 import org.appland.settlers.model.Headquarter;
 import org.appland.settlers.model.Hunter;
-import org.appland.settlers.model.Land;
 import org.appland.settlers.model.Material;
 import org.appland.settlers.model.Military;
 import org.appland.settlers.model.Player;
@@ -19,7 +17,7 @@ import org.appland.settlers.model.Projectile;
 import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Size;
 import org.appland.settlers.model.Stone;
-import org.appland.settlers.model.Storage;
+import org.appland.settlers.model.Storehouse;
 import org.appland.settlers.model.Tile;
 import org.appland.settlers.model.Tree;
 import org.appland.settlers.model.WildAnimal;
@@ -59,23 +57,6 @@ import static org.junit.Assert.fail;
 
 public class Utils {
 
-    public static void fastForward(int time, Actor actor) throws Exception {
-
-        for (int i = 0; i < time; i++) {
-            actor.stepTime();
-        }
-    }
-
-    public static void fastForward(int time, Actor... actors) throws Exception {
-        fastForward(time, Arrays.asList(actors));
-    }
-
-    public static void fastForward(int time, List<Actor> actors) throws Exception {
-        for (Actor actor : actors) {
-            fastForward(time, actor);
-        }
-    }
-
     public static void fastForward(int time, GameMap map) throws Exception {
 
         for (int i = 0; i < time; i++) {
@@ -96,11 +77,11 @@ public class Utils {
         return result;
     }
 
-    public static void fillUpInventory(Storage storage, Material material, int amount) throws Exception {
+    public static void fillUpInventory(Storehouse storehouse, Material material, int amount) throws Exception {
         Cargo cargo = new Cargo(material, null);
 
         for (int i = 0; i < amount; i++) {
-            storage.putCargo(cargo);
+            storehouse.putCargo(cargo);
         }
     }
 
@@ -179,7 +160,9 @@ public class Utils {
         assertTrue(worker.isAt(target));
     }
 
-    public static <T extends Worker> T occupyBuilding(T worker, Building building, GameMap map) throws Exception {
+    public static <T extends Worker> T occupyBuilding(T worker, Building building) throws Exception {
+        GameMap map = building.getMap();
+
         map.placeWorker(worker, building);
         building.assignWorker(worker);
         worker.enterBuilding(building);
@@ -240,7 +223,9 @@ public class Utils {
         surroundPointWithVegetation(point, SWAMP, map);
     }
 
-    public static void fastForwardUntilBuildingIsConstructed(Building building, GameMap map) throws Exception {
+    public static void fastForwardUntilBuildingIsConstructed(Building building) throws Exception {
+        GameMap map = building.getMap();
+
         for (int i = 0; i < 10000; i++) {
             if (building.isReady()) {
                 break;
@@ -252,7 +237,9 @@ public class Utils {
         assertTrue(building.isReady());
     }
 
-    public static void fastForwardUntilBuildingIsOccupied(Building building, GameMap map) throws Exception {
+    public static void fastForwardUntilBuildingIsOccupied(Building building) throws Exception {
+        GameMap map = building.getMap();
+
         for (int i = 0; i < 1000; i++) {
             if (building.getWorker() != null) {
                 break;
@@ -303,30 +290,34 @@ public class Utils {
         return courier;
     }
 
-    public static void adjustInventoryTo(Storage storage, Material material, int amount, GameMap map) throws Exception {
+    public static void adjustInventoryTo(Storehouse Storehouse, Material material, int amount) throws Exception {
+        GameMap map = Storehouse.getMap();
+
         for (int i = 0; i < 1000; i++) {
 
-            if (storage.getAmount(material) == amount) {
+            if (Storehouse.getAmount(material) == amount) {
                 break;
             }
 
-            if (storage.getAmount(material) > amount) {
+            if (Storehouse.getAmount(material) > amount) {
 
                 if (material == PRIVATE || material == SERGEANT || material == GENERAL) {
-                    storage.retrieveMilitary(material);
+                    Storehouse.retrieveMilitary(material);
                 } else {
-                    storage.retrieve(material);
+                    Storehouse.retrieve(material);
                 }
-            } else if (storage.getAmount(material) < amount) {
-                storage.putCargo(new Cargo(material, map));
+            } else if (Storehouse.getAmount(material) < amount) {
+                Storehouse.putCargo(new Cargo(material, map));
             }
         }
 
-        assertEquals(storage.getAmount(material), amount);
+        assertEquals(Storehouse.getAmount(material), amount);
     }
 
-    public static void constructHouse(Building building, GameMap map) throws Exception {
-        assertTrue(building.underConstruction());
+    public static void constructHouse(Building building) throws Exception {
+        GameMap map = building.getMap();
+
+        assertTrue(building.isUnderConstruction());
 
         for (int i = 0; i < 20; i++) {
             if (building.needsMaterial(PLANK)) {
@@ -357,7 +348,7 @@ public class Utils {
                 break;
             }
 
-            building.stepTime();
+            map.stepTime();
         }
 
         assertTrue(building.isReady());
@@ -401,7 +392,8 @@ public class Utils {
         assertNotNull(worker.getCargo());
     }
 
-    public static void waitForMilitaryBuildingToGetPopulated(GameMap map, Building building, int nr) throws Exception {
+    public static void waitForMilitaryBuildingToGetPopulated(Building building, int nr) throws Exception {
+        GameMap map = building.getMap();
 
         boolean populated = false;
 
@@ -662,14 +654,14 @@ public class Utils {
 
         for (int i = 0; i < 1000; i++) {
 
-            if (projectile.arrived()) {
+            if (projectile.isArrived()) {
                 break;
             }
 
             map.stepTime();
         }
 
-        assertTrue(projectile.arrived());
+        assertTrue(projectile.isArrived());
     }
 
     static WildAnimal waitForAnimalToAppear(GameMap map) throws Exception {

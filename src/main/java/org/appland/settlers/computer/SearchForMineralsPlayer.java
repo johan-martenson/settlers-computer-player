@@ -196,7 +196,7 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
                 }
             }
 
-            if (countdown.reachedZero()) {
+            if (countdown.hasReachedZero()) {
 
                 /* Give up on waiting for the geologist if the timeout expired */
                 state = State.LOOKING_FOR_MINERALS;

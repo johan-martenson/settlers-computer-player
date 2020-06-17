@@ -74,9 +74,9 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
-        Utils.adjustInventoryTo(headquarter, STONE, 40, map);
-        Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40);
+        Utils.adjustInventoryTo(headquarter, STONE, 40);
+        Utils.adjustInventoryTo(headquarter, PRIVATE, 40);
 
         /* Verify that the player starts with placing a barracks */
         MoreUtils.verifyPlayerPlacesOnlyBuilding(computerPlayer, map, Barracks.class);
@@ -105,9 +105,9 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
-        Utils.adjustInventoryTo(headquarter, STONE, 40, map);
-        Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40);
+        Utils.adjustInventoryTo(headquarter, STONE, 40);
+        Utils.adjustInventoryTo(headquarter, PRIVATE, 40);
 
         /* Wait for the player to with place a barracks */
         Barracks barracks = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Barracks.class, map);
@@ -137,9 +137,9 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
-        Utils.adjustInventoryTo(headquarter, STONE, 40, map);
-        Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40);
+        Utils.adjustInventoryTo(headquarter, STONE, 40);
+        Utils.adjustInventoryTo(headquarter, PRIVATE, 40);
 
         /* Verify that the player does not place barracks too close to the edges */
 
@@ -187,9 +187,9 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
-        Utils.adjustInventoryTo(headquarter, STONE, 40, map);
-        Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40);
+        Utils.adjustInventoryTo(headquarter, STONE, 40);
+        Utils.adjustInventoryTo(headquarter, PRIVATE, 40);
 
         /* Wait for the player to with place a barracks */
         Barracks barracks = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Barracks.class, map);
@@ -217,9 +217,9 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
-        Utils.adjustInventoryTo(headquarter, STONE, 40, map);
-        Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40);
+        Utils.adjustInventoryTo(headquarter, STONE, 40);
+        Utils.adjustInventoryTo(headquarter, PRIVATE, 40);
 
         /* Wait for the player to with place a barracks */
         Barracks barracks0 = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Barracks.class, map);
@@ -253,9 +253,9 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANK, 400, map);
-        Utils.adjustInventoryTo(headquarter, STONE, 400, map);
-        Utils.adjustInventoryTo(headquarter, PRIVATE, 400, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 400);
+        Utils.adjustInventoryTo(headquarter, STONE, 400);
+        Utils.adjustInventoryTo(headquarter, PRIVATE, 400);
 
         /* Wait for the player to place a barracks that is close to the edge */
         for (int i = 0; i < 20; i++) {
@@ -294,9 +294,9 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
-        Utils.adjustInventoryTo(headquarter, STONE, 40, map);
-        Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40);
+        Utils.adjustInventoryTo(headquarter, STONE, 40);
+        Utils.adjustInventoryTo(headquarter, PRIVATE, 40);
 
         /* Wait for the player to place the first barracks */
         Barracks barracks0 = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Barracks.class, map);
@@ -357,9 +357,9 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
-        Utils.adjustInventoryTo(headquarter, STONE, 40, map);
-        Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40);
+        Utils.adjustInventoryTo(headquarter, STONE, 40);
+        Utils.adjustInventoryTo(headquarter, PRIVATE, 40);
 
         /* Verify that the player does not place barracks too close to the edges */
 
@@ -397,9 +397,9 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
-        Utils.adjustInventoryTo(headquarter, STONE, 40, map);
-        Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40);
+        Utils.adjustInventoryTo(headquarter, STONE, 40);
+        Utils.adjustInventoryTo(headquarter, PRIVATE, 40);
 
         /* Wait for the player to with place a barracks */
         Barracks barracks0 = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Barracks.class, map);
@@ -436,9 +436,9 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
-        Utils.adjustInventoryTo(headquarter, STONE, 40, map);
-        Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40);
+        Utils.adjustInventoryTo(headquarter, STONE, 40);
+        Utils.adjustInventoryTo(headquarter, PRIVATE, 40);
 
         /* Wait for the player to with place a barracks */
         Barracks barracks0 = MoreUtils.waitForComputerPlayerToPlaceBuilding(computerPlayer, Barracks.class, map);
@@ -490,15 +490,15 @@ public class TestExpandLandPlayer {
         Barracks barracks1 = map.placeBuilding(new Barracks(player1), point2);
 
         /* Finish player 1's barracks */
-        Utils.constructHouse(barracks1, map);
+        Utils.constructHouse(barracks1);
 
         /* Occupy player 1's barracks */
         Utils.occupyMilitaryBuilding(Military.Rank.GENERAL_RANK, 2, barracks1, map);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter0, PLANK, 60, map);
-        Utils.adjustInventoryTo(headquarter0, STONE, 60, map);
-        Utils.adjustInventoryTo(headquarter0, PRIVATE, 10, map);
+        Utils.adjustInventoryTo(headquarter0, PLANK, 60);
+        Utils.adjustInventoryTo(headquarter0, STONE, 60);
+        Utils.adjustInventoryTo(headquarter0, PRIVATE, 10);
 
         /* Wait for player 0 to place a barracks close to player 1's barracks */
         Building barracksToAttack = null;
@@ -578,9 +578,9 @@ public class TestExpandLandPlayer {
         Headquarter headquarter = map.placeBuilding(new Headquarter(player0), point0);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANK, 40, map);
-        Utils.adjustInventoryTo(headquarter, STONE, 40, map);
-        Utils.adjustInventoryTo(headquarter, PRIVATE, 40, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 40);
+        Utils.adjustInventoryTo(headquarter, STONE, 40);
+        Utils.adjustInventoryTo(headquarter, PRIVATE, 40);
 
         /* Wait for the player to place barracks */
         Barracks barracks0 = MoreUtils.verifyPlayerPlacesOnlyBuilding(computerPlayer, map, Barracks.class);
@@ -590,7 +590,7 @@ public class TestExpandLandPlayer {
         MoreUtils.verifyPlayersBuildingsContain(player0, Barracks.class);
 
         /* Wait for the barracks to get constructed */
-        Utils.fastForwardUntilBuildingIsConstructed(barracks0, map);
+        Utils.fastForwardUntilBuildingIsConstructed(barracks0);
 
         /* Verify that the player stops promotions because there is no enemy in the map */
         computerPlayer.turn();
@@ -623,9 +623,9 @@ public class TestExpandLandPlayer {
         Headquarter headquarter1 = map.placeBuilding(new Headquarter(player1), point1);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANK, 500, map);
-        Utils.adjustInventoryTo(headquarter, STONE, 500, map);
-        Utils.adjustInventoryTo(headquarter, PRIVATE, 500, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 500);
+        Utils.adjustInventoryTo(headquarter, STONE, 500);
+        Utils.adjustInventoryTo(headquarter, PRIVATE, 500);
 
         /* Verify that the player enables promotions in barracks close to the
            enemy
@@ -689,9 +689,9 @@ public class TestExpandLandPlayer {
         Headquarter headquarter1 = map.placeBuilding(new Headquarter(player1), point1);
 
         /* Give the player extra building materials and militaries */
-        Utils.adjustInventoryTo(headquarter, PLANK, 500, map);
-        Utils.adjustInventoryTo(headquarter, STONE, 500, map);
-        Utils.adjustInventoryTo(headquarter, PRIVATE, 500, map);
+        Utils.adjustInventoryTo(headquarter, PLANK, 500);
+        Utils.adjustInventoryTo(headquarter, STONE, 500);
+        Utils.adjustInventoryTo(headquarter, PRIVATE, 500);
 
         /* Verify that the player upgrades barracks close to the enemy */
         Barracks latestBarracks = null;

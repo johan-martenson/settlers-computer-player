@@ -133,7 +133,7 @@ public class MoreUtils {
         Barracks barracks0 = map.placeBuilding(new Barracks(player), point2);
 
         /* Finish construction of barracks */
-        Utils.constructHouse(barracks0, map);
+        Utils.constructHouse(barracks0);
 
         /* Occupy the barracks */
         Utils.occupyMilitaryBuilding(PRIVATE_RANK, 2, barracks0, map);
