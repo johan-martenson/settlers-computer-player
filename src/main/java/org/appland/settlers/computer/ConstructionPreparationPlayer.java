@@ -114,7 +114,7 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
                 System.out.println(" - Connected the quarry: " + road.getWayPoints());
                 Utils.fillRoadWithFlags(map, road);
             }
-        } else if (quarryDone() && quarry.outOfNaturalResources()) {
+        } else if (quarryDone() && quarry.isOutOfNaturalResources()) {
             System.out.println(" - No more stone in quarry");
             /* Destroy the quarry if it can't reach any stone */
             quarry.tearDown();
@@ -176,7 +176,7 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
         return (foresterDone()   &&
                 woodcuttersDone() &&
                 sawmillDone()    &&
-                ((quarryDone() && !quarry.outOfNaturalResources()) ||
+                ((quarryDone() && !quarry.isOutOfNaturalResources()) ||
                  (noQuarry() && !hasStonesOnLand)));
     }
 
@@ -231,7 +231,7 @@ public class ConstructionPreparationPlayer implements ComputerPlayer {
             hasStonesOnLand = Utils.hasStoneWithinArea(map, player);
         }
 
-        return quarryDone() && !quarry.outOfNaturalResources();
+        return quarryDone() && !quarry.isOutOfNaturalResources();
     }
 
     public boolean hasAccessToStone() {

@@ -18,7 +18,7 @@ import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Size;
 import org.appland.settlers.model.Stone;
 import org.appland.settlers.model.Storehouse;
-import org.appland.settlers.model.Tile;
+import org.appland.settlers.model.Vegetation;
 import org.appland.settlers.model.Tree;
 import org.appland.settlers.model.WildAnimal;
 import org.appland.settlers.model.Worker;
@@ -44,9 +44,9 @@ import static org.appland.settlers.model.Material.PRIVATE;
 import static org.appland.settlers.model.Material.SERGEANT;
 import static org.appland.settlers.model.Material.STONE;
 import static org.appland.settlers.model.Size.LARGE;
-import static org.appland.settlers.model.Tile.Vegetation.MOUNTAIN;
-import static org.appland.settlers.model.Tile.Vegetation.SWAMP;
-import static org.appland.settlers.model.Tile.Vegetation.WATER;
+import static org.appland.settlers.model.Vegetation.MOUNTAIN;
+import static org.appland.settlers.model.Vegetation.SWAMP;
+import static org.appland.settlers.model.Vegetation.WATER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -252,19 +252,19 @@ public class Utils {
     }
 
     public static void putGoldAtSurroundingTiles(Point point, Size size, GameMap map) {
-        map.getTerrain().surroundPointWithMineral(point, GOLD, size);
+        map.surroundPointWithMineral(point, GOLD, size);
     }
 
     public static void putIronAtSurroundingTiles(Point point, Size size, GameMap map) {
-        map.getTerrain().surroundPointWithMineral(point, IRON, size);
+        map.surroundPointWithMineral(point, IRON, size);
     }
 
     public static void putCoalAtSurroundingTiles(Point point, Size size, GameMap map) {
-        map.getTerrain().surroundPointWithMineral(point, COAL, size);
+        map.surroundPointWithMineral(point, COAL, size);
     }
 
     public static void putGraniteAtSurroundingTiles(Point point, Size size, GameMap map) {
-        map.getTerrain().surroundPointWithMineral(point, STONE, size);
+        map.surroundPointWithMineral(point, STONE, size);
     }
 
     public static void createMountainWithinRadius(Point point, int radius, GameMap map) {
@@ -275,7 +275,7 @@ public class Utils {
 
     public static void putMineralWithinRadius(Material mineral, Point point1, int radius, GameMap map) {
         for (Point p : map.getPointsWithinRadius(point1, radius - 1)) {
-            map.getTerrain().surroundPointWithMineral(p, mineral, LARGE);
+            map.surroundPointWithMineral(p, mineral, LARGE);
         }
     }
 
@@ -932,15 +932,15 @@ public class Utils {
 
     }
 
-    static void surroundPointWithVegetation(Point point, Tile.Vegetation vegetation, GameMap map) {
+    static void surroundPointWithVegetation(Point point, Vegetation vegetation, GameMap map) {
         map.getTerrain().surroundWithVegetation(point, vegetation);
 
-        assertEquals(map.getTerrain().getTileUpLeft(point).getVegetationType(), vegetation);
-        assertEquals(map.getTerrain().getTileAbove(point).getVegetationType(), vegetation);
-        assertEquals(map.getTerrain().getTileUpRight(point).getVegetationType(), vegetation);
-        assertEquals(map.getTerrain().getTileDownRight(point).getVegetationType(), vegetation);
-        assertEquals(map.getTerrain().getTileBelow(point).getVegetationType(), vegetation);
-        assertEquals(map.getTerrain().getTileDownLeft(point).getVegetationType(), vegetation);
+        assertEquals(map.getTerrain().getTileUpLeft(point), vegetation);
+        assertEquals(map.getTerrain().getTileAbove(point), vegetation);
+        assertEquals(map.getTerrain().getTileUpRight(point), vegetation);
+        assertEquals(map.getTerrain().getTileDownRight(point), vegetation);
+        assertEquals(map.getTerrain().getTileBelow(point), vegetation);
+        assertEquals(map.getTerrain().getTileDownLeft(point), vegetation);
     }
 
     public static void verifyWorkerStaysAtHome(Worker worker, GameMap map) throws Exception {

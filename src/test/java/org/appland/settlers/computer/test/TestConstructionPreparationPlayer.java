@@ -281,7 +281,7 @@ public class TestConstructionPreparationPlayer {
 
         /* Wait for the stone to run out */
         assertTrue(map.isStoneAtPoint(stone0.getPosition()));
-        assertFalse(quarry.outOfNaturalResources());
+        assertFalse(quarry.isOutOfNaturalResources());
 
         MoreUtils.waitForStoneToRunOut(computerPlayer, map, stone0);
 
@@ -304,7 +304,7 @@ public class TestConstructionPreparationPlayer {
         /* Give the stonemason time to figure out that there is no more stone */
         Utils.fastForward(200, map);
 
-        assertTrue(quarry.outOfNaturalResources());
+        assertTrue(quarry.isOutOfNaturalResources());
 
         /* Verify that the player destroys the quarry */
         for (int i = 0; i < 150; i++) {
