@@ -11,7 +11,6 @@ import org.appland.settlers.model.Mill;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.Point;
 import org.appland.settlers.model.Road;
-import org.appland.settlers.model.Terrain;
 import org.appland.settlers.model.Well;
 
 import java.util.ArrayList;
@@ -194,13 +193,11 @@ public class FoodProducer implements ComputerPlayer {
 
     private Point findPointForFishery() {
 
-        Terrain terrain = map.getTerrain();
-
         /* Look for water */
         for (Point point : controlledPlayer.getLandInPoints()) {
 
             /* Filter non-water points */
-            if (!terrain.isInWater(point)) {
+            if (!map.isInWater(point)) {
                 continue;
             }
 

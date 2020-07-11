@@ -254,7 +254,7 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
                 continue;
             }
 
-            if (!map.getTerrain().isOnMountain(point)) {
+            if (!map.isOnMountain(point)) {
                 concludedPoints.add(point);
 
                 continue;
@@ -369,7 +369,7 @@ public class SearchForMineralsPlayer implements ComputerPlayer {
 
     private boolean isAvailableForSign(Point p) {
 
-        if (!map.getTerrain().isOnMountain(p)) {
+        if (!map.isOnMountain(p)) {
             return false;
         }
 
