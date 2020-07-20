@@ -92,7 +92,7 @@ public class Utils {
             Road road = map.getRoadsFromFlag(flag).get(0);
 
             /* Move the flag iterator to the other side */
-            EndPoint otherSide = road.getOtherFlag(flag);
+            EndPoint otherSide = road.getOtherEndPoint(flag);
 
             /* Stop if the other side is a building */
             if (map.isBuildingAtPoint(otherSide.getPosition())) {
@@ -393,7 +393,7 @@ public class Utils {
                 searchedRoads.add(road);
 
                 /* Get the other end */
-                EndPoint ep = road.getOtherFlag(flag);
+                EndPoint ep = road.getOtherEndPoint(flag);
 
                 /* Filter buildings */
                 if (map.isBuildingAtPoint(ep.getPosition())) {
