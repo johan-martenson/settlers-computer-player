@@ -14,6 +14,7 @@ import org.appland.settlers.model.GraniteMine;
 import org.appland.settlers.model.InvalidUserActionException;
 import org.appland.settlers.model.IronMine;
 import org.appland.settlers.model.Player;
+import org.appland.settlers.model.TransportCategory;
 
 import static org.appland.settlers.model.Material.BEER;
 import static org.appland.settlers.model.Material.BREAD;
@@ -271,22 +272,19 @@ public class CompositePlayer implements ComputerPlayer {
 
         /* Create a baseline for materials that tend to overflow */
 
-        player.setTransportPriority(0, GOLD);
-        player.setTransportPriority(1, SHIELD);
-        player.setTransportPriority(2, SWORD);
-        player.setTransportPriority(3, IRON_BAR);
-        player.setTransportPriority(4, COAL);
-        player.setTransportPriority(5, IRON);
-        player.setTransportPriority(6, MEAT);
-        player.setTransportPriority(7, BREAD);
-        player.setTransportPriority(8, FISH);
-        player.setTransportPriority(9, FLOUR);
-        player.setTransportPriority(10, WHEAT);
-        player.setTransportPriority(11, STONE);
-        player.setTransportPriority(12, PLANK);
-        player.setTransportPriority(13, BEER);
-        player.setTransportPriority(14, WOOD);
-        player.setTransportPriority(15, WATER);
+        player.setTransportPriority(0, TransportCategory.GOLD);
+        player.setTransportPriority(1, TransportCategory.WEAPONS);
+        player.setTransportPriority(2, TransportCategory.IRON_BAR);
+        player.setTransportPriority(3, TransportCategory.COAL);
+        player.setTransportPriority(4, TransportCategory.IRON);
+        player.setTransportPriority(5, TransportCategory.FOOD);
+        player.setTransportPriority(6, TransportCategory.FLOUR);
+        player.setTransportPriority(7, TransportCategory.WHEAT);
+        player.setTransportPriority(8, TransportCategory.STONE);
+        player.setTransportPriority(9, TransportCategory.PLANK);
+        player.setTransportPriority(10, TransportCategory.BEER);
+        player.setTransportPriority(11, TransportCategory.WOOD);
+        player.setTransportPriority(12, TransportCategory.WATER);
 
         /* Main priority: GOLD, PRIVATE, PLANKS, STONES
            Handle backwards to get the priority right
@@ -294,51 +292,48 @@ public class CompositePlayer implements ComputerPlayer {
 
         /* First stones */
         if (player.getInventory().get(STONE) < 20) {
-            player.setTransportPriority(0, STONE);
+            player.setTransportPriority(0, TransportCategory.STONE);
         }
 
         /* Then planks */
         if (player.getInventory().get(PLANK) < 20) {
-            player.setTransportPriority(0, PLANK);
-            player.setTransportPriority(1, WOOD);
+            player.setTransportPriority(0, TransportCategory.PLANK);
+            player.setTransportPriority(1, TransportCategory.WOOD);
         }
 
         /* Then privates - handle beer */
         if (player.getInventory().get(BEER) < 5) {
-            player.setTransportPriority(0, BEER);
+            player.setTransportPriority(0, TransportCategory.BEER);
 
             if (player.getInventory().get(WATER) < 10) {
-                player.setTransportPriority(1, WATER);
+                player.setTransportPriority(1, TransportCategory.WATER);
             }
 
             if (player.getInventory().get(WHEAT) < 10) {
-                player.setTransportPriority(2, WHEAT);
+                player.setTransportPriority(2, TransportCategory.WHEAT);
             }
         }
 
         /* Then privates - handle weapons */
         if (player.getInventory().get(BEER) > 10) {
-            player.setTransportPriority(0, SWORD);
-            player.setTransportPriority(1, SHIELD);
+            player.setTransportPriority(0, TransportCategory.WEAPONS);
 
-            player.setTransportPriority(2, IRON_BAR);
-            player.setTransportPriority(3, COAL);
+            player.setTransportPriority(1, TransportCategory.IRON_BAR);
+            player.setTransportPriority(2, TransportCategory.COAL);
 
             if (player.getInventory().get(IRON_BAR) < 5) {
-                player.setTransportPriority(4, IRON);
+                player.setTransportPriority(3, TransportCategory.IRON);
 
                 if (player.getInventory().get(COAL) < 5 ||
                     player.getInventory().get(IRON) < 5) {
-                    player.setTransportPriority(5, BREAD);
-                    player.setTransportPriority(6, FISH);
-                    player.setTransportPriority(7, MEAT);
+                    player.setTransportPriority(4, TransportCategory.FOOD);
 
                     if (player.getInventory().get(BREAD) < 5) {
-                        player.setTransportPriority(8, FLOUR);
-                        player.setTransportPriority(9, WATER);
+                        player.setTransportPriority(5, TransportCategory.FLOUR);
+                        player.setTransportPriority(6, TransportCategory.WATER);
 
                         if (player.getInventory().get(FLOUR) < 5) {
-                            player.setTransportPriority(9, WHEAT);
+                            player.setTransportPriority(7, TransportCategory.WHEAT);
                         }
                     }
                 }
@@ -347,22 +342,20 @@ public class CompositePlayer implements ComputerPlayer {
 
         /* Then gold */
         if (player.getInventory().get(COIN) < 5) {
-            player.setTransportPriority(0, COIN);
-            player.setTransportPriority(1, COAL);
-            player.setTransportPriority(2, GOLD);
+            player.setTransportPriority(0, TransportCategory.COIN);
+            player.setTransportPriority(1, TransportCategory.COAL);
+            player.setTransportPriority(2, TransportCategory.GOLD);
 
             if (player.getInventory().get(COAL) < 5 ||
                 player.getInventory().get(GOLD) < 5) {
-                player.setTransportPriority(3, BREAD);
-                player.setTransportPriority(4, FISH);
-                player.setTransportPriority(5, MEAT);
+                player.setTransportPriority(3, TransportCategory.FOOD);
 
                 if (player.getInventory().get(BREAD) < 5) {
-                    player.setTransportPriority(6, FLOUR);
-                    player.setTransportPriority(7, WATER);
+                    player.setTransportPriority(4, TransportCategory.FLOUR);
+                    player.setTransportPriority(5, TransportCategory.WATER);
 
                     if (player.getInventory().get(FLOUR) < 5) {
-                        player.setTransportPriority(7, WHEAT);
+                        player.setTransportPriority(6, TransportCategory.WHEAT);
                     }
                 }
             }
