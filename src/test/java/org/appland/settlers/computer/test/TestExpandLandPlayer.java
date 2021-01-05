@@ -503,7 +503,7 @@ public class TestExpandLandPlayer {
         /* Wait for player 0 to place a barracks close to player 1's barracks */
         Building barracksToAttack = null;
 
-        for (int i = 0; i < 5000; i++) {
+        for (int i = 0; i < 10000; i++) {
 
             for (Point p : map.getPointsWithinRadius(barracks1.getPosition(), 12)) {
 

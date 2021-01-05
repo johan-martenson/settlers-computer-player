@@ -15,6 +15,9 @@ import org.appland.settlers.model.InvalidUserActionException;
 import org.appland.settlers.model.IronMine;
 import org.appland.settlers.model.Player;
 import org.appland.settlers.model.TransportCategory;
+import org.appland.settlers.utils.Duration;
+import org.appland.settlers.utils.Group;
+import org.appland.settlers.utils.Stats;
 
 import static org.appland.settlers.model.Material.BEER;
 import static org.appland.settlers.model.Material.BREAD;
@@ -33,6 +36,7 @@ import static org.appland.settlers.model.Material.SWORD;
 import static org.appland.settlers.model.Material.WATER;
 import static org.appland.settlers.model.Material.WHEAT;
 import static org.appland.settlers.model.Material.WOOD;
+import static org.appland.settlers.utils.StatsConstants.AGGREGATED_EACH_STEP_TIME_GROUP;
 
 /**
  *
@@ -48,6 +52,8 @@ public class CompositePlayer implements ComputerPlayer {
     private final ExpandLandPlayer              expandingPlayer;
     private final AttackPlayer                  attackingPlayer;
     private final Countdown                     countdown;
+    private final Group collectEachStepTimeGroup;
+    private final Stats stats;
 
     private GameMap map;
     private ComputerPlayer previousPlayer;
@@ -60,6 +66,7 @@ public class CompositePlayer implements ComputerPlayer {
     private final static int ATTACK_FOLLOW_UP    = 20;
     private final static int TIME_TO_WAIT_FOR_PROMOTED_SOLDIERS = 200;
     private final static int PERIODIC_LAKE_SCAN = 40;
+    private final static String AGGREGATED_EACH_STEP_TIME_GROUP = "COLLECT_EACH_TURN";
 
     public CompositePlayer(Player player, GameMap map) {
         this.player = player;
@@ -67,12 +74,18 @@ public class CompositePlayer implements ComputerPlayer {
         counter     = 0;
         countdown   = new Countdown();
 
+        /* Set up statistics collection */
+        stats = new Stats();
+
+        collectEachStepTimeGroup = stats.createVariableGroupIfAbsent(AGGREGATED_EACH_STEP_TIME_GROUP);
+
+        /* Instantiate each computer player */
         constructionPlayer = new ConstructionPreparationPlayer(player, map);
         mineralsPlayer     = new SearchForMineralsPlayer(player, map);
         foodPlayer         = new FoodProducer(player, map);
         coinPlayer         = new CoinProducer(player, map);
         militaryProducer   = new MilitaryProducer(player, map);
-        expandingPlayer    = new ExpandLandPlayer(player, map);
+        expandingPlayer    = new ExpandLandPlayer(player, map, stats);
         attackingPlayer    = new AttackPlayer(player, map);
 
         /* Configure the players */
@@ -80,8 +93,14 @@ public class CompositePlayer implements ComputerPlayer {
         expandingPlayer.waitForBuildingsToGetCompletelyOccupied(true);
     }
 
+    public Stats getStats() {
+        return stats;
+    }
+
     @Override
     public void turn() throws Exception {
+
+        Duration duration = stats.measureOneShotDuration("CompositePlayer.turn");
 
         /* Keep track of how many times the method is run to support periodic tasks */
         if (counter > COUNTER_MAX) {
@@ -115,16 +134,22 @@ public class CompositePlayer implements ComputerPlayer {
 
             /* Change transport priorities if needed */
             tuneTransportPriorities();
+
+            duration.after("Tune transport priorities");
         }
 
         /* Scan for new potential mines periodically */
         if (counter % PERIODIC_SCAN_FOR_NEW_MINERALS == 0 ) {
             mineralsPlayer.scanForNewMinerals();
+
+            duration.after("Scan for new minerals");
         }
 
         /* Scan for lakes periodically */
         if (counter % PERIODIC_LAKE_SCAN == 0) {
             foodPlayer.scanForNewLakes();
+
+            duration.after("Scan for new lakes");
         }
 
         /* Ensure plank production is active */
@@ -133,6 +158,8 @@ public class CompositePlayer implements ComputerPlayer {
 
             currentPlayer = constructionPlayer;
 
+            duration.after("Construction player turn");
+
         /* Ensure stones are collected. Explore land directly if there are no stones available */
         } else if (!constructionPlayer.stoneProductionWorking()) {
 
@@ -140,10 +167,14 @@ public class CompositePlayer implements ComputerPlayer {
                 constructionPlayer.turn();
 
                 currentPlayer = constructionPlayer;
+
+                duration.after("Construction player turn");
             } else {
                 expandingPlayer.turn();
 
                 currentPlayer = expandingPlayer;
+
+                duration.after("Expanding land player turn");
             }
 
         /* Scan for minerals if there are unknown areas and re-scan periodically */
@@ -152,17 +183,23 @@ public class CompositePlayer implements ComputerPlayer {
 
             currentPlayer = mineralsPlayer;
 
+            duration.after("Minerals player turn");
+
         /* Build first level of food production if it's missing and there are mines needing it */
         } else if (mineralsPlayer.hasMines() && !foodPlayer.basicFoodProductionDone()) {
             foodPlayer.turn();
 
             currentPlayer = foodPlayer;
 
+            duration.after("Food player turn");
+
         /* Build up coin production if gold is available */
         } else if (player.getInventory().get(GOLD) > 0 && !coinPlayer.coinProductionDone()) {
             coinPlayer.turn();
 
             currentPlayer = coinPlayer;
+
+            duration.after("Coin player turn");
 
         /* Build up full food production after the coin production is available */
         } else if (mineralsPlayer.hasCoalMine() &&
@@ -171,6 +208,8 @@ public class CompositePlayer implements ComputerPlayer {
             foodPlayer.turn();
 
             currentPlayer = foodPlayer;
+
+            duration.after("Food player turn");
 
         /* Build up military production when full food production is done */
         } else if (mineralsPlayer.hasCoalMine() &&
@@ -181,12 +220,16 @@ public class CompositePlayer implements ComputerPlayer {
 
             currentPlayer = militaryProducer;
 
+            duration.after("Military producer turn");
+
         /* Handle ongoing attacks */
         } else if (attackingPlayer.isAttacking() && counter % ATTACK_FOLLOW_UP == 0) {
 
             attackingPlayer.turn();
 
             currentPlayer = attackingPlayer;
+
+            duration.after("Attacking player turn");
 
         /* Handle the case where an ongoing attack has been won */
         } else if (attackingPlayer.hasWonBuildings()) {
@@ -196,6 +239,8 @@ public class CompositePlayer implements ComputerPlayer {
             /* Notify the expanding player about newly acquired enemy buildings */
             expandingPlayer.registerBuildings(attackingPlayer.getWonBuildings());
             attackingPlayer.clearWonBuildings();
+
+            duration.after("Won buildings");
 
         /* Look for enemies to attack */
         } else if (expandingPlayer.hasNewBuildings() || counter % PERIODIC_ENEMY_SCAN == 0) {
@@ -222,6 +267,8 @@ public class CompositePlayer implements ComputerPlayer {
             /* Look for enemies close by to attack */
             Building enemyBuilding = Utils.getCloseEnemyBuilding(player);
 
+            duration.after("Look for enemy buildings to attack");
+
             if (enemyBuilding == null) {
                 System.out.println("Composite player: No close enemy to attack");
                 return;
@@ -233,6 +280,9 @@ public class CompositePlayer implements ComputerPlayer {
                 attackingPlayer.turn();
 
                 currentPlayer = attackingPlayer;
+
+                duration.after("Attacking player turn");
+
             } else {
                 System.out.println("Composite player: Cannot attack enemy at " + enemyBuilding.getPosition());
             }
@@ -243,11 +293,17 @@ public class CompositePlayer implements ComputerPlayer {
             expandingPlayer.turn();
 
             currentPlayer = expandingPlayer;
+
+            duration.after("Expanding player turn");
         }
 
         if (previousPlayer != currentPlayer) {
             System.out.println(" -- Switched to " + currentPlayer.getClass().getSimpleName() + " from " + previousPlayer);
         }
+
+        duration.reportStats(stats);
+
+        collectEachStepTimeGroup.collectionPeriodDone();
     }
 
     @Override

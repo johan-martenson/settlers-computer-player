@@ -41,8 +41,7 @@ public class MoreUtils {
     }
 
     public static <T extends Building>
-        T waitForComputerPlayerToPlaceBuilding(ComputerPlayer computerPlayer,
-            Class<T> aClass, GameMap map) throws Exception {
+    T waitForComputerPlayerToPlaceBuilding(ComputerPlayer computerPlayer, Class<T> aClass, GameMap map) throws Exception {
         Player player = computerPlayer.getControlledPlayer();
         T found       = null;
 

@@ -168,8 +168,8 @@ public class Utils {
         return null;
     }
 
-    static Point pointToConnectViaToGetToBuilding(Player player, GameMap map, Point start, Building building2) {
-        Point end = building2.getFlag().getPosition();
+    static Point pointToConnectViaToGetToBuilding(Player player, GameMap map, Point start, Building building) {
+        Point end = building.getFlag().getPosition();
 
         /* Return directly if they are already connected */
         if (map.arePointsConnectedByRoads(start, end)) {
@@ -545,13 +545,20 @@ public class Utils {
     static int distanceToKnownEnemiesWithinRange(GameMap map, Player player, Point point, int range) {
         double  distance = Double.MAX_VALUE;
 
-        /* Walk through surrounding points and find the closest point belonging
-           to an enemy
-        */
+        /* Walk through surrounding points and find the closest point belonging to an enemy */
         for (Point p : map.getPointsWithinRadius(point, range)) {
 
             /* Ignore un-discovered points */
             if (!player.getDiscoveredLand().contains(p)) {
+                continue;
+            }
+
+            /* Ignore points owned by the player themselves */
+            if (player.getLandInPoints().contains(p)) {
+                continue;
+            }
+
+            if (player.getBorderPoints().contains(p)) {
                 continue;
             }
 
@@ -564,6 +571,7 @@ public class Utils {
             /* Filter points not belonging to an enemy */
 
             /* Other players' borders */
+            Player playerAtPoint = null;
             boolean enemyBorder = false;
             for (Player enemyPlayer : map.getPlayers()) {
 
@@ -571,29 +579,21 @@ public class Utils {
                     continue;
                 }
 
-                for (Point borderPoint : player.getBorderPoints()) {
+                if (enemyPlayer.getBorderPoints().contains(p)) {
+                    enemyBorder = true;
 
-                    if (!player.getDiscoveredLand().contains(borderPoint)) {
-                        continue;
-                    }
+                    break;
+                }
 
-                    if (p.equals(borderPoint)) {
-                        enemyBorder = true;
+                if (enemyPlayer.getLandInPoints().contains(p)) {
+                    playerAtPoint = enemyPlayer;
 
-                        break;
-                    }
+                    break;
                 }
             }
 
-            Player playerAtPoint = player.getPlayerAtPoint(p);
-
             /* Filter out no-man's land */
             if (playerAtPoint == null && !enemyBorder) {
-                continue;
-            }
-
-            /* Filter out the player's own land */
-            if (!enemyBorder && playerAtPoint.equals(player)) {
                 continue;
             }
 
@@ -653,5 +653,44 @@ public class Utils {
         } else {
             return null;
         }
+    }
+
+    public static Set<Building> getMilitaryBuildingsForPlayer(Player player) {
+        Set<Building> militaryBuildings = new HashSet<>();
+
+        for (Building building : player.getBuildings()) {
+            if (!building.isMilitaryBuilding()) {
+                continue;
+            }
+
+            if (building.isBurningDown() || building.isDestroyed()) {
+                continue;
+            }
+
+            militaryBuildings.add(building);
+        }
+
+        return militaryBuildings;
+    }
+
+    public static Set<Building> getDiscoveredEnemyMilitaryBuildingsForPlayer(Player player) {
+        Set<Building> discoveredEnemyBuildings = new HashSet<>();
+
+        for (Player enemyPlayer : player.getMap().getPlayers()) {
+
+            if (player.equals(enemyPlayer)) {
+                continue;
+            }
+
+            for (Building enemyBuilding : getMilitaryBuildingsForPlayer(enemyPlayer)) {
+                if (!player.getDiscoveredLand().contains(enemyBuilding.getPosition())) {
+                    continue;
+                }
+
+                discoveredEnemyBuildings.add(enemyBuilding);
+            }
+        }
+
+        return discoveredEnemyBuildings;
     }
 }
