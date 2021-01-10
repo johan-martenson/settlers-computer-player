@@ -18,7 +18,6 @@ import org.appland.settlers.model.Road;
 import org.appland.settlers.model.Size;
 import org.appland.settlers.model.Stone;
 import org.appland.settlers.model.Storehouse;
-import org.appland.settlers.model.Vegetation;
 import org.appland.settlers.model.Tree;
 import org.appland.settlers.model.WildAnimal;
 import org.appland.settlers.model.Worker;
@@ -44,9 +43,6 @@ import static org.appland.settlers.model.Material.PRIVATE;
 import static org.appland.settlers.model.Material.SERGEANT;
 import static org.appland.settlers.model.Material.STONE;
 import static org.appland.settlers.model.Size.LARGE;
-import static org.appland.settlers.model.Vegetation.MOUNTAIN;
-import static org.appland.settlers.model.Vegetation.SWAMP;
-import static org.appland.settlers.model.Vegetation.WATER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -211,18 +207,6 @@ public class Utils {
         assertTrue(found);
     }
 
-    public static void surroundPointWithWater(Point point, GameMap map) {
-        surroundPointWithVegetation(point, WATER, map);
-    }
-
-    public static void surroundPointWithMountain(Point point, GameMap map) {
-        surroundPointWithVegetation(point, MOUNTAIN, map);
-    }
-
-    public static void surroundPointWithSwamp(Point point, GameMap map) {
-        surroundPointWithVegetation(point, SWAMP, map);
-    }
-
     public static void fastForwardUntilBuildingIsConstructed(Building building) throws Exception {
         GameMap map = building.getMap();
 
@@ -265,12 +249,6 @@ public class Utils {
 
     public static void putGraniteAtSurroundingTiles(Point point, Size size, GameMap map) {
         map.surroundPointWithMineral(point, STONE, size);
-    }
-
-    public static void createMountainWithinRadius(Point point, int radius, GameMap map) {
-        for (Point p : map.getPointsWithinRadius(point, radius - 1)) {
-            surroundPointWithVegetation(p, MOUNTAIN, map);
-        }
     }
 
     public static void putMineralWithinRadius(Material mineral, Point point1, int radius, GameMap map) {
@@ -930,17 +908,6 @@ public class Utils {
 
         assertTrue(map.isTreeAtPoint(point));
 
-    }
-
-    static void surroundPointWithVegetation(Point point, Vegetation vegetation, GameMap map) {
-        map.surroundWithVegetation(point, vegetation);
-
-        assertEquals(map.getTileUpLeft(point), vegetation);
-        assertEquals(map.getTileAbove(point), vegetation);
-        assertEquals(map.getTileUpRight(point), vegetation);
-        assertEquals(map.getTileDownRight(point), vegetation);
-        assertEquals(map.getTileBelow(point), vegetation);
-        assertEquals(map.getTileDownLeft(point), vegetation);
     }
 
     public static void verifyWorkerStaysAtHome(Worker worker, GameMap map) throws Exception {
